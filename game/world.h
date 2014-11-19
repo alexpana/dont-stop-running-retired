@@ -65,7 +65,7 @@ private:
 
     void generateNewBlock()
     {
-        engine::Random random = m_game->getRandom();
+        engine::Random& random = m_game->getRandom();
         engine::Rect2 lastBlock = blocks[blocks.size() - 1];
 
         double left = lastBlock.x + lastBlock.w;

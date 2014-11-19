@@ -13,14 +13,17 @@ public:
     Random()
     {
         std::random_device rd;
-        m_randomEngine = std::mt19937(rd());
-        m_uniformIntDistribution = std::uniform_int_distribution<int>();
+        m_randomEngine = std::default_random_engine(rd());
+        m_uniformIntDistribution = std::uniform_int_distribution<int>(0, 0x00ffffff);
     }
+
+    Random(const Random& other) = delete;
 
     // Generates the next integer value from 0 (inclusive) to max int (exclusive)
     int nextInt()
     {
-        return abs(static_cast<int>(m_randomEngine()));
+        int randomNumber = m_uniformIntDistribution(m_randomEngine);
+        return randomNumber;
     }
 
     // Generates the next integer value from 0 (inclusive) to n (exclusive)
@@ -35,7 +38,7 @@ public:
     }
 
 private:
-    std::mt19937 m_randomEngine;
+    std::default_random_engine m_randomEngine;
     std::uniform_int_distribution<int> m_uniformIntDistribution;
 };
 
