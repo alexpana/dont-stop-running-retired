@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <vector>
 #include <memory>
 
 #include <SDL.h>
@@ -10,7 +10,7 @@ namespace engine {
 class Rect2;
 
 enum TileType {
-    GRASS_TOP = 0,
+    GRASS_TOP,
     GRASS_FILL,
     GROUND,
     RUNNER,
@@ -31,7 +31,7 @@ public:
     const Rect2 TileMap::getTileRect(TileType tileType);
 
 private:
-    std::map<TileType, Rect2> m_map;
+    std::vector<Rect2> m_tiles;
 };
 
 
