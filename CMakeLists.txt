@@ -20,8 +20,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${DontStopRunning_SOURCE_DIR}/cmake"
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_IMAGE REQUIRED)
+find_package(BOX2D REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${BOX2D_INCLUDE_DIR})
 
 add_subdirectory(engine)
 

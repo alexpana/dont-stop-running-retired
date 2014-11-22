@@ -39,7 +39,10 @@ target_link_libraries(game
     engine 
 
     ${SDL2_LIBRARY} 
-    ${SDL2_IMAGE_LIBRARY} 
+    ${SDL2_IMAGE_LIBRARY}
+
+    ${BOX2D_LIBRARY}
+
     winmm 
     imm32 
     version)
