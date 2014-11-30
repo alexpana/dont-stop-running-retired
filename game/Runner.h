@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include "Defines.h"
-
 #include <Game.h>
 #include <Vec2.h>
 #include <Timer.h>

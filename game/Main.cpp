@@ -1,12 +1,10 @@
-#include "Defines.h"
-
-#if !TEST_PHYSICS
-
 #include <iostream>
 #include <map>
 #include <thread>
 
-#define SDL_MAIN_HANDLED
+#ifndef SDL_MAIN_HANDLED
+    #define SDL_MAIN_HANDLED
+#endif
 
 #include <SDL.h>
 
@@ -138,5 +136,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-#endif

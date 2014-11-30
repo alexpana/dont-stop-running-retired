@@ -8,8 +8,7 @@ set(GAME_SOURCES
 
 set(GAME_HEADERS
     World.h
-    Runner.h
-    Defines.h)
+    Runner.h)
 
 # =======================================
 # Source groups
