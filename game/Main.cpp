@@ -1,4 +1,4 @@
-#include "defines.h"
+#include "Defines.h"
 
 #if !TEST_PHYSICS
 
@@ -12,7 +12,7 @@
 
 #include "TileMap.h"
 #include "TileEngine.h"
-#include "world.h"
+#include "World.h"
 #include <Event.h>
 
 using namespace std;

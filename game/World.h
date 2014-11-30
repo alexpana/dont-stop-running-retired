@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "Rect2.h"
-#include "runner.h"
+#include "Runner.h"
 #include "TileEngine.h"
 #include "Vec2.h"
 
