@@ -22,6 +22,8 @@ find_package(SDL2 REQUIRED)
 
 find_package(SDL2_IMAGE REQUIRED)
 
+find_package(SDL2_TTF REQUIRED)
+
 add_subdirectory(engine)
 
 add_subdirectory(game)
