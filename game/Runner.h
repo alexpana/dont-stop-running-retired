@@ -70,6 +70,8 @@ private:
 
     void resetJump();
 
+    double getDistanceToGround();
+
 public:
     double gravity = 3000.0;
 

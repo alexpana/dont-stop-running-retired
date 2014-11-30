@@ -7,41 +7,41 @@ using namespace std;
 using namespace engine;
 
 void Runner::update(double delta) {
+
+    // update velocity
     velocity.y += gravity * delta / 1000.0;
 
-    Vec2 rightFoot = position + size;
-    Vec2 leftFoot = position + Vec2{0, size.y};
+    // update position
+    double distanceToObstacle = world->obstacleDistance(position + size);
 
-    double rightFootFloorPosition = world->floorPosition(rightFoot);
-    double leftFootFloorPosition = world->floorPosition(leftFoot);
+    double distanceToGround = getDistanceToGround();
 
-    double forwardSpace = world->obstacleDistance(rightFoot);
+    double forwardMovement = min(distanceToObstacle, (delta / 1000.0) * velocity.x);
 
-    double floorPosition = min(rightFootFloorPosition, leftFootFloorPosition);
+    position.x += forwardMovement;
 
-    position.x += min(forwardSpace, (delta / 1000.0) * velocity.x);
+    position.y += min(distanceToGround, (delta / 1000) * velocity.y);
 
-    if (velocity.y > 0) {
-        // when falling, make sure we don't go through the floor
-        position.y = min(floorPosition - size.y,
-                position.y + (delta / 1000) * velocity.y);
-
-    } else {
-        // the sky is the limit
-        position.y += (delta / 1000) * velocity.y;
-    }
-
-    if (floorPosition - rightFoot.y <= 1 && velocity.y > 0) {
+    if (distanceToGround <= 1 && velocity.y > 0) {
         resetJump();
     }
 
-    canJump = floorPosition - rightFoot.y <= 1;
+    canJump = distanceToGround < 1.0;
+
+    // update stats
+    if (distanceToGround >= 1.0) {
+        world->getStats().timeInAir += delta;
+    }
+
+    world->getStats().milesRan += forwardMovement;
 }
 
 void Runner::startJump() {
     if (!canJump) {
         return;
     }
+
+    world->getStats().numberOfJumps += 1;
 
     velocity.y = shortJumpStartVelocity;
     isJumping = true;
@@ -56,10 +56,21 @@ void Runner::resetJump() {
 
 void Runner::addJumpForce() {
     if (isJumping) {
-        if (jumpTimer.getMilli() < 300) {
-            velocity.y += -100 * (300 - jumpTimer.getMilli()) / 300.0;
+        if (jumpTimer.getMilli() < 350) {
+            velocity.y += -100 * (350 - jumpTimer.getMilli()) / 350.0;
         }
     } else {
         startJump();
     }
 }
+
+double Runner::getDistanceToGround() {
+    Vec2 rightFoot = position + size;
+    Vec2 leftFoot = position + Vec2{0, size.y};
+
+    double rightFootFloorPosition = world->floorPosition(rightFoot);
+    double leftFootFloorPosition = world->floorPosition(leftFoot);
+
+    return std::min(rightFootFloorPosition - rightFoot.y, leftFootFloorPosition - leftFoot.y);
+}
+
