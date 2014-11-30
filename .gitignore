@@ -2,5 +2,7 @@ cmake_build/
 bin/
 lib/
 
+.idea/
+
 .gitignore~
 ..gitignore.un~
