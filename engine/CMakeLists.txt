@@ -7,10 +7,11 @@ include_directories(include/)
 set(ROOT_SOURCES
     src/Game.cpp
     src/TextureFactory.cpp
-    src/TileMap.cpp
-    src/Filesystem.cpp)
+    src/TileMap.cpp)
 
 set(ROOT_HEADERS
+    include/Console.h
+	include/Event.h
     include/Game.h
     include/Texture.h
     include/TextureFactory.h
@@ -21,23 +22,16 @@ set(ROOT_HEADERS
     include/TileMap.h
     include/Timer.h
     include/Vec2.h
-    include/Filesystem.h)
+    include/Filesystem.h
+    include/FrameCounter.h)
 
 # =======================================
 # Physics Sources
 # =======================================
 
-set(PHYSICS_SOURCES
-    src/physics/Physics.cpp
-    src/physics/Particle.cpp)
+set(PHYSICS_SOURCES)
 
-set(PHYSICS_HEADERS
-    include/physics/Physics.h
-    include/physics/Particle.h
-    include/physics/CollisionSystem.h
-    include/physics/ParticleForceGenerator.h
-    include/physics/GravityForceGenerator.h
-    include/physics/ParticleGeneratorRegistry.h)
+set(PHYSICS_HEADERS)
 
 # =======================================
 # Physics Sources
@@ -56,6 +50,14 @@ set(GRAPHICS_HEADERS
 source_group(Physics FILES ${PHYSICS_SOURCES} ${PHYSICS_HEADERS})
 source_group(Engine FILES ${ROOT_SOURCES} ${ROOT_HEADERS})
 source_group(Graphics FILES ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
+
+# =======================================
+# Include Directories
+# =======================================
+
+include_directories(${SDL2_INCLUDE_DIR})
+
+include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 
 # =======================================
 # Library

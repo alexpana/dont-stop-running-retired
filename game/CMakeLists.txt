@@ -3,13 +3,13 @@
 # =======================================
 
 set(GAME_SOURCES
-    main.cpp
-    test_physics.cpp)
+    Main.cpp
+    Runner.cpp)
 
 set(GAME_HEADERS
-    world.h
-    runner.h
-    defines.h)
+    World.h
+    Runner.h
+    Defines.h)
 
 # =======================================
 # Source groups
@@ -29,6 +29,10 @@ add_executable(game
 # Include directories
 # =======================================
 
+include_directories(${SDL2_INCLUDE_DIR})
+
+include_directories(${SDL2_IMAGE_INCLUDE_DIR})
+
 include_directories(../engine/include/)
 
 # =======================================
@@ -36,14 +40,15 @@ include_directories(../engine/include/)
 # =======================================
 
 target_link_libraries(game 
-    engine 
+    engine
 
-    ${SDL2_LIBRARY} 
+    ${SDL2MAIN_LIBRARY}
+    ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
 
     ${BOX2D_LIBRARY}
 
-    winmm 
+    winmm
     imm32 
     version)
 

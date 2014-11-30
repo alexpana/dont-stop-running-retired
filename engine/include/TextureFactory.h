@@ -7,29 +7,28 @@
 #include "Texture.h"
 
 namespace engine {
+    class TextureFactory;
 
-class TextureFactory;
-typedef std::shared_ptr<TextureFactory> TextureFactoryPtr;
+    typedef std::shared_ptr<TextureFactory> TextureFactoryPtr;
 
-class TextureFactory {
+    class TextureFactory {
 
-public:
-    TextureFactory(SDL_Renderer* renderer, const SDL_PixelFormat& optimizedPixelFormat);
+    public:
+        TextureFactory(SDL_Renderer *renderer, const SDL_PixelFormat &optimizedPixelFormat);
 
-    TextureFactory(const TextureFactory& other) = delete;
+        TextureFactory(const TextureFactory &other) = delete;
 
-    TextureFactory operator=(const TextureFactory& other) = delete;
+        TextureFactory operator=(const TextureFactory &other) = delete;
 
-    TexturePtr loadImage(std::string filename);
+        TexturePtr loadImage(std::string filename);
 
-    static TextureFactoryPtr create(SDL_Renderer* renderer, const SDL_PixelFormat& optimizedPixelFormat);
+        static TextureFactoryPtr create(SDL_Renderer *renderer, const SDL_PixelFormat &optimizedPixelFormat);
 
-private:
-    const SDL_PixelFormat m_optimizedPixelFormat;
+    private:
+        const SDL_PixelFormat m_optimizedPixelFormat;
 
-    SDL_Renderer *m_nativeRenderer;
+        SDL_Renderer *m_nativeRenderer;
 
-    const TexturePtr m_dummyImage;
-};
-
+        const TexturePtr m_dummyImage;
+    };
 }

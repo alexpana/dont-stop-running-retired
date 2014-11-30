@@ -5,18 +5,16 @@
 #include <Windows.h>
 
 namespace engine {
+    class Filesystem {
+    public:
+        std::string getCurrentWorkingDirectory() {
+            char *buffer = new char[128];
 
-class Filesystem {
+            // TODO: port this
+            GetCurrentDirectory(128, buffer);
 
-public:
-
-    std::string getCurrentWorkingDirectory() 
-    {
-        char buffer[128];
-        GetCurrentDirectory(128, buffer);
-        return buffer;
-    }
-
-};
+            return buffer;
+        }
+    };
 
 }

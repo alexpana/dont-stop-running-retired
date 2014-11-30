@@ -4,15 +4,16 @@
 
 #include <iostream>
 #include <map>
+#include <thread>
+
+#define SDL_MAIN_HANDLED
 
 #include <SDL.h>
-#include <SDL_image.h>
 
-#include "game.h"
 #include "TileMap.h"
 #include "TileEngine.h"
-#include "Timer.h"
 #include "world.h"
+#include <Event.h>
 
 using namespace std;
 
@@ -20,122 +21,127 @@ static bool running = true;
 
 #define _TC(x) ((int)(x*32))
 
-class FrameCounter {
-public:
-    FrameCounter(const engine::GamePtr game) : m_game(game), lastFrameCount(m_game->getFrameCount()) {}
-
-    int getMilli() {
-        return m_timer.getMilli();
-    }
-
-    void restart() {
-        m_timer.restart();
-        lastFrameCount = m_game->getFrameCount();
-    }
-
-    double getFPS() {
-        return static_cast<double>(m_game->getFrameCount() - lastFrameCount) * 1000 / m_timer.getMilli();
-    }
-
-private:
-    const engine::GamePtr m_game;
-
-    engine::Timer m_timer;
-
-    int lastFrameCount = 0;
-};
-
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     engine::Game::Params params;
     params.screenWidth = 800;
     params.screenHeight = 600;
     params.windowTitle = "Don't Stop Running!";
 
     engine::GamePtr gamePtr = make_shared<engine::Game>();
-    auto& game = *(gamePtr.get());
 
-    cout << "Running game from: " << game.getFilesystem().getCurrentWorkingDirectory() << endl;
+    gamePtr->initialize(params);
 
-    bool initialized = game.initialize(params);
-
-    if (!initialized) 
-    {
+    if (!gamePtr->isInitialized()) {
         return -1;
     }
 
-    auto& imageFactory = game.getTextureFactory();
+    cout << "Running game from: " << gamePtr->getFilesystem().getCurrentWorkingDirectory() << endl;
+
+    auto &imageFactory = gamePtr->getTextureFactory();
 
     auto tiles = make_shared<engine::TileMap>();
 
-    auto tileEngine = make_shared<engine::TileEngine>(game.getRenderer(), tiles, imageFactory.loadImage("./data/tiles.png"));
+    auto tileEngine = make_shared<engine::TileEngine>(gamePtr->getRenderer(), tiles, imageFactory.loadImage("./data/tiles.png"));
 
-    auto world = World{gamePtr, tileEngine};
+    auto worldPtr = make_shared<World>(gamePtr, tileEngine);
 
-    world.createBlock(_TC(0), _TC(8), _TC(4));
-    world.createBlock(_TC(5), _TC(12.5), _TC(4));
-    world.createBlock(_TC(12), _TC(13), _TC(2));
-    world.createBlock(_TC(16), _TC(12), _TC(6));
+    gamePtr->registerUpdateable(worldPtr);
+    gamePtr->registerDrawable(worldPtr);
 
-    auto frameCounter = FrameCounter{gamePtr};
-    auto timer = engine::Timer{};
+    worldPtr->createBlock(_TC(0), _TC(8), _TC(20));
 
-    if (!game.isInitialized())
-    {
-        printf("Could not initialize the game.");
-        return -1;
-    }
+    auto runner = worldPtr->getRunner();
 
-    while (running)
-    {
+    // create input thread
+    std::thread{[&worldPtr, &runner]() {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+        while (true) {
+            std::string cmd;
+            int n;
+            std::cin >> cmd;
+
+            if (cmd == "setv") {
+                std::cin >> n;
+                runner->setSpeed(n);
+            }
+
+            if (cmd == "setg") {
+                std::cin >> n;
+                runner->setGravity(n);
+            }
+
+            if (cmd == "setj") {
+                std::cin >> n;
+                runner->setJumpVelocity(n);
+            }
+
+            if (cmd == "p") {
+                worldPtr->displayConstants();
+            }
+        }
+#pragma clang diagnostic pop
+    }}.detach();
+
+    while (running) {
+        gamePtr->startFrame();
+
         SDL_Event e;
+        while (SDL_PollEvent(&e) != 0) {
+            using engine::Event;
 
-        game.getRenderer()->setColor(0x303132ff);
-        game.getRenderer()->clear();
-
-        //Handle events on queue 
-        while(SDL_PollEvent(&e) != 0 ) 
-        { 
-            //User requests quit 
-            if(e.type == SDL_QUIT)
-            {
+            if (Event::isQuit(e)) {
                 running = false;
-            } 
-
-            if (e.type == SDL_KEYDOWN)
-            {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
-                {
-                    // Start jump
-                }
             }
 
-            if (e.type == SDL_KEYUP)
-            {
-                if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
-                {
-                    // End jump
-                }
+            if (Event::isKeyDown(e, SDLK_SPACE)) {
+                runner->startJump();
+                runner->startJump();
             }
 
+            if (Event::isKeyDown(e, SDLK_SPACE)) {
+                runner->startJump();
+
+            }
+
+            if (Event::isKeyUp(e, SDLK_SPACE)) {
+                runner->endJump();
+            }
+
+            if (Event::isKeyDown(e, SDLK_1)) {
+                runner->increaseSpeed();
+                worldPtr->displayConstants();
+            }
+
+            if (Event::isKeyDown(e, SDLK_2)) {
+                runner->decreaseSpeed();
+                worldPtr->displayConstants();
+            }
+
+            if (Event::isKeyDown(e, SDLK_3)) {
+                runner->increaseJumpVelocity();
+                worldPtr->displayConstants();
+            }
+
+            if (Event::isKeyDown(e, SDLK_4)) {
+                runner->decreaseJumpVelocity();
+                worldPtr->displayConstants();
+            }
+
+            if (Event::isKeyDown(e, SDLK_5)) {
+                runner->increaseGravity();
+                worldPtr->displayConstants();
+            }
+
+            if (Event::isKeyDown(e, SDLK_6)) {
+                runner->decreaseGravity();
+                worldPtr->displayConstants();
+            }
         }
 
-        if (frameCounter.getMilli() > 2000) {
-            double fps = frameCounter.getFPS();
+        gamePtr->update();
 
-            cout << "FPS: " << fps << std::endl;
-
-            frameCounter.restart();
-        }
-
-        int milli = timer.getMilli();
-        timer.restart();
-
-        world.update(milli);
-
-        world.draw();
-
-        game.endFrame();
+        gamePtr->endFrame();
     }
 
     return 0;
