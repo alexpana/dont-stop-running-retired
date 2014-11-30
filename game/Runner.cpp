@@ -7,30 +7,35 @@ using namespace std;
 using namespace engine;
 
 void Runner::update(double delta) {
-    m_velocity.y += m_gravity * delta / 1000.0;
+    velocity.y += gravity * delta / 1000.0;
 
-    Vec2 rightFoot = m_position + m_size;
-    Vec2 leftFoot = m_position + Vec2{0, m_size.y};
+    Vec2 rightFoot = position + size;
+    Vec2 leftFoot = position + Vec2{0, size.y};
 
-    double forwardSpace = m_world->obstacleDistance(rightFoot);
+    double rightFootFloorPosition = world->floorPosition(rightFoot);
+    double leftFootFloorPosition = world->floorPosition(leftFoot);
 
-    double rightFootFloorPosition = m_world->floorPosition(rightFoot);
-    double leftFootFloorPosition = m_world->floorPosition(leftFoot);
+    double forwardSpace = world->obstacleDistance(rightFoot);
 
     double floorPosition = min(rightFootFloorPosition, leftFootFloorPosition);
 
-    m_position.x += min(forwardSpace, (delta / 1000.0) * m_velocity.x);
+    position.x += min(forwardSpace, (delta / 1000.0) * velocity.x);
 
-    if (m_velocity.y > 0) {
-        m_position.y = min(floorPosition - m_size.y, m_position.y + (delta / 1000) * m_velocity.y);
+    if (velocity.y > 0) {
+        // when falling, make sure we don't go through the floor
+        position.y = min(floorPosition - size.y,
+                position.y + (delta / 1000) * velocity.y);
+
     } else {
-        m_position.y += (delta / 1000) * m_velocity.y;
+        // the sky is the limit
+        position.y += (delta / 1000) * velocity.y;
     }
 
-    if (floorPosition - rightFoot.y <= 1 && m_velocity.y > 0) {
-        endJump();
+    if (floorPosition - rightFoot.y <= 1 && velocity.y > 0) {
+        resetJump();
     }
 
+    canJump = floorPosition - rightFoot.y <= 1;
 }
 
 void Runner::startJump() {
@@ -38,13 +43,23 @@ void Runner::startJump() {
         return;
     }
 
-    m_velocity.y = m_jumpStartVelocity;
+    velocity.y = shortJumpStartVelocity;
     isJumping = true;
     canJump = false;
-    m_jumpTimer.restart();
+    jumpTimer.restart();
 }
 
-void Runner::endJump() {
-    canJump = true;
-    m_velocity.y = 0;
+void Runner::resetJump() {
+    isJumping = false;
+    velocity.y = 0;
+}
+
+void Runner::addJumpForce() {
+    if (isJumping) {
+        if (jumpTimer.getMilli() < 300) {
+            velocity.y += -100 * (300 - jumpTimer.getMilli()) / 300.0;
+        }
+    } else {
+        startJump();
+    }
 }

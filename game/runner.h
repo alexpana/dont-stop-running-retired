@@ -13,81 +13,86 @@ class World;
 class Runner : public engine::Game::IUpdateable {
 public:
     explicit Runner(World *world) :
-            m_size(20, 40),
+            size(20, 40),
             isJumping(false),
-            m_world(world) {
-        m_velocity.x = 410; // 20km / s
+            world(world),
+            velocity{410, 0} {
     }
 
     void update(double delta) override;
 
     engine::Vec2 getPosition() const {
-        return m_position;
+        return position;
     }
 
     engine::Vec2 getSize() const {
-        return m_size;
+        return size;
     }
 
-    void startJump();
-
-    void endJump();
+    void addJumpForce();
 
     void increaseSpeed() {
-        m_velocity.x += 2.0;
+        velocity.x += 2.0;
     }
 
     void decreaseSpeed() {
-        m_velocity.x -= 2.0;
+        velocity.x -= 2.0;
     }
 
     void increaseGravity() {
-        m_gravity += 10.0;
+        gravity += 10.0;
     }
 
     void decreaseGravity() {
-        m_gravity -= 10.0;
+        gravity -= 10.0;
     }
 
     void increaseJumpVelocity() {
-        m_jumpStartVelocity += -10.0;
+        longJumpStartVelocity += -10.0;
     }
 
     void decreaseJumpVelocity() {
-        m_jumpStartVelocity -= -10.0;
+        longJumpStartVelocity -= -10.0;
     }
 
     void setSpeed(double speed) {
-        m_velocity.x = speed;
+        velocity.x = speed;
     }
 
     void setGravity(double gravity) {
-        this->m_gravity = gravity;
+        this->gravity = gravity;
     }
 
     void setJumpVelocity(double velocity) {
-        m_jumpStartVelocity = velocity;
+        longJumpStartVelocity = velocity;
     }
 
+private:
+    void startJump();
+
+    void resetJump();
+
 public:
-    double m_gravity = 1000.0;
+    double gravity = 3000.0;
 
-    double m_jumpStartVelocity = -400.0;
+    double longJumpStartVelocity = -700.0;
 
-    engine::Vec2 m_velocity;
+    double shortJumpStartVelocity = -200.0;
+
+    engine::Vec2 velocity;
 
 private:
     bool canJump = true;
 
     bool isJumping = false;
 
-    engine::Timer m_jumpTimer;
+    engine::Timer jumpTimer;
 
-    World *m_world;
+    World *world;
 
-    engine::Vec2 m_position;
+    engine::Vec2 position;
 
-    engine::Vec2 m_size;
+    engine::Vec2 size;
 };
 
 typedef std::shared_ptr<Runner> RunnerPtr;

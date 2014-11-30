@@ -84,9 +84,9 @@ public:
     }
 
     void displayConstants() {
-        std::cout << "Gravity:             " << m_runner->m_gravity << std::endl;
-        std::cout << "Jump start velocity: " << m_runner->m_jumpStartVelocity << std::endl;
-        std::cout << "Speed:               " << m_runner->m_velocity.x << std::endl;
+        std::cout << "Gravity:             " << m_runner->gravity << std::endl;
+        std::cout << "Jump start velocity: " << m_runner->longJumpStartVelocity << std::endl;
+        std::cout << "Speed:               " << m_runner->velocity.x << std::endl;
     }
 
 private:

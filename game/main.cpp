@@ -94,20 +94,6 @@ int main(int argc, char **argv) {
                 running = false;
             }
 
-            if (Event::isKeyDown(e, SDLK_SPACE)) {
-                runner->startJump();
-                runner->startJump();
-            }
-
-            if (Event::isKeyDown(e, SDLK_SPACE)) {
-                runner->startJump();
-
-            }
-
-            if (Event::isKeyUp(e, SDLK_SPACE)) {
-                runner->endJump();
-            }
-
             if (Event::isKeyDown(e, SDLK_1)) {
                 runner->increaseSpeed();
                 worldPtr->displayConstants();
@@ -137,6 +123,12 @@ int main(int argc, char **argv) {
                 runner->decreaseGravity();
                 worldPtr->displayConstants();
             }
+        }
+
+        const Uint8 *state = SDL_GetKeyboardState(nullptr);
+
+        if (state[SDL_SCANCODE_SPACE]) {
+            runner->addJumpForce();
         }
 
         gamePtr->update();
