@@ -1,14 +1,21 @@
 #pragma once
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include <memory>
 
-#include <SDL.h>
-
-#include "Texture.h"
-#include "Rect2.h"
-#include "Vec2.h"
+class SDL_Renderer;
 
 namespace engine {
+
+    class Vec2;
+
+    class Rect2;
+
+    class Texture;
+
+    typedef std::shared_ptr<Texture> TexturePtr;
+
     namespace graphics {
         class Renderer;
 
@@ -16,11 +23,9 @@ namespace engine {
 
         class Renderer {
         public:
-            Renderer(SDL_Renderer *renderer) : m_renderer(renderer) {
-            }
+            Renderer(SDL_Renderer *renderer);
 
-            ~Renderer() {
-            }
+            ~Renderer();
 
             void setColor(int rgba);
 
@@ -40,6 +45,8 @@ namespace engine {
 
             void fillRect(const Rect2 &rect);
 
+            void drawText(const Vec2 &position, const std::string &text);
+
             void clear();
 
             void flip();
@@ -47,8 +54,11 @@ namespace engine {
             static RendererPtr create(SDL_Renderer *renderer);
 
         private:
-            SDL_Renderer *m_renderer;
+            struct Implementation;
+
+            Implementation *pimpl;
         };
 
     }
 }
+#pragma clang diagnostic pop

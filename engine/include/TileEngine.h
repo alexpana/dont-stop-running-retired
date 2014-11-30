@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "graphics/Renderer.h"
+#include "Rect2.h"
 #include "Texture.h"
 #include "TileMap.h"
 #include "Vec2.h"
