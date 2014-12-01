@@ -12,18 +12,18 @@ set(ROOT_SOURCES
 set(ROOT_HEADERS
     include/Console.h
 	include/Event.h
+	include/Filesystem.h
+    include/FrameCounter.h
     include/Game.h
-    include/Texture.h
-    include/TextureFactory.h
     include/Log.h
     include/Random.h
     include/Rect2.h
+    include/Texture.h
+    include/TextureFactory.h
     include/TileEngine.h
     include/TileMap.h
     include/Timer.h
-    include/Vec2.h
-    include/Filesystem.h
-    include/FrameCounter.h)
+    include/Vec2.h)
 
 # =======================================
 # Physics Sources
@@ -60,6 +60,8 @@ include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 
 include_directories(${SDL2_TTF_INCLUDE_DIR})
+
+include_directories(${SDL2_MIXER_INCLUDE_DIR})
 
 # =======================================
 # Library
