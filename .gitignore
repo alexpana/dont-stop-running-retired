@@ -1,6 +1,9 @@
 cmake_build/
-bin/
+
 lib/
+bin/*
+
+!bin/data
 
 .idea/
 
