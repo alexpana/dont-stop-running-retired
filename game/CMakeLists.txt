@@ -45,6 +45,7 @@ target_link_libraries(game
     ${SDL2MAIN_LIBRARY}
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
+    ${SDL2_TTF_LIBRARY}
 
     ${BOX2D_LIBRARY}
 

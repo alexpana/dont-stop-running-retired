@@ -56,9 +56,8 @@ namespace engine {
         private:
             struct Implementation;
 
-            Implementation *pimpl;
+            Implementation *impl;
         };
-
     }
 }
 #pragma clang diagnostic pop

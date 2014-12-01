@@ -109,6 +109,8 @@ namespace engine {
 
         bool initSDLImage();
 
+        bool initSDLTTF();
+
         SDL_Window *m_mainWindow;
 
         SDL_Surface *m_frameBuffer;

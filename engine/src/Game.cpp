@@ -1,4 +1,5 @@
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #include "Game.h"
 
@@ -19,6 +20,10 @@ namespace engine {
         }
 
         if (!initSDLImage()) {
+            return false;
+        }
+
+        if (!initSDLTTF()) {
             return false;
         }
 
@@ -57,6 +62,10 @@ namespace engine {
         }
 
         return true;
+    }
+
+    bool Game::initSDLTTF() {
+        return TTF_Init() == 0;
     }
 
     bool Game::initSDL() {
