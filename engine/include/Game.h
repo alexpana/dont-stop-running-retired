@@ -52,42 +52,44 @@ namespace engine {
 
         Game(const Game &other) = delete;
 
-        bool initialize(const Params &params);
+        bool start(const Params &params);
+
+        void stop();
 
         SDL_Window *getWindow() const {
-            return m_mainWindow;
+            return mainWindow;
         }
 
         int getScreenHeight() const {
-            return m_frameBuffer->h;
+            return frameBuffer->h;
         }
 
         int getScreenWidth() const {
-            return m_frameBuffer->w;
+            return frameBuffer->w;
         }
 
         bool isInitialized() const {
-            return m_initialized;
+            return initialized;
         }
 
         Filesystem &getFilesystem() {
-            return m_filesystem;
+            return filesystem;
         }
 
         graphics::RendererPtr getRenderer() {
-            return m_renderer;
+            return renderer;
         }
 
         TextureFactory &getTextureFactory() {
-            return *m_imageFactory;
+            return *imageFactory;
         }
 
         Random &getRandom() {
-            return m_random;
+            return random;
         }
 
         int getFrameCount() const {
-            return m_frameCount;
+            return frameCount;
         }
 
         void startFrame();
@@ -96,10 +98,6 @@ namespace engine {
 
         void update();
 
-        bool isRunning();
-
-        void stopRunning();
-
         void registerUpdateable(const IUpdateablePtr &updateable);
 
         void registerDrawable(const IDrawablePtr &drawable);
@@ -107,35 +105,43 @@ namespace engine {
     private:
         bool initSDL();
 
+        void stopSDL();
+
         bool initSDLImage();
+
+        void stopSDLImage();
 
         bool initSDLTTF();
 
-        SDL_Window *m_mainWindow;
+        void stopSDLTTF();
 
-        SDL_Surface *m_frameBuffer;
+        bool initSDLMixer();
 
-        Random m_random;
+        void stopSDLMixer();
 
-        Filesystem m_filesystem;
+        SDL_Window *mainWindow;
 
-        graphics::RendererPtr m_renderer;
+        SDL_Surface *frameBuffer;
 
-        TextureFactoryPtr m_imageFactory;
+        Random random;
 
-        Timer m_timer;
+        Filesystem filesystem;
 
-        bool m_initialized;
+        graphics::RendererPtr renderer;
 
-        bool m_isRunning;
+        TextureFactoryPtr imageFactory;
 
-        int m_frameCount;
+        Timer timer;
 
-        double m_lastFrameTimeDelta;
+        bool initialized;
 
-        std::vector<IUpdateablePtr> m_registeredUpdateables;
+        int frameCount;
 
-        std::vector<IDrawablePtr> m_registeredDrawables;
+        double lastFrameTimeDelta;
+
+        std::vector<IUpdateablePtr> registeredUpdateables;
+
+        std::vector<IDrawablePtr> registeredDrawables;
     };
 
 }

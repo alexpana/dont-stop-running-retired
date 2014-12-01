@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
     engine::GamePtr gamePtr = make_shared<engine::Game>();
 
-    gamePtr->initialize(params);
+    gamePtr->start(params);
 
     if (!gamePtr->isInitialized()) {
         return -1;
@@ -134,5 +134,6 @@ int main(int argc, char **argv) {
         gamePtr->endFrame();
     }
 
+    gamePtr->stop();
     return 0;
 }
