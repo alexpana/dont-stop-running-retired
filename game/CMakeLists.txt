@@ -4,7 +4,8 @@
 
 set(GAME_SOURCES
     Main.cpp
-    Runner.cpp)
+    Runner.cpp
+    World.cpp)
 
 set(GAME_HEADERS
     World.h
