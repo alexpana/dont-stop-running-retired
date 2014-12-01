@@ -59,6 +59,12 @@ private:
 
     engine::TexturePtr background;
 
+    engine::TexturePtr backgroundFar;
+
+    engine::TexturePtr backgroundMid;
+
+    engine::TexturePtr backgroundNear;
+
     std::vector<engine::Rect2> blocks;
     std::vector<double> blockOriginalY;
     std::vector<double> blockTimeOffset;

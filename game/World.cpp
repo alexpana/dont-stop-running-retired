@@ -9,6 +9,9 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     game->registerUpdateable(runner);
 
     background = game->getTextureFactory().loadImage("data/bg.png");
+    backgroundFar = game->getTextureFactory().loadImage("data/bg_far.png");
+    backgroundMid = game->getTextureFactory().loadImage("data/bg_mid.png");
+    backgroundNear = game->getTextureFactory().loadImage("data/bg_near.png");
 }
 
 void World::draw() {
@@ -53,8 +56,29 @@ void World::drawRunner() {
 }
 
 void World::drawBackground() {
-    game->getRenderer()->drawTexture(background, Vec2((int) position.x % background->getWidth(), 0));
-    game->getRenderer()->drawTexture(background, Vec2((int) position.x % background->getWidth() + background->getWidth(), 0));
+    static const double BG_FAR_SPEED = 1.4;
+    static const double BG_MID_SPEED = 1.2;
+
+    double x = position.x;
+
+    int wrap = backgroundFar->getWidth();
+
+
+    game->getRenderer()->drawTexture(background, Vec2{0, 0});
+    game->getRenderer()->drawTexture(background, Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
+
+    game->getRenderer()->drawTexture(backgroundFar, Vec2((int) (x / BG_FAR_SPEED) % wrap, 0));
+    game->getRenderer()->drawTexture(backgroundFar, Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
+
+    double midPlaneY = 0; //std::min(40.0, std::max(0.0, - runner->getPosition().y / 100.0));
+
+    game->getRenderer()->drawTexture(backgroundMid, Vec2((int) (x / BG_MID_SPEED) % wrap, midPlaneY));
+    game->getRenderer()->drawTexture(backgroundMid, Vec2((int) (x / BG_MID_SPEED) % wrap + wrap, midPlaneY));
+
+    double nearPlaneY = std::min(100.0, std::max(0.0, 50 - runner->getPosition().y / 50.0));
+
+    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) x % wrap, nearPlaneY));
+    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) x % wrap + wrap, nearPlaneY));
 }
 
 inline void World::drawBlock(Rect2 const &block) {
