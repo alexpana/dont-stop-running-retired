@@ -47,7 +47,7 @@ namespace engine {
         //Get window surface
         frameBuffer = SDL_GetWindowSurface(mainWindow);
 
-        renderer = graphics::Renderer::create(nativeRenderer);
+        renderer = Renderer::create(nativeRenderer);
 
         imageFactory = TextureFactory::create(nativeRenderer, *frameBuffer->format);
 

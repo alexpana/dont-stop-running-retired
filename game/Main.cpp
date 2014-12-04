@@ -122,6 +122,10 @@ int main(int argc, char **argv) {
                 runner->decreaseGravity();
                 worldPtr->displayConstants();
             }
+
+            if (Event::isKeyDown(e, SDLK_e)) {
+                gamePtr->getSound()->playSampleOnce(worldPtr->getFootstep());
+            }
         }
 
         const Uint8 *state = SDL_GetKeyboardState(nullptr);

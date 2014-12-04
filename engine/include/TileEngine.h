@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Game.h"
-#include "graphics/Renderer.h"
+#include "Renderer.h"
 #include "Rect2.h"
 #include "Texture.h"
 #include "TileMap.h"
@@ -16,7 +16,7 @@ namespace engine {
 
     class TileEngine {
     public:
-        TileEngine(graphics::RendererPtr renderer, TileMapPtr tileMap, TexturePtr tileAtlas) :
+        TileEngine(RendererPtr renderer, TileMapPtr tileMap, TexturePtr tileAtlas) :
                 m_renderer(renderer),
                 m_tileMap(tileMap),
                 m_atlas(tileAtlas) {
@@ -33,7 +33,7 @@ namespace engine {
         }
 
     private:
-        graphics::RendererPtr m_renderer;
+        RendererPtr m_renderer;
 
         TileMapPtr m_tileMap;
 

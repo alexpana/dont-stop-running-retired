@@ -67,8 +67,9 @@ void World::drawRunner() {
 }
 
 void World::drawBackground() {
-    static const double BG_FAR_SPEED = 1.4;
-    static const double BG_MID_SPEED = 1.2;
+    static const double BG_FAR_SPEED = 2.0;
+    static const double BG_MID_SPEED = 1.6;
+    static const double BG_NEAR_SPEED = 1.2;
 
     double x = position.x;
 
@@ -88,8 +89,8 @@ void World::drawBackground() {
 
     double nearPlaneY = std::min(100.0, std::max(0.0, 50 - runner->getPosition().y / 50.0));
 
-    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) x % wrap, nearPlaneY));
-    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) x % wrap + wrap, nearPlaneY));
+    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) (x / BG_NEAR_SPEED) % wrap, nearPlaneY));
+    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) (x / BG_NEAR_SPEED) % wrap + wrap, nearPlaneY));
 }
 
 inline void World::drawBlock(Rect2 const &block) {

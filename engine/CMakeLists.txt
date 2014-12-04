@@ -40,10 +40,10 @@ set(PHYSICS_HEADERS)
 # =======================================
 
 set(GRAPHICS_SOURCES
-    src/graphics/Renderer.cpp)
+    src/Renderer.cpp)
 
 set(GRAPHICS_HEADERS
-    include/graphics/Renderer.h)
+    include/Renderer.h)
 
 # =======================================
 # Source groups

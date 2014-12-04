@@ -6,7 +6,7 @@
 #include <SDL.h>
 
 #include "Filesystem.h"
-#include "graphics/Renderer.h"
+#include "Renderer.h"
 #include "Random.h"
 #include "TextureFactory.h"
 #include "Timer.h"
@@ -78,7 +78,7 @@ namespace engine {
             return filesystem;
         }
 
-        graphics::RendererPtr getRenderer() {
+        RendererPtr getRenderer() {
             return renderer;
         }
 
@@ -131,7 +131,7 @@ namespace engine {
 
         Filesystem filesystem;
 
-        graphics::RendererPtr renderer;
+        RendererPtr renderer;
 
         TextureFactoryPtr imageFactory;
 
