@@ -58,4 +58,12 @@ namespace engine {
     void SoundSampleDeleter::operator()(SoundSample *sample) {
         delete sample;
     }
+
+    void Sound::setVolume(double volume) {
+        Mix_Volume(-1, (int)(MIX_MAX_VOLUME * volume));
+    }
+
+    void Sound::setSampleVolume(SoundSample* sample, double volume) {
+        Mix_VolumeChunk(sample->mixChunk, (int)(MIX_MAX_VOLUME * volume));
+    }
 }

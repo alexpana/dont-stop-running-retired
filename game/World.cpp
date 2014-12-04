@@ -16,6 +16,7 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     backgroundNear = game->getTextureFactory().loadImage("data/bg_near.png");
 
     stepSample = game->getSound()->loadSample("data/footstep.wav");
+    game->getSound()->setSampleVolume(stepSample.get(), 0.4);
 }
 
 void World::draw() {

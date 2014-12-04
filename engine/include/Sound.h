@@ -29,6 +29,11 @@ namespace engine {
 
         void playSampleRepeated(SoundSample *sample);
 
+        // Volume interval is (0, 1)
+        void setVolume(double volume);
+
+        void setSampleVolume(SoundSample* sample, double volume);
+
     private:
         struct Implementation;
         Implementation *impl;
