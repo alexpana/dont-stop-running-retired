@@ -1,7 +1,5 @@
 #include "World.h"
 
-#include "Sound.h"
-
 using namespace engine;
 
 World::World(GamePtr game, TileEnginePtr tileEngine) :

@@ -7,9 +7,9 @@ namespace engine {
 
     class SoundSample;
 
-    class SoundSampleDeleter{
+    class SoundSampleDeleter {
     public:
-        void operator()(SoundSample*);
+        void operator()(SoundSample *);
     };
 
     typedef std::unique_ptr<SoundSample, SoundSampleDeleter> SoundSamplePtr;
@@ -32,7 +32,7 @@ namespace engine {
         // Volume interval is (0, 1)
         void setVolume(double volume);
 
-        void setSampleVolume(SoundSample* sample, double volume);
+        void setSampleVolume(SoundSample *sample, double volume);
 
     private:
         struct Implementation;

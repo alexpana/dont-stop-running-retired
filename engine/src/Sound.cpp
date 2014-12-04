@@ -10,7 +10,8 @@ namespace engine {
 
     struct SoundSample {
     public:
-        SoundSample(Mix_Chunk *mixChunk) : mixChunk(mixChunk) {}
+        SoundSample(Mix_Chunk *mixChunk) : mixChunk(mixChunk) {
+        }
 
         ~SoundSample() {
             Mix_FreeChunk(mixChunk);
@@ -60,10 +61,10 @@ namespace engine {
     }
 
     void Sound::setVolume(double volume) {
-        Mix_Volume(-1, (int)(MIX_MAX_VOLUME * volume));
+        Mix_Volume(-1, (int) (MIX_MAX_VOLUME * volume));
     }
 
-    void Sound::setSampleVolume(SoundSample* sample, double volume) {
-        Mix_VolumeChunk(sample->mixChunk, (int)(MIX_MAX_VOLUME * volume));
+    void Sound::setSampleVolume(SoundSample *sample, double volume) {
+        Mix_VolumeChunk(sample->mixChunk, (int) (MIX_MAX_VOLUME * volume));
     }
 }

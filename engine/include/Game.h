@@ -90,7 +90,7 @@ namespace engine {
             return random;
         }
 
-        Sound* getSound() {
+        Sound *getSound() {
             return sound.get();
         }
 

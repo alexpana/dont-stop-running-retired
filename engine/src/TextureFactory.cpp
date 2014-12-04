@@ -19,7 +19,7 @@ namespace engine {
             return m_dummyImage;
         }
 
-            return Texture::create(SDL_CreateTextureFromSurface(m_nativeRenderer, rawSurface));
+        return Texture::create(SDL_CreateTextureFromSurface(m_nativeRenderer, rawSurface));
     }
 
     TextureFactoryPtr TextureFactory::create(SDL_Renderer *renderer, const SDL_PixelFormat &optimizedPixelFormat) {

@@ -32,7 +32,7 @@ public:
 
     void displayConstants();
 
-    engine::SoundSample* getFootstep() {
+    engine::SoundSample *getFootstep() {
         return stepSample.get();
     }
 
