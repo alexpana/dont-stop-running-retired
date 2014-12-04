@@ -8,10 +8,11 @@
 
 #include <SDL.h>
 
+#include "Event.h"
+#include "Sound.h"
 #include "TileMap.h"
 #include "TileEngine.h"
 #include "World.h"
-#include <Event.h>
 
 using namespace std;
 

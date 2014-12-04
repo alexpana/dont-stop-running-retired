@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "Sound.h"
+
 using namespace engine;
 
 World::World(GamePtr game, TileEnginePtr tileEngine) :
@@ -12,6 +14,8 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     backgroundFar = game->getTextureFactory().loadImage("data/bg_far.png");
     backgroundMid = game->getTextureFactory().loadImage("data/bg_mid.png");
     backgroundNear = game->getTextureFactory().loadImage("data/bg_near.png");
+
+    stepSample = game->getSound()->loadSample("data/footstep.wav");
 }
 
 void World::draw() {
@@ -24,9 +28,16 @@ void World::draw() {
     drawStats({10, 10});
 }
 
-void World::update(double) {
+void World::update(double timeDelta) {
     position.x = -runner->getPosition().x + 60;
     stats.kilometersRan = runner->getPosition().x / PIXELS_PER_METER / 1000.0;
+
+    stepPlayTime += timeDelta;
+
+    if (stepPlayTime > 300) {
+        stepPlayTime -= 300;
+        game->getSound()->playSampleOnce(stepSample.get());
+    }
 
     if (shouldGenerateNewBlock()) {
         generateNewBlock();

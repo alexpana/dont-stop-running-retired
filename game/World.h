@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Runner.h"
+#include "Sound.h"
 #include "Stats.h"
 #include "TileEngine.h"
 #include "Vec2.h"
@@ -30,6 +31,10 @@ public:
     Stats &getStats();
 
     void displayConstants();
+
+    engine::SoundSample* getFootstep() {
+        return stepSample.get();
+    }
 
 private:
     void drawBlocks();
@@ -69,6 +74,9 @@ private:
     std::vector<double> blockOriginalY;
     std::vector<double> blockTimeOffset;
     std::vector<double> blockVelocity;
+
+    engine::SoundSamplePtr stepSample;
+    double stepPlayTime = 0.0;
 
     Stats stats;
 

@@ -16,6 +16,8 @@ namespace engine {
 
     typedef std::shared_ptr<Game> GamePtr;
 
+    class Sound;
+
     class Game {
     public:
         class Params {
@@ -88,6 +90,10 @@ namespace engine {
             return random;
         }
 
+        Sound* getSound() {
+            return sound.get();
+        }
+
         int getFrameCount() const {
             return frameCount;
         }
@@ -115,15 +121,13 @@ namespace engine {
 
         void stopSDLTTF();
 
-        bool initSDLMixer();
-
-        void stopSDLMixer();
-
         SDL_Window *mainWindow;
 
         SDL_Surface *frameBuffer;
 
         Random random;
+
+        std::unique_ptr<Sound> sound;
 
         Filesystem filesystem;
 

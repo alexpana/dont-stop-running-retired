@@ -1,6 +1,6 @@
 #include "Game.h"
 
-#include <SDL_mixer.h>
+#include "Sound.h"
 #include <SDL_ttf.h>
 
 namespace engine {
@@ -32,9 +32,7 @@ namespace engine {
             return false;
         }
 
-        if (!initSDLMixer()) {
-            return false;
-        }
+        sound->initialize();
 
         //Create window
         mainWindow = SDL_CreateWindow(params.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, params.screenWidth, params.screenHeight, SDL_WINDOW_SHOWN);
@@ -60,7 +58,8 @@ namespace engine {
 
     void Game::stop() {
         if (initialized) {
-            stopSDLMixer();
+            sound->cleanup();
+
             stopSDLTTF();
             stopSDLImage();
             stopSDL();
@@ -93,11 +92,6 @@ namespace engine {
 
     bool Game::initSDLTTF() {
         return TTF_Init() == 0;
-    }
-
-    bool Game::initSDLMixer() {
-        Mix_Init(0);
-        return Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == 0;
     }
 
     void Game::registerUpdateable(const IUpdateablePtr &updateable) {
@@ -144,9 +138,5 @@ namespace engine {
 
     void Game::stopSDLTTF() {
         TTF_Quit();
-    }
-
-    void Game::stopSDLMixer() {
-        Mix_Quit();
     }
 }

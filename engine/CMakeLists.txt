@@ -6,6 +6,7 @@ include_directories(include/)
 
 set(ROOT_SOURCES
     src/Game.cpp
+    src/Sound.cpp
     src/TextureFactory.cpp
     src/TileMap.cpp)
 
@@ -18,6 +19,7 @@ set(ROOT_HEADERS
     include/Log.h
     include/Random.h
     include/Rect2.h
+    include/Sound.h
     include/Texture.h
     include/TextureFactory.h
     include/TileEngine.h
@@ -76,3 +78,7 @@ add_library(engine STATIC
 
     ${GRAPHICS_SOURCES}
     ${GRAPHICS_HEADERS})
+
+target_link_libraries(engine
+
+    ${SDL2_MIXER_LIBRARY})
