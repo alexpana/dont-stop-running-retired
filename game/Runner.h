@@ -65,6 +65,8 @@ public:
         longJumpStartVelocity = velocity;
     }
 
+    bool isInAir();
+
 private:
     void startJump();
 

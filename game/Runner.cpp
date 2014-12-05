@@ -74,3 +74,6 @@ double Runner::getDistanceToGround() {
     return std::min(rightFootFloorPosition - rightFoot.y, leftFootFloorPosition - leftFoot.y);
 }
 
+bool Runner::isInAir() {
+    return getDistanceToGround() >= 0.5;
+}

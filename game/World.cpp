@@ -6,6 +6,7 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
         game(game) {
     runner = std::make_shared<Runner>(this);
+
     game->registerUpdateable(runner);
 
     background = game->getTextureFactory()->loadImage("data/bg.png");
@@ -13,8 +14,11 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     backgroundMid = game->getTextureFactory()->loadImage("data/bg_mid.png");
     backgroundNear = game->getTextureFactory()->loadImage("data/bg_near.png");
 
-    stepSample = game->getSound()->loadSample("data/footstep.wav");
-    game->getSound()->setSampleVolume(stepSample.get(), 0.4);
+    stepSample1 = game->getSound()->loadSample("data/footstep.wav");
+    stepSample2 = game->getSound()->loadSample("data/footstep2.wav");
+
+    game->getSound()->setSampleVolume(stepSample1.get(), 0.2);
+    game->getSound()->setSampleVolume(stepSample2.get(), 0.2);
 }
 
 void World::draw() {
@@ -28,14 +32,20 @@ void World::draw() {
 }
 
 void World::update(double timeDelta) {
-    position.x = -runner->getPosition().x + 60;
+    if (runner->isInAir()) {
+        stats.timeInAir += timeDelta;
+    } else {
+        stepPlayTime += timeDelta;
+    }
+
+    position.x = runner->getPosition().x - 60;
+
     stats.kilometersRan = runner->getPosition().x / PIXELS_PER_METER / 1000.0;
 
-    stepPlayTime += timeDelta;
-
-    if (stepPlayTime > 300) {
-        stepPlayTime -= 300;
-        game->getSound()->playSampleOnce(stepSample.get());
+    if (stepPlayTime > stepPeriod) {
+        stepPlayTime -= stepPeriod;
+        stepPeriod = game->getRandom()->nextInt(150, 180);
+        game->getSound()->playSampleOnce(game->getRandom()->nextInt(0, 100) > 20 ? stepSample1.get() : stepSample2.get());
     }
 
     if (shouldGenerateNewBlock()) {
@@ -62,7 +72,7 @@ void World::drawRunner() {
 
     // draw runner
     game->getRenderer()->setColor(0x601030FF);
-    game->getRenderer()->fillRect(Rect2(60.0, runnerPosition.y, runnerSize.x, runnerSize.y));
+    game->getRenderer()->fillRect(Rect2(runner->getPosition().x - position.x, runnerPosition.y, runnerSize.x, runnerSize.y));
 }
 
 void World::drawBackground() {
@@ -70,7 +80,7 @@ void World::drawBackground() {
     static const double BG_MID_SPEED = 1.6;
     static const double BG_NEAR_SPEED = 1.2;
 
-    double x = position.x;
+    double x = -position.x;
 
     int wrap = backgroundFar->getWidth();
 
@@ -86,7 +96,7 @@ void World::drawBackground() {
     game->getRenderer()->drawTexture(backgroundMid, Vec2((int) (x / BG_MID_SPEED) % wrap, midPlaneY));
     game->getRenderer()->drawTexture(backgroundMid, Vec2((int) (x / BG_MID_SPEED) % wrap + wrap, midPlaneY));
 
-    double nearPlaneY = std::min(100.0, std::max(0.0, 50 - runner->getPosition().y / 50.0));
+    double nearPlaneY = 0; //std::min(100.0, std::max(0.0, 50 - runner->getPosition().y / 50.0));
 
     game->getRenderer()->drawTexture(backgroundNear, Vec2((int) (x / BG_NEAR_SPEED) % wrap, nearPlaneY));
     game->getRenderer()->drawTexture(backgroundNear, Vec2((int) (x / BG_NEAR_SPEED) % wrap + wrap, nearPlaneY));
@@ -94,9 +104,9 @@ void World::drawBackground() {
 
 inline void World::drawBlock(Rect2 const &block) {
     // Skip invisible blocks
-    if (block.x + block.w + position.x < 0) return;
+    if (block.x + block.w - position.x < 0) return;
 
-    double screenX = block.x + position.x;
+    double screenX = block.x - position.x;
 
     for (int i = 0; i < block.w / TILE_SIZE; ++i) {
         tileEngine->drawTile(screenX + i * TILE_SIZE, block.y, GRASS_TOP);
@@ -122,7 +132,7 @@ void World::drawStats(const Vec2 &position) {
 }
 
 void World::createBlock(int left, int right, int top) {
-    addBlock(Rect2(left, right, top, 800));
+    addBlock(Rect2(left, top, right, 800));
 }
 
 double World::obstacleDistance(Vec2 position) {
@@ -164,7 +174,7 @@ void World::displayConstants() {
 void World::generateNewBlock() {
     using namespace engine;
 
-    Random* random = game->getRandom();
+    Random *random = game->getRandom();
     Rect2 lastBlock = blocks[blocks.size() - 1];
     double lastBlockOriginalHeight = blockOriginalY[blocks.size() - 1];
 
@@ -183,7 +193,7 @@ void World::generateNewBlock() {
 
 bool World::shouldGenerateNewBlock() {
     Rect2 lastBlock = blocks[blocks.size() - 1];
-    return lastBlock.x + lastBlock.w + position.x < game->getScreenWidth() + 50;
+    return lastBlock.x + lastBlock.w - position.x < game->getScreenWidth() + 50;
 }
 
 void World::addBlock(const Rect2 &block) {
