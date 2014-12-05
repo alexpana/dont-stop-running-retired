@@ -1,14 +1,12 @@
 #include "Game.h"
 
-#include "Sound.h"
 #include <SDL_ttf.h>
+
+#include "Sound.h"
 
 namespace engine {
 
-    Game::Game() :
-            initialized(false),
-            frameCount(0),
-            lastFrameTimeDelta(0) {
+    Game::Game(Params const &params) : initParams(params) {
     }
 
     Game::~Game() {
@@ -17,7 +15,7 @@ namespace engine {
         mainWindow = nullptr;
     }
 
-    bool Game::start(Params const &params) {
+    bool Game::start() {
         using namespace std;
 
         if (!initSDL()) {
@@ -32,10 +30,11 @@ namespace engine {
             return false;
         }
 
+        sound = std::unique_ptr<Sound>(new Sound);
         sound->initialize();
 
         //Create window
-        mainWindow = SDL_CreateWindow(params.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, params.screenWidth, params.screenHeight, SDL_WINDOW_SHOWN);
+        mainWindow = SDL_CreateWindow(initParams.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, initParams.screenWidth, initParams.screenHeight, SDL_WINDOW_SHOWN);
 
         if (mainWindow == nullptr) {
             printf("Window could not be created! SDL_Error: %s", SDL_GetError());
@@ -44,12 +43,13 @@ namespace engine {
 
         auto nativeRenderer = SDL_CreateRenderer(getWindow(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-        //Get window surface
         frameBuffer = SDL_GetWindowSurface(mainWindow);
 
-        renderer = Renderer::create(nativeRenderer);
+        renderer = std::unique_ptr<Renderer>(new Renderer{nativeRenderer});
 
-        imageFactory = TextureFactory::create(nativeRenderer, *frameBuffer->format);
+        imageFactory = std::unique_ptr<TextureFactory>(new TextureFactory{nativeRenderer, *frameBuffer->format});
+
+        random = std::unique_ptr<Random>(new Random);
 
         initialized = true;
 

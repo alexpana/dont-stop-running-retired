@@ -48,13 +48,13 @@ namespace engine {
         typedef std::shared_ptr<IDrawable> IDrawablePtr;
 
     public:
-        Game();
-
-        ~Game();
+        Game(const Params &params);
 
         Game(const Game &other) = delete;
 
-        bool start(const Params &params);
+        ~Game();
+
+        bool start();
 
         void stop();
 
@@ -74,20 +74,20 @@ namespace engine {
             return initialized;
         }
 
-        Filesystem &getFilesystem() {
-            return filesystem;
+        Filesystem *getFilesystem() {
+            return filesystem.get();
         }
 
-        RendererPtr getRenderer() {
-            return renderer;
+        Renderer *getRenderer() {
+            return renderer.get();
         }
 
-        TextureFactory &getTextureFactory() {
-            return *imageFactory;
+        TextureFactory *getTextureFactory() {
+            return imageFactory.get();
         }
 
-        Random &getRandom() {
-            return random;
+        Random *getRandom() {
+            return random.get();
         }
 
         Sound *getSound() {
@@ -125,27 +125,29 @@ namespace engine {
 
         SDL_Surface *frameBuffer;
 
-        Random random;
+        std::unique_ptr<Random> random;
+
+        std::unique_ptr<Renderer> renderer;
 
         std::unique_ptr<Sound> sound;
 
-        Filesystem filesystem;
+        std::unique_ptr<Filesystem> filesystem;
 
-        RendererPtr renderer;
+        std::unique_ptr<TextureFactory> imageFactory;
 
-        TextureFactoryPtr imageFactory;
+        bool initialized = false;
 
-        Timer timer;
+        int frameCount = 0;
 
-        bool initialized;
-
-        int frameCount;
-
-        double lastFrameTimeDelta;
+        double lastFrameTimeDelta = 0;
 
         std::vector<IUpdateablePtr> registeredUpdateables;
 
         std::vector<IDrawablePtr> registeredDrawables;
+
+        Timer timer;
+
+        const Params initParams;
     };
 
 }

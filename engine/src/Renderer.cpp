@@ -24,12 +24,9 @@ namespace engine {
     };
 
     Renderer::Renderer(SDL_Renderer *renderer) {
-        impl = new Implementation(renderer);
-        impl->font = TTF_OpenFont("data/minecraftia.ttf", 8);
-    }
+        impl = std::unique_ptr<Implementation>(new Implementation{renderer});
 
-    Renderer::~Renderer() {
-        delete impl;
+        impl->font = TTF_OpenFont("data/minecraftia.ttf", 8);
     }
 
     void Renderer::setColor(int rgba) {

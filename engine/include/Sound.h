@@ -33,9 +33,5 @@ namespace engine {
         void setVolume(double volume);
 
         void setSampleVolume(SoundSample *sample, double volume);
-
-    private:
-        struct Implementation;
-        Implementation *impl;
     };
 }

@@ -16,7 +16,7 @@ namespace engine {
 
     class TileEngine {
     public:
-        TileEngine(RendererPtr renderer, TileMapPtr tileMap, TexturePtr tileAtlas) :
+        TileEngine(Renderer *renderer, TileMapPtr tileMap, TexturePtr tileAtlas) :
                 m_renderer(renderer),
                 m_tileMap(tileMap),
                 m_atlas(tileAtlas) {
@@ -33,7 +33,7 @@ namespace engine {
         }
 
     private:
-        RendererPtr m_renderer;
+        Renderer *m_renderer;
 
         TileMapPtr m_tileMap;
 

@@ -26,21 +26,21 @@ int main(int argc, char **argv) {
     params.screenHeight = 600;
     params.windowTitle = "Don't Stop Running!";
 
-    engine::GamePtr gamePtr = make_shared<engine::Game>();
+    engine::GamePtr gamePtr = make_shared<engine::Game>(params);
 
-    gamePtr->start(params);
+    gamePtr->start();
 
     if (!gamePtr->isInitialized()) {
         return -1;
     }
 
-    cout << "Running game from: " << gamePtr->getFilesystem().getCurrentWorkingDirectory() << endl;
+    cout << "Running game from: " << gamePtr->getFilesystem()->getCurrentWorkingDirectory() << endl;
 
-    auto &imageFactory = gamePtr->getTextureFactory();
+    auto textureFactory = gamePtr->getTextureFactory();
 
     auto tiles = make_shared<engine::TileMap>();
 
-    auto tileEngine = make_shared<engine::TileEngine>(gamePtr->getRenderer(), tiles, imageFactory.loadImage("./data/tiles.png"));
+    auto tileEngine = make_shared<engine::TileEngine>(gamePtr->getRenderer(), tiles, textureFactory->loadImage("./data/tiles.png"));
 
     auto worldPtr = make_shared<World>(gamePtr, tileEngine);
 

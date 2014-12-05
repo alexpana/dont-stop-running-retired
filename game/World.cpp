@@ -8,10 +8,10 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     runner = std::make_shared<Runner>(this);
     game->registerUpdateable(runner);
 
-    background = game->getTextureFactory().loadImage("data/bg.png");
-    backgroundFar = game->getTextureFactory().loadImage("data/bg_far.png");
-    backgroundMid = game->getTextureFactory().loadImage("data/bg_mid.png");
-    backgroundNear = game->getTextureFactory().loadImage("data/bg_near.png");
+    background = game->getTextureFactory()->loadImage("data/bg.png");
+    backgroundFar = game->getTextureFactory()->loadImage("data/bg_far.png");
+    backgroundMid = game->getTextureFactory()->loadImage("data/bg_mid.png");
+    backgroundNear = game->getTextureFactory()->loadImage("data/bg_near.png");
 
     stepSample = game->getSound()->loadSample("data/footstep.wav");
     game->getSound()->setSampleVolume(stepSample.get(), 0.4);
@@ -164,19 +164,19 @@ void World::displayConstants() {
 void World::generateNewBlock() {
     using namespace engine;
 
-    Random &random = game->getRandom();
+    Random* random = game->getRandom();
     Rect2 lastBlock = blocks[blocks.size() - 1];
     double lastBlockOriginalHeight = blockOriginalY[blocks.size() - 1];
 
     double left = lastBlock.x + lastBlock.w;
 
-    int r1 = random.nextInt(0, 100);
+    int r1 = random->nextInt(0, 100);
     if (r1 > 30) {
-        left += random.nextInt(100, 150);
+        left += random->nextInt(100, 150);
     }
 
-    double top = std::max(TOP_MIN, lastBlockOriginalHeight + random.nextInt(6) * 20 - 60);
-    double width = random.nextInt(6, 12) * TILE_SIZE;
+    double top = std::max(TOP_MIN, lastBlockOriginalHeight + random->nextInt(6) * 20 - 60);
+    double width = random->nextInt(6, 12) * TILE_SIZE;
 
     addBlock(Rect2{left, top, width, 100.0});
 }
@@ -191,7 +191,7 @@ void World::addBlock(const Rect2 &block) {
 
     blockOriginalY.push_back(block.y);
 
-    blockTimeOffset.push_back(game->getRandom().nextInt(100) / 10.0);
+    blockTimeOffset.push_back(game->getRandom()->nextInt(100) / 10.0);
 
-    blockVelocity.push_back(0.005 + game->getRandom().nextInt(20) / 20000.0);
+    blockVelocity.push_back(0.005 + game->getRandom()->nextInt(20) / 20000.0);
 }

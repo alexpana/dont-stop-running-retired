@@ -5,8 +5,6 @@
 #include <SDL_mixer.h>
 
 namespace engine {
-    struct Sound::Implementation {
-    };
 
     struct SoundSample {
     public:
@@ -22,6 +20,7 @@ namespace engine {
 
 
     Sound::Sound() {
+        std::cout << "Creating new sound component" << std::endl;
     }
 
     void Sound::initialize() {

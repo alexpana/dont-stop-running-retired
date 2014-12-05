@@ -24,8 +24,6 @@ namespace engine {
     public:
         Renderer(SDL_Renderer *renderer);
 
-        ~Renderer();
-
         void setColor(int rgba);
 
         void setColor(int red, int green, int blue, int alpha);
@@ -55,7 +53,7 @@ namespace engine {
     private:
         struct Implementation;
 
-        Implementation *impl;
+        std::shared_ptr<Implementation> impl;
     };
 }
 #pragma clang diagnostic pop
