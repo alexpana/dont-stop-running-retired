@@ -24,7 +24,7 @@ namespace engine {
     public:
         Renderer(SDL_Renderer *renderer);
 
-        void setColor(int rgba);
+        void setColor(unsigned int rgba);
 
         void setColor(int red, int green, int blue, int alpha);
 

@@ -32,7 +32,7 @@ namespace engine {
         SDL_SetRenderDrawBlendMode(impl->renderer, SDL_BLENDMODE_BLEND);
     }
 
-    void Renderer::setColor(int rgba) {
+    void Renderer::setColor(unsigned int rgba) {
         setColor((rgba >> 24) & 0xff, (rgba >> 16) & 0xff, (rgba >> 8) & 0xff, rgba & 0xff);
     }
 
