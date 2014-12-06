@@ -51,24 +51,22 @@ void World::updateTrail() {
 
     game->getRenderer()->setColor(0xFF0000FF);
 
-    if (deltaX < 10) {
-        for (int i = 1; i <= deltaX + 1; ++i) {
-            int interpolatedX = (int) (previousRunnerPosition.x + i);
-            int interpolatedY = (int) (previousRunnerPosition.y + deltaY * (double) (i - 1) / deltaX);
+    for (int i = 1; i <= deltaX + 1; ++i) {
+        int interpolatedX = (int) (previousRunnerPosition.x + i);
+        int interpolatedY = (int) (previousRunnerPosition.y + deltaY * (double) (i - 1) / deltaX);
 
-            int runnerHeight = (int) runner->getSize().y;
+        int runnerHeight = (int) runner->getSize().y;
 
-            double heightStep = runnerHeight / 6.0;
+        double heightStep = runnerHeight / 6.0;
 
-            static int colors[] = {0xff0000ff, 0xff6600ff, 0xffff00ff, 0x00cc00ff, 0x3366ffff, 0x6600ccff};
+        static int colors[] = {0xff0000ff, 0xff6600ff, 0xffff00ff, 0x00cc00ff, 0x3366ffff, 0x6600ccff};
 
-            for (int j = 0; j < 6; ++j) {
-                game->getRenderer()->setColor(colors[j]);
+        for (int j = 0; j < 6; ++j) {
+            game->getRenderer()->setColor(colors[j]);
 
-                game->getRenderer()->drawLine(
-                        Vec2{interpolatedX - position.x, interpolatedY - position.y + j * heightStep},
-                        Vec2{interpolatedX - position.x, interpolatedY - position.y + std::min((double) runnerHeight - 1, (j + 1) * heightStep)});
-            }
+            game->getRenderer()->drawLine(
+                    Vec2{interpolatedX - position.x, interpolatedY - position.y + j * heightStep},
+                    Vec2{interpolatedX - position.x, interpolatedY - position.y + std::min((double) runnerHeight - 1, (j + 1) * heightStep)});
         }
     }
 
