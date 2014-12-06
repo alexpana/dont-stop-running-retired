@@ -9,8 +9,6 @@
 namespace engine {
     class TextureFactory;
 
-    typedef std::shared_ptr<TextureFactory> TextureFactoryPtr;
-
     class TextureFactory {
 
     public:
@@ -20,9 +18,7 @@ namespace engine {
 
         TextureFactory operator=(const TextureFactory &other) = delete;
 
-        TexturePtr loadImage(std::string filename);
-
-        static TextureFactoryPtr create(SDL_Renderer *renderer, const SDL_PixelFormat &optimizedPixelFormat);
+        std::unique_ptr<engine::Texture> loadImage(std::string filename);
 
     private:
         const SDL_PixelFormat m_optimizedPixelFormat;

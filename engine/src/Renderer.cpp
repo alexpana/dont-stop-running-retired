@@ -6,9 +6,9 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "Texture.h"
-
+#include "Log.h"
 #include "Rect2.h"
+#include "Texture.h"
 
 namespace engine {
 
@@ -16,8 +16,9 @@ namespace engine {
     public:
         SDL_Renderer *renderer;
         TTF_Font *font;
+        Log logger;
 
-        Implementation(SDL_Renderer *renderer) : renderer(renderer) {
+        Implementation(SDL_Renderer *renderer) : renderer(renderer), logger("Renderer") {
         }
 
         void drawSurface(SDL_Surface *surface, const Vec2 &position);
@@ -27,6 +28,8 @@ namespace engine {
         impl = std::unique_ptr<Implementation>(new Implementation{renderer});
 
         impl->font = TTF_OpenFont("data/minecraftia.ttf", 8);
+
+        SDL_SetRenderDrawBlendMode(impl->renderer, SDL_BLENDMODE_BLEND);
     }
 
     void Renderer::setColor(int rgba) {
@@ -68,13 +71,13 @@ namespace engine {
         SDL_RenderFillRect(impl->renderer, &sdlRect);
     }
 
-    void Renderer::drawTexture(const TexturePtr source, const Vec2 &position, const Rect2 &sourceRect) {
+    void Renderer::drawTexture(const Texture *source, const Vec2 &position, const Rect2 &sourceRect) {
         SDL_Rect srcRect = {(int) sourceRect.x, (int) sourceRect.y, (int) sourceRect.w, (int) sourceRect.h};
         SDL_Rect dstRect = {(int) position.x, (int) position.y, (int) sourceRect.w, (int) sourceRect.h};
         SDL_RenderCopy(impl->renderer, source->getNative(), &srcRect, &dstRect);
     }
 
-    void Renderer::drawTexture(const TexturePtr source, const Vec2 &position) {
+    void Renderer::drawTexture(const Texture *source, const Vec2 &position) {
         SDL_Rect dstRect = {(int) position.x, (int) position.y, source->getWidth(), source->getHeight()};
         SDL_RenderCopy(impl->renderer, source->getNative(), nullptr, &dstRect);
     }
@@ -101,6 +104,40 @@ namespace engine {
         SDL_Rect dstRect = {(int) position.x, (int) position.y, w, h};
         SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
         SDL_DestroyTexture(texture);
+    }
+
+    std::unique_ptr<Texture> Renderer::createTexture(int w, int h, int access = SDL_TEXTUREACCESS_TARGET) {
+
+        SDL_Texture *newTexture = SDL_CreateTexture(impl->renderer, SDL_PIXELFORMAT_RGBA8888, access, w, h);
+
+        if (!newTexture) {
+            impl->logger.error() << "Could not create texture. Reason: " << SDL_GetError() << "\n";
+        } else {
+            SDL_SetTextureBlendMode(newTexture, SDL_BLENDMODE_BLEND);
+        }
+
+        return std::unique_ptr<Texture>(new engine::Texture{newTexture});
+    };
+
+    void Renderer::setTarget(Texture *texture) {
+        int error = SDL_SetRenderTarget(impl->renderer, texture->getNative());
+        if (error) {
+            impl->logger.error() << "Could not set render target. Reason: " << SDL_GetError() << "\n";
+        }
+    }
+
+    void Renderer::resetTarget() {
+        int error = SDL_SetRenderTarget(impl->renderer, nullptr);
+        if (error) {
+            impl->logger.error() << "Could not reset render target. Reason: " << SDL_GetError() << "\n";
+        }
+    }
+
+    void Renderer::setAlphaModulation(Texture *texture, int modulation) {
+        int error = SDL_SetTextureAlphaMod(texture->getNative(), (Uint8) (modulation & 0xFF));
+        if (error) {
+            impl->logger.error() << "Could not set alpha modulation. Reason: " << SDL_GetError() << "\n";
+        }
     }
 }
 #pragma clang diagnostic pop

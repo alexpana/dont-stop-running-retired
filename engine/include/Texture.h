@@ -16,20 +16,22 @@ namespace engine {
             SDL_QueryTexture(texture, nullptr, nullptr, &m_width, &m_height);
         }
 
+        Texture(const Texture &other) = delete;
+
         ~Texture() {
             SDL_DestroyTexture(m_texture);
             m_texture = nullptr;
         }
 
-        SDL_Texture *getNative() {
+        SDL_Texture *getNative() const {
             return m_texture;
         }
 
-        int getWidth() {
+        int getWidth() const {
             return m_width;
         }
 
-        int getHeight() {
+        int getHeight() const {
             return m_height;
         }
 

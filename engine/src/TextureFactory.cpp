@@ -10,19 +10,16 @@ namespace engine {
             m_dummyImage(nullptr) {
     }
 
-    TexturePtr TextureFactory::loadImage(std::string filename) {
+    std::unique_ptr<engine::Texture> TextureFactory::loadImage(std::string filename) {
         SDL_Surface *rawSurface = IMG_Load(filename.c_str());
 
         if (rawSurface == nullptr) {
             printf("%s: %s\n", "Could not load surface", filename.c_str());
             printf("IMG_Load: %s\n", IMG_GetError());
-            return m_dummyImage;
+
+            return nullptr;
         }
 
-        return Texture::create(SDL_CreateTextureFromSurface(m_nativeRenderer, rawSurface));
-    }
-
-    TextureFactoryPtr TextureFactory::create(SDL_Renderer *renderer, const SDL_PixelFormat &optimizedPixelFormat) {
-        return std::make_shared<TextureFactory>(renderer, optimizedPixelFormat);
-    }
+        return std::unique_ptr<Texture>(new Texture{SDL_CreateTextureFromSurface(m_nativeRenderer, rawSurface)});
+    };
 }

@@ -25,7 +25,7 @@ namespace engine {
         void drawTile(double x, double y, TileType type) {
             const Rect2 tileSourceRect = m_tileMap->getTileRect(type);
 
-            m_renderer->drawTexture(m_atlas, Vec2(x, y), tileSourceRect);
+            m_renderer->drawTexture(m_atlas.get(), Vec2(x, y), tileSourceRect);
         }
 
         void drawTile(Vec2 v, TileType type) {

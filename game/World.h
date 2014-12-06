@@ -53,6 +53,8 @@ private:
 
     void generateNewBlock();
 
+    void updateTrail();
+
 private:
     RunnerPtr runner;
 
@@ -62,13 +64,13 @@ private:
 
     engine::TileEnginePtr tileEngine;
 
-    engine::TexturePtr background;
+    std::unique_ptr<engine::Texture> background;
 
-    engine::TexturePtr backgroundFar;
+    std::unique_ptr<engine::Texture> backgroundFar;
 
-    engine::TexturePtr backgroundMid;
+    std::unique_ptr<engine::Texture> backgroundMid;
 
-    engine::TexturePtr backgroundNear;
+    std::unique_ptr<engine::Texture> backgroundNear;
 
     std::vector<engine::Rect2> blocks;
     std::vector<double> blockOriginalY;
@@ -84,6 +86,16 @@ private:
     double stepPeriod = 140;
 
     Stats stats;
+
+    std::unique_ptr<engine::Texture> trailFrontBuffer;
+
+    std::unique_ptr<engine::Texture> trailBackBuffer;
+
+    bool trailInitialized;
+
+    engine::Vec2 previousRunnerPosition;
+
+    engine::Log logger;
 
     static const int PIXELS_PER_METER = 25;
 };

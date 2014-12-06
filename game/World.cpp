@@ -4,7 +4,8 @@ using namespace engine;
 
 World::World(GamePtr game, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
-        game(game) {
+        game(game),
+        logger("Game") {
     runner = std::make_shared<Runner>(this);
 
     game->registerUpdateable(runner);
@@ -19,12 +20,73 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
 
     game->getSound()->setSampleVolume(stepSample1.get(), 0.2);
     game->getSound()->setSampleVolume(stepSample2.get(), 0.2);
+
+    trailFrontBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
+    trailBackBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
+
+}
+
+void World::updateTrail() {
+    if (!trailInitialized) {
+        previousRunnerPosition = runner->getPosition();
+        trailInitialized = true;
+        return;
+    }
+
+    Vec2 runnerPosition = runner->getPosition();
+
+    game->getRenderer()->setAlphaModulation(trailFrontBuffer.get(), 0xFF);
+    game->getRenderer()->setAlphaModulation(trailBackBuffer.get(), 0xFF);
+
+    std::swap(trailFrontBuffer, trailBackBuffer);
+
+
+    game->getRenderer()->setTarget(trailFrontBuffer.get());
+
+    game->getRenderer()->setColor(0x00000000);
+    game->getRenderer()->clear();
+
+    double deltaX = runnerPosition.x - previousRunnerPosition.x;
+    double deltaY = runnerPosition.y - previousRunnerPosition.y;
+
+    game->getRenderer()->setColor(0xFF0000FF);
+
+    if (deltaX < 10) {
+        for (int i = 1; i <= deltaX + 1; ++i) {
+            int interpolatedX = (int) (previousRunnerPosition.x + i);
+            int interpolatedY = (int) (previousRunnerPosition.y + deltaY * (double) (i - 1) / deltaX);
+
+            int runnerHeight = (int) runner->getSize().y;
+
+            double heightStep = runnerHeight / 6.0;
+
+            static int colors[] = {0xff0000ff, 0xff6600ff, 0xffff00ff, 0x00cc00ff, 0x3366ffff, 0x6600ccff};
+
+            for (int j = 0; j < 6; ++j) {
+                game->getRenderer()->setColor(colors[j]);
+
+                game->getRenderer()->drawLine(
+                        Vec2{interpolatedX - position.x, interpolatedY - position.y + j * heightStep},
+                        Vec2{interpolatedX - position.x, interpolatedY - position.y + std::min((double) runnerHeight - 1, (j + 1) * heightStep)});
+            }
+        }
+    }
+
+    game->getRenderer()->drawTexture(trailBackBuffer.get(), Vec2{-deltaX, 0});
+
+    game->getRenderer()->resetTarget();
+
+    game->getRenderer()->setAlphaModulation(trailFrontBuffer.get(), 0x90);
+
+    previousRunnerPosition = runnerPosition;
 }
 
 void World::draw() {
     drawBackground();
 
     drawBlocks();
+
+    game->getRenderer()->drawTexture(trailFrontBuffer.get(), Vec2{0, 0});
 
     drawRunner();
 
@@ -38,7 +100,9 @@ void World::update(double timeDelta) {
         stepPlayTime += timeDelta;
     }
 
-    position.x = runner->getPosition().x - 60;
+    position.x = runner->getPosition().x - 160;
+
+    updateTrail();
 
     stats.kilometersRan = runner->getPosition().x / PIXELS_PER_METER / 1000.0;
 
@@ -53,11 +117,11 @@ void World::update(double timeDelta) {
     }
 
     // move blocks
-    for (int i = 0; i < blocks.size(); ++i) {
-        long double delta = std::sin(blockTimeOffset[i]) * 0.3;
-        blocks[i].y += delta;
-        blockTimeOffset[i] += blockVelocity[i];
-    }
+//    for (int i = 0; i < blocks.size(); ++i) {
+//        long double delta = std::sin(blockTimeOffset[i]) * 0.3;
+//        blocks[i].y += delta;
+//        blockTimeOffset[i] += blockVelocity[i];
+//    }
 }
 
 void World::drawBlocks() {
@@ -85,21 +149,21 @@ void World::drawBackground() {
     int wrap = backgroundFar->getWidth();
 
 
-    game->getRenderer()->drawTexture(background, Vec2{0, 0});
-    game->getRenderer()->drawTexture(background, Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
+    game->getRenderer()->drawTexture(background.get(), Vec2{0, 0});
+    game->getRenderer()->drawTexture(background.get(), Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
 
-    game->getRenderer()->drawTexture(backgroundFar, Vec2((int) (x / BG_FAR_SPEED) % wrap, 0));
-    game->getRenderer()->drawTexture(backgroundFar, Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
+    game->getRenderer()->drawTexture(backgroundFar.get(), Vec2((int) (x / BG_FAR_SPEED) % wrap, 0));
+    game->getRenderer()->drawTexture(backgroundFar.get(), Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
 
     double midPlaneY = 0; //std::min(40.0, std::max(0.0, - runner->getPosition().y / 100.0));
 
-    game->getRenderer()->drawTexture(backgroundMid, Vec2((int) (x / BG_MID_SPEED) % wrap, midPlaneY));
-    game->getRenderer()->drawTexture(backgroundMid, Vec2((int) (x / BG_MID_SPEED) % wrap + wrap, midPlaneY));
+    game->getRenderer()->drawTexture(backgroundMid.get(), Vec2((int) (x / BG_MID_SPEED) % wrap, midPlaneY));
+    game->getRenderer()->drawTexture(backgroundMid.get(), Vec2((int) (x / BG_MID_SPEED) % wrap + wrap, midPlaneY));
 
     double nearPlaneY = 0; //std::min(100.0, std::max(0.0, 50 - runner->getPosition().y / 50.0));
 
-    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) (x / BG_NEAR_SPEED) % wrap, nearPlaneY));
-    game->getRenderer()->drawTexture(backgroundNear, Vec2((int) (x / BG_NEAR_SPEED) % wrap + wrap, nearPlaneY));
+    game->getRenderer()->drawTexture(backgroundNear.get(), Vec2((int) (x / BG_NEAR_SPEED) % wrap, nearPlaneY));
+    game->getRenderer()->drawTexture(backgroundNear.get(), Vec2((int) (x / BG_NEAR_SPEED) % wrap + wrap, nearPlaneY));
 }
 
 inline void World::drawBlock(Rect2 const &block) {

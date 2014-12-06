@@ -36,9 +36,9 @@ namespace engine {
 
         void drawCircle(const Vec2 &origin, double radius);
 
-        void drawTexture(const TexturePtr source, const Vec2 &position, const Rect2 &sourceRect);
+        void drawTexture(const Texture *source, const Vec2 &position, const Rect2 &sourceRect);
 
-        void drawTexture(const TexturePtr source, const Vec2 &position);
+        void drawTexture(const Texture *source, const Vec2 &position);
 
         void fillRect(const Rect2 &rect);
 
@@ -47,6 +47,14 @@ namespace engine {
         void clear();
 
         void flip();
+
+        std::unique_ptr<Texture> createTexture(int w, int h, int access);
+
+        void setTarget(Texture *texture);
+
+        void resetTarget();
+
+        void setAlphaModulation(Texture *texture, int modulation);
 
         static RendererPtr create(SDL_Renderer *renderer);
 
