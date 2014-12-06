@@ -6,7 +6,7 @@
 
 namespace engine {
 
-    Game::Game(Params const &params) : initParams(params) {
+    Game::Game(Params const &params) : initParams(params), logger("Game") {
     }
 
     Game::~Game() {
@@ -37,7 +37,7 @@ namespace engine {
         mainWindow = SDL_CreateWindow(initParams.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, initParams.screenWidth, initParams.screenHeight, SDL_WINDOW_SHOWN);
 
         if (mainWindow == nullptr) {
-            printf("Window could not be created! SDL_Error: %s", SDL_GetError());
+            logger.error() << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
 
@@ -69,8 +69,8 @@ namespace engine {
     }
 
     bool Game::initSDL() {
-        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-            printf("Could not init SDL_VIDEO");
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
+            logger.error() << "Could not init SDL_VIDEO" << std::endl;
             return false;
         }
 
@@ -82,8 +82,8 @@ namespace engine {
 
         int status = IMG_Init(flags);
         if ((status & flags) != flags) {
-            printf("IMG_Init: Failed to init required png support!\n");
-            printf("IMG_Init: %s\n", IMG_GetError());
+            logger.error() << "IMG_Init: Failed to init required png support!" << std::endl;
+            logger.error() << "IMG_Init: " << IMG_GetError() << std::endl;
             return false;
         }
 

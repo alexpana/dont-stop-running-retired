@@ -26,28 +26,30 @@ int main(int argc, char **argv) {
     params.screenHeight = 600;
     params.windowTitle = "Don't Stop Running!";
 
-    engine::GamePtr gamePtr = make_shared<engine::Game>(params);
+    engine::GamePtr game = make_shared<engine::Game>(params);
 
-    gamePtr->start();
+    engine::Log log{"Main"};
 
-    if (!gamePtr->isInitialized()) {
+    game->start();
+
+    if (!game->isInitialized()) {
         return -1;
     }
 
-    cout << "Running game from: " << gamePtr->getFilesystem()->getCurrentWorkingDirectory() << endl;
+    log.info() << "Running game from: " << game->getFilesystem()->getCurrentWorkingDirectory() << endl;
 
-    auto textureFactory = gamePtr->getTextureFactory();
+    auto textureFactory = game->getTextureFactory();
 
     auto tiles = make_shared<engine::TileMap>();
 
-    auto tileEngine = make_shared<engine::TileEngine>(gamePtr->getRenderer(), tiles, textureFactory->loadImage("./data/tiles.png"));
+    auto tileEngine = make_shared<engine::TileEngine>(game->getRenderer(), tiles, textureFactory->loadImage("./data/tiles.png"));
 
-    auto worldPtr = make_shared<World>(gamePtr, tileEngine);
+    auto worldPtr = make_shared<World>(game, tileEngine);
 
-    gamePtr->registerUpdateable(worldPtr);
-    gamePtr->registerDrawable(worldPtr);
+    game->registerUpdateable(worldPtr);
+    game->registerDrawable(worldPtr);
 
-    worldPtr->createBlock(_TC(0), _TC(8), _TC(20));
+    worldPtr->createBlock(_TC(0), _TC(20), _TC(8));
 
     auto runner = worldPtr->getRunner();
 
@@ -83,7 +85,7 @@ int main(int argc, char **argv) {
     }}.detach();
 
     while (running) {
-        gamePtr->startFrame();
+        game->startFrame();
 
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
@@ -124,7 +126,7 @@ int main(int argc, char **argv) {
             }
 
             if (Event::isKeyDown(e, SDLK_e)) {
-                gamePtr->getSound()->playSampleOnce(worldPtr->getFootstep());
+                game->getSound()->playSampleOnce(worldPtr->getFootstep());
             }
         }
 
@@ -134,11 +136,11 @@ int main(int argc, char **argv) {
             runner->addJumpForce();
         }
 
-        gamePtr->update();
+        game->update();
 
-        gamePtr->endFrame();
+        game->endFrame();
     }
 
-    gamePtr->stop();
+    game->stop();
     return 0;
 }

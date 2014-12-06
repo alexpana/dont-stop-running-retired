@@ -20,10 +20,11 @@ namespace engine {
 
 
     Sound::Sound() {
-        std::cout << "Creating new sound component" << std::endl;
     }
 
     void Sound::initialize() {
+        log.info() << "Initializing sound\n";
+
         Mix_Init(0);
 
         int error = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
@@ -31,11 +32,13 @@ namespace engine {
         Mix_Volume(-1, 64);
 
         if (error == -1) {
-            std::cout << "Could not initialize SDL_mixer. Reason: " << Mix_GetError() << std::endl;
+            log.error() << "Could not initialize SDL_mixer. Reason: " << Mix_GetError() << "\n";
         }
     }
 
     void Sound::cleanup() {
+        log.info() << "Cleaning up sound\n";
+
         Mix_CloseAudio();
         Mix_Quit();
     }

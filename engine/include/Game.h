@@ -6,6 +6,7 @@
 #include <SDL.h>
 
 #include "Filesystem.h"
+#include "Log.h"
 #include "Renderer.h"
 #include "Random.h"
 #include "TextureFactory.h"
@@ -148,6 +149,8 @@ namespace engine {
         Timer timer;
 
         const Params initParams;
+
+        Log logger;
     };
 
 }

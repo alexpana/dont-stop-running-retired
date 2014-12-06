@@ -1,23 +1,52 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <string>
+#include <chrono>
+#include <ctime>
+#include <string.h>
+#include <time.h>
 
 namespace engine {
     class Log {
     public:
-        Log &log(std::string message) {
-            std::cout << message << std::endl;
-            return *this;
+
+        Log(const std::string& className) : className(className) {
+
         }
 
-//    Log& log(std::string method, std::string message)//    {
-//        std::cout << "[" << method << "] " << message << std::endl;
-//        return *this;
-//    }
+        std::ostream& debug() {
+            return prepareOutputStream("DEBUG");
 
-        Log &log(const char *fmt, const char *...) {
-            return *this;
         }
+
+        std::ostream& info() {
+            return prepareOutputStream("INFO");
+        }
+
+        std::ostream& error() {
+            return prepareOutputStream("ERROR");
+        }
+
+        std::ostream& warning() {
+            return prepareOutputStream("WARNING");
+        }
+
+    private:
+        std::ostream &prepareOutputStream(const std::string& level) {
+            char timestamp[10];
+
+            memset(timestamp, 0, sizeof(timestamp));
+
+            time_t now = time(nullptr);
+            tm tm = *localtime(&now);
+
+            strftime(timestamp, sizeof(timestamp), "%H:%M:%S", &tm);
+
+            return std::cout << timestamp << " " << level << " [" << className << "] ";
+        }
+
+        std::string className;
     };
 }
