@@ -140,30 +140,15 @@ void World::drawRunner() {
 }
 
 void World::drawBackground() {
-    static const double BG_FAR_SPEED = 2.0;
-    static const double BG_MID_SPEED = 1.6;
+    static const double BG_FAR_SPEED = 4.0;
+    static const double BG_MID_SPEED = 2.4;
     static const double BG_NEAR_SPEED = 1.2;
 
-    double x = -position.x;
-
-    int wrap = backgroundFar->getWidth();
-
-
     game->getRenderer()->drawTexture(background.get(), Vec2{0, 0});
-    game->getRenderer()->drawTexture(background.get(), Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
 
-    game->getRenderer()->drawTexture(backgroundFar.get(), Vec2((int) (x / BG_FAR_SPEED) % wrap, 0));
-    game->getRenderer()->drawTexture(backgroundFar.get(), Vec2((int) (x / BG_FAR_SPEED) % wrap + wrap, 0));
-
-    double midPlaneY = 0; //std::min(40.0, std::max(0.0, - runner->getPosition().y / 100.0));
-
-    game->getRenderer()->drawTexture(backgroundMid.get(), Vec2((int) (x / BG_MID_SPEED) % wrap, midPlaneY));
-    game->getRenderer()->drawTexture(backgroundMid.get(), Vec2((int) (x / BG_MID_SPEED) % wrap + wrap, midPlaneY));
-
-    double nearPlaneY = 0; //std::min(100.0, std::max(0.0, 50 - runner->getPosition().y / 50.0));
-
-    game->getRenderer()->drawTexture(backgroundNear.get(), Vec2((int) (x / BG_NEAR_SPEED) % wrap, nearPlaneY));
-    game->getRenderer()->drawTexture(backgroundNear.get(), Vec2((int) (x / BG_NEAR_SPEED) % wrap + wrap, nearPlaneY));
+    drawTilingBackgroundTexture(backgroundFar.get(), -position.x / BG_FAR_SPEED);
+    drawTilingBackgroundTexture(backgroundMid.get(), -position.x / BG_MID_SPEED);
+    drawTilingBackgroundTexture(backgroundNear.get(), -position.x / BG_NEAR_SPEED);
 }
 
 inline void World::drawBlock(Rect2 const &block) {
@@ -268,4 +253,25 @@ void World::addBlock(const Rect2 &block) {
     blockTimeOffset.push_back(game->getRandom()->nextInt(100) / 10.0);
 
     blockVelocity.push_back(0.005 + game->getRandom()->nextInt(20) / 20000.0);
+}
+
+void World::drawTilingBackgroundTexture(Texture *texture, double offset) {
+    int roundedX = (int) offset % texture->getWidth();
+
+    if (roundedX > 0) {
+        roundedX -= texture->getWidth();
+    }
+
+    Rect2 src{std::abs(roundedX), 0,
+            std::min(game->getScreenWidth(), texture->getWidth() + roundedX),
+            texture->getHeight()};
+    Vec2 dst{0, 0};
+
+    while (dst.x < game->getScreenWidth()) {
+        game->getRenderer()->drawTexture(texture, dst, src);
+        dst.x += src.w;
+
+        src.x = (int)(src.x + src.w) % texture->getWidth();
+        src.w = std::min((int)(game->getScreenWidth() - dst.x), texture->getWidth());
+    }
 }
