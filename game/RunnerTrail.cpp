@@ -8,9 +8,10 @@ RunnerTrail::RunnerTrail(World *world) : world(world) {
     Game *game = world->getGame();
     frontBuffer = game->getRenderer()->createTexture(game->getScreenWidth(), game->getScreenHeight(), SDL_TEXTUREACCESS_TARGET);
     backBuffer = game->getRenderer()->createTexture(game->getScreenWidth(), game->getScreenHeight(), SDL_TEXTUREACCESS_TARGET);
+    trailGradient = game->getTextureFactory()->loadImage("data/trail.png");
 }
 
-void RunnerTrail::update(double deltaTime) {
+void RunnerTrail::update(double /*deltaTime*/) {
     Game *game = world->getGame();
     Runner *runner = world->getRunner();
 
@@ -38,26 +39,12 @@ void RunnerTrail::update(double deltaTime) {
 
     game->getRenderer()->setColor(0xFF0000FF);
 
-    Vec2 position = world->getCameraPosition();
-
     if (!(deltaX < 10 && deltaY < -20)) {
         for (int i = 1; i <= deltaX + 1; ++i) {
             int interpolatedX = (int) (previousRunnerPosition.x + i);
             int interpolatedY = (int) (previousRunnerPosition.y + deltaY * (double) (i - 1) / deltaX);
 
-            int runnerHeight = (int) runner->getSize().y;
-
-            double heightStep = runnerHeight / 6.0;
-
-            static int colors[] = {0xff0000ff, 0xff6600ff, 0xffff00ff, 0x00cc00ff, 0x3366ffff, 0x6600ccff};
-
-            for (int j = 0; j < 6; ++j) {
-                game->getRenderer()->setColor(colors[j]);
-
-                game->getRenderer()->drawLine(
-                        Vec2{interpolatedX - position.x, interpolatedY - position.y + j * heightStep},
-                        Vec2{interpolatedX - position.x, interpolatedY - position.y + std::min((double) runnerHeight - 1, (j + 1) * heightStep)});
-            }
+            drawTrailSegment(interpolatedX, interpolatedY);
         }
     }
 
@@ -68,6 +55,12 @@ void RunnerTrail::update(double deltaTime) {
     game->getRenderer()->setAlphaModulation(frontBuffer.get(), 0x90);
 
     previousRunnerPosition = runnerPosition;
+}
+
+void RunnerTrail::drawTrailSegment(int interpolatedX, int interpolatedY) {
+    Vec2 position = world->getCameraPosition();
+    world->getGame()->getRenderer()->drawTexture(trailGradient.get(),
+            Vec2{interpolatedX - position.x, interpolatedY - position.y});
 }
 
 engine::Texture *RunnerTrail::getTrailTexture() {
