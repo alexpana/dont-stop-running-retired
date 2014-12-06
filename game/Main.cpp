@@ -18,8 +18,6 @@ using namespace std;
 
 static bool running = true;
 
-#define _TC(x) ((int)(x*32))
-
 int main(int argc, char **argv) {
     engine::Game::Params params;
     params.screenWidth = 800;
@@ -48,8 +46,6 @@ int main(int argc, char **argv) {
 
     game->registerUpdateable(worldPtr);
     game->registerDrawable(worldPtr);
-
-    worldPtr->createBlock(_TC(0), _TC(20), _TC(8));
 
     auto runner = worldPtr->getRunner();
 

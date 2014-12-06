@@ -24,6 +24,10 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     trailFrontBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
     trailBackBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
 
+    // add initial block
+    createBlock(0, 2048, 256);
+
+    runner->setPosition(Vec2{160, 256 - runner->getSize().y});
 }
 
 void World::updateTrail() {
