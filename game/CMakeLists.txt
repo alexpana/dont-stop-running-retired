@@ -5,12 +5,14 @@
 set(GAME_SOURCES
     Main.cpp
     Runner.cpp
+    RunnerTrail.cpp
     World.cpp)
 
 set(GAME_HEADERS
-    World.h
+    RunnerTrail.h
     Runner.h
-    Stats.h)
+    Stats.h
+    World.h)
 
 # =======================================
 # Source groups

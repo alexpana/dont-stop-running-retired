@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Runner.h"
+#include "RunnerTrail.h"
 #include "Sound.h"
 #include "Stats.h"
 #include "TileEngine.h"
@@ -26,7 +27,11 @@ public:
 
     double floorPosition(engine::Vec2 position);
 
-    RunnerPtr getRunner();
+    Runner *getRunner();
+
+    engine::Game *getGame();
+
+    engine::Vec2 getCameraPosition();
 
     Stats &getStats();
 
@@ -51,10 +56,8 @@ private:
 
     void generateNewBlock();
 
-    void updateTrail();
-
 private:
-    RunnerPtr runner;
+    std::shared_ptr<Runner> runner;
 
     engine::Vec2 position;
 
@@ -85,16 +88,10 @@ private:
 
     Stats stats;
 
-    std::unique_ptr<engine::Texture> trailFrontBuffer;
-
-    std::unique_ptr<engine::Texture> trailBackBuffer;
-
-    bool trailInitialized;
-
-    engine::Vec2 previousRunnerPosition;
-
     engine::Log logger;
 
     static const int PIXELS_PER_METER = 25;
+
+    std::unique_ptr<RunnerTrail> runnerTrail;
 };
 

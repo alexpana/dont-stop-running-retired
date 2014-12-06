@@ -21,68 +21,12 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     game->getSound()->setSampleVolume(stepSoundSamples[0].get(), 0.2);
     game->getSound()->setSampleVolume(stepSoundSamples[1].get(), 0.2);
 
-    trailFrontBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
-    trailBackBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
-
     // add initial block
     createBlock(0, 2048, 256);
 
     runner->setPosition(Vec2{160, 256 - runner->getSize().y});
-}
 
-void World::updateTrail() {
-    if (!trailInitialized) {
-        previousRunnerPosition = runner->getPosition();
-        trailInitialized = true;
-        return;
-    }
-
-    Vec2 runnerPosition = runner->getPosition();
-
-    game->getRenderer()->setAlphaModulation(trailFrontBuffer.get(), 0xFF);
-    game->getRenderer()->setAlphaModulation(trailBackBuffer.get(), 0xFF);
-
-    std::swap(trailFrontBuffer, trailBackBuffer);
-
-
-    game->getRenderer()->setTarget(trailFrontBuffer.get());
-
-    game->getRenderer()->setColor(0x00000000);
-    game->getRenderer()->clear();
-
-    double deltaX = runnerPosition.x - previousRunnerPosition.x;
-    double deltaY = runnerPosition.y - previousRunnerPosition.y;
-
-    game->getRenderer()->setColor(0xFF0000FF);
-
-    if (!(deltaX < 10 && deltaY < -20)) {
-        for (int i = 1; i <= deltaX + 1; ++i) {
-            int interpolatedX = (int) (previousRunnerPosition.x + i);
-            int interpolatedY = (int) (previousRunnerPosition.y + deltaY * (double) (i - 1) / deltaX);
-
-            int runnerHeight = (int) runner->getSize().y;
-
-            double heightStep = runnerHeight / 6.0;
-
-            static int colors[] = {0xff0000ff, 0xff6600ff, 0xffff00ff, 0x00cc00ff, 0x3366ffff, 0x6600ccff};
-
-            for (int j = 0; j < 6; ++j) {
-                game->getRenderer()->setColor(colors[j]);
-
-                game->getRenderer()->drawLine(
-                        Vec2{interpolatedX - position.x, interpolatedY - position.y + j * heightStep},
-                        Vec2{interpolatedX - position.x, interpolatedY - position.y + std::min((double) runnerHeight - 1, (j + 1) * heightStep)});
-            }
-        }
-    }
-
-    game->getRenderer()->drawTexture(trailBackBuffer.get(), Vec2{-deltaX, 0});
-
-    game->getRenderer()->resetTarget();
-
-    game->getRenderer()->setAlphaModulation(trailFrontBuffer.get(), 0x90);
-
-    previousRunnerPosition = runnerPosition;
+    runnerTrail = std::unique_ptr<RunnerTrail>(new RunnerTrail{this});
 }
 
 void World::draw() {
@@ -90,7 +34,7 @@ void World::draw() {
 
     drawBlocks();
 
-    game->getRenderer()->drawTexture(trailFrontBuffer.get(), Vec2{0, 0});
+    game->getRenderer()->drawTexture(runnerTrail->getTrailTexture(), Vec2{0, 0});
 
     drawRunner();
 
@@ -106,7 +50,7 @@ void World::update(double timeDelta) {
 
     position.x = runner->getPosition().x - 160;
 
-    updateTrail();
+    runnerTrail->update(timeDelta);
 
     stats.kilometersRan = runner->getPosition().x / PIXELS_PER_METER / 1000.0;
 
@@ -217,8 +161,8 @@ double World::floorPosition(Vec2 position) {
     return 1000;
 }
 
-RunnerPtr World::getRunner() {
-    return runner;
+Runner *World::getRunner() {
+    return runner.get();
 }
 
 Stats &World::getStats() {
@@ -282,7 +226,15 @@ void World::drawTilingBackgroundTexture(Texture *texture, double offset) {
         game->getRenderer()->drawTexture(texture, dst, src);
         dst.x += src.w;
 
-        src.x = (int)(src.x + src.w) % texture->getWidth();
-        src.w = std::min((int)(game->getScreenWidth() - dst.x), texture->getWidth());
+        src.x = (int) (src.x + src.w) % texture->getWidth();
+        src.w = std::min((int) (game->getScreenWidth() - dst.x), texture->getWidth());
     }
+}
+
+engine::Game *World::getGame() {
+    return game.get();
+}
+
+engine::Vec2 World::getCameraPosition() {
+    return position;
 }
