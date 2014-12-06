@@ -100,5 +100,3 @@ private:
 
     engine::Vec2 size;
 };
-
-typedef std::shared_ptr<Runner> RunnerPtr;
