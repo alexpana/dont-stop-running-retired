@@ -15,11 +15,11 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     backgroundMid = game->getTextureFactory()->loadImage("data/bg_mid.png");
     backgroundNear = game->getTextureFactory()->loadImage("data/bg_near.png");
 
-    stepSample1 = game->getSound()->loadSample("data/footstep.wav");
-    stepSample2 = game->getSound()->loadSample("data/footstep2.wav");
+    stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep.wav"));
+    stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep2.wav"));
 
-    game->getSound()->setSampleVolume(stepSample1.get(), 0.2);
-    game->getSound()->setSampleVolume(stepSample2.get(), 0.2);
+    game->getSound()->setSampleVolume(stepSoundSamples[0].get(), 0.2);
+    game->getSound()->setSampleVolume(stepSoundSamples[1].get(), 0.2);
 
     trailFrontBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
     trailBackBuffer = game->getRenderer()->createTexture(800, 600, SDL_TEXTUREACCESS_TARGET);
@@ -113,7 +113,14 @@ void World::update(double timeDelta) {
     if (stepPlayTime > stepPeriod) {
         stepPlayTime -= stepPeriod;
         stepPeriod = game->getRandom()->nextInt(150, 180);
-        game->getSound()->playSampleOnce(game->getRandom()->nextInt(0, 100) > 20 ? stepSample1.get() : stepSample2.get());
+
+        game->getSound()->playSampleOnce(stepSoundSamples[currentStepSample].get());
+
+        currentStepSample += 1;
+        if (currentStepSample >= stepSoundSamples.size()) {
+            currentStepSample = 0;
+            std::random_shuffle(begin(stepSoundSamples), end(stepSoundSamples));
+        }
     }
 
     if (shouldGenerateNewBlock()) {

@@ -32,10 +32,6 @@ public:
 
     void displayConstants();
 
-    engine::SoundSample *getFootstep() {
-        return stepSample1.get();
-    }
-
 private:
     void drawBlocks();
 
@@ -79,9 +75,9 @@ private:
     std::vector<double> blockTimeOffset;
     std::vector<double> blockVelocity;
 
-    engine::SoundSamplePtr stepSample1;
+    std::vector<engine::SoundSamplePtr> stepSoundSamples;
 
-    engine::SoundSamplePtr stepSample2;
+    int currentStepSample = 0;
 
     double stepPlayTime = 0.0;
 
