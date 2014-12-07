@@ -10,8 +10,8 @@ namespace engine {
                 lastFrameCount(m_game->getFrameCount()) {
         }
 
-        int getMilli() {
-            return m_timer.getMilli();
+        int seconds() {
+            return m_timer.seconds();
         }
 
         void restart() {
@@ -20,7 +20,7 @@ namespace engine {
         }
 
         double getFPS() {
-            return static_cast<double>(m_game->getFrameCount() - lastFrameCount) * 1000 / m_timer.getMilli();
+            return static_cast<double>(m_game->getFrameCount() - lastFrameCount) / m_timer.seconds();
         }
 
     private:

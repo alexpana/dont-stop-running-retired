@@ -9,18 +9,18 @@ using namespace engine;
 void Runner::update(double delta) {
 
     // update velocity
-    velocity.y += gravity * delta / 1000.0;
+    velocity.y += gravity * delta;
 
     // update position
     double distanceToObstacle = world->obstacleDistance(position + size);
 
     double distanceToGround = getDistanceToGround();
 
-    double forwardMovement = min(distanceToObstacle, (delta / 1000.0) * velocity.x);
+    double forwardMovement = min(distanceToObstacle, delta * velocity.x);
 
     position.x += forwardMovement;
 
-    position.y += min(distanceToGround, (delta / 1000) * velocity.y);
+    position.y += min(distanceToGround, delta * velocity.y);
 
     if (distanceToGround <= 1 && velocity.y > 0) {
         resetJump();
@@ -56,8 +56,8 @@ void Runner::resetJump() {
 
 void Runner::addJumpForce() {
     if (isJumping) {
-        if (jumpTimer.getMilli() < 350) {
-            velocity.y += -100 * (350 - jumpTimer.getMilli()) / 350.0;
+        if (jumpTimer.seconds() < 0.350) {
+            velocity.y += -100 * (0.350 - jumpTimer.seconds()) / 0.350;
         }
     } else {
         startJump();

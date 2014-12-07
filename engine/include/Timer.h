@@ -1,23 +1,17 @@
 #pragma once
 
-#include <SDL.h>
+#include <stdint.h>
 
 namespace engine {
     class Timer {
     public:
-        Timer() {
-            m_startTime = SDL_GetTicks();
-        }
+        Timer();
 
-        void restart() {
-            m_startTime = SDL_GetTicks();
-        }
+        void restart();
 
-        int getMilli() const {
-            return SDL_GetTicks() - m_startTime;
-        }
+        double seconds();
 
     private:
-        int m_startTime;
+        uint64_t timestamp;
     };
 }

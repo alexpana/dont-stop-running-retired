@@ -8,7 +8,8 @@ set(ROOT_SOURCES
     src/Game.cpp
     src/Sound.cpp
     src/TextureFactory.cpp
-    src/TileMap.cpp)
+    src/TileMap.cpp
+    src/Timer.cpp)
 
 set(ROOT_HEADERS
     include/Console.h

@@ -110,11 +110,11 @@ namespace engine {
         frameCount += 1;
         renderer->flip();
 
-        lastFrameTimeDelta = 10; //m_timer.getMilli();
+        lastFrameTimeDelta = timer.seconds();
     }
 
     void Game::update() {
-        lastFrameTimeDelta = 15;
+//        lastFrameTimeDelta = 15;
         for (auto &updateable : registeredUpdateables) {
             updateable->update(lastFrameTimeDelta);
         }
