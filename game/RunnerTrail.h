@@ -27,4 +27,6 @@ private:
     std::unique_ptr<engine::Texture> trailGradient;
 
     void drawTrailSegment(int interpolatedX, int interpolatedY);
+
+    int totalOffset = 0;
 };

@@ -17,6 +17,7 @@ void RunnerTrail::update(double /*deltaTime*/) {
 
     if (!trailInitialized) {
         previousRunnerPosition = runner->getPosition();
+        totalOffset = (int)world->getCameraPosition().x;
         trailInitialized = true;
         return;
     }
@@ -28,7 +29,6 @@ void RunnerTrail::update(double /*deltaTime*/) {
 
     std::swap(frontBuffer, backBuffer);
 
-
     game->getRenderer()->setTarget(frontBuffer.get());
 
     game->getRenderer()->setColor(0x00000000);
@@ -36,8 +36,6 @@ void RunnerTrail::update(double /*deltaTime*/) {
 
     double deltaX = runnerPosition.x - previousRunnerPosition.x;
     double deltaY = runnerPosition.y - previousRunnerPosition.y;
-
-    game->getRenderer()->setColor(0xFF0000FF);
 
     if (!(deltaX < 10 && deltaY < -20)) {
         for (int i = 1; i <= deltaX + 1; ++i) {
@@ -48,11 +46,15 @@ void RunnerTrail::update(double /*deltaTime*/) {
         }
     }
 
-    game->getRenderer()->drawTexture(backBuffer.get(), Vec2{-deltaX, 0});
+    int backBufferOffset = (int)(world->getCameraPosition().x - totalOffset);
+
+    game->getRenderer()->drawTexture(backBuffer.get(), Vec2{-backBufferOffset, 0});
 
     game->getRenderer()->resetTarget();
 
     game->getRenderer()->setAlphaModulation(frontBuffer.get(), 0x90);
+
+    totalOffset += backBufferOffset;
 
     previousRunnerPosition = runnerPosition;
 }
