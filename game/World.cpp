@@ -52,7 +52,7 @@ void World::update(double timeDelta) {
 
     runnerTrail->update(timeDelta);
 
-    stats.kilometersRan = runner->getPosition().x / PIXELS_PER_METER / 1000.0;
+    stats.metersRan = runner->getPosition().x / PIXELS_PER_METER;
 
     if (stepPlayTime > stepPeriod) {
         stepPlayTime -= stepPeriod;
@@ -131,7 +131,7 @@ void World::drawStats(const Vec2 &position) {
     game->getRenderer()->drawText(position, stringStream.str());
 
     stringStream.str("");
-    stringStream << "Kilometers ran:  " << stats.kilometersRan << "\n";
+    stringStream << "Meters ran:  " << (int)(stats.metersRan * 10) / 10.0 << "\n";
     game->getRenderer()->drawText(position + Vec2{0, 20}, stringStream.str());
 }
 

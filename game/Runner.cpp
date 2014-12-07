@@ -33,7 +33,7 @@ void Runner::update(double delta) {
         world->getStats().timeInAir += delta;
     }
 
-    world->getStats().kilometersRan += forwardMovement;
+    world->getStats().metersRan += forwardMovement;
 }
 
 void Runner::startJump() {
