@@ -17,7 +17,7 @@ void RunnerTrail::update(double /*deltaTime*/) {
 
     if (!trailInitialized) {
         previousRunnerPosition = runner->getPosition();
-        totalOffset = (int)world->getCameraPosition().x;
+        totalOffset = (int) world->getCameraPosition().x;
         trailInitialized = true;
         return;
     }
@@ -46,7 +46,7 @@ void RunnerTrail::update(double /*deltaTime*/) {
         }
     }
 
-    int backBufferOffset = (int)(world->getCameraPosition().x - totalOffset);
+    int backBufferOffset = (int) (world->getCameraPosition().x - totalOffset);
 
     game->getRenderer()->drawTexture(backBuffer.get(), Vec2{-backBufferOffset, 0});
 

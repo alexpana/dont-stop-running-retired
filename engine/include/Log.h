@@ -12,29 +12,29 @@ namespace engine {
     class Log {
     public:
 
-        Log(const std::string& className) : className(className) {
+        Log(const std::string &className) : className(className) {
 
         }
 
-        std::ostream& debug() {
+        std::ostream &debug() {
             return prepareOutputStream("DEBUG");
 
         }
 
-        std::ostream& info() {
+        std::ostream &info() {
             return prepareOutputStream("INFO");
         }
 
-        std::ostream& error() {
+        std::ostream &error() {
             return prepareOutputStream("ERROR");
         }
 
-        std::ostream& warning() {
+        std::ostream &warning() {
             return prepareOutputStream("WARNING");
         }
 
     private:
-        std::ostream &prepareOutputStream(const std::string& level) {
+        std::ostream &prepareOutputStream(const std::string &level) {
             char timestamp[10];
 
             memset(timestamp, 0, sizeof(timestamp));

@@ -35,6 +35,7 @@ namespace engine {
         void setVolume(double volume);
 
         void setSampleVolume(SoundSample *sample, double volume);
+
     private:
         Log log = Log{"Sound"};
     };

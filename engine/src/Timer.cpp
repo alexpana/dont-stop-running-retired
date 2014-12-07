@@ -10,19 +10,18 @@ namespace engine {
             QueryPerformanceFrequency(&TIMER_FREQUENCY);
         }
 
-        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&timestamp));
+        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *>(&timestamp));
     }
-
 
 
     double Timer::seconds() {
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
-        return (double)(currentTime.QuadPart - timestamp) / TIMER_FREQUENCY.QuadPart;
+        return (double) (currentTime.QuadPart - timestamp) / TIMER_FREQUENCY.QuadPart;
     }
 
     void Timer::restart() {
-        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&timestamp));
+        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *>(&timestamp));
     }
 
 }

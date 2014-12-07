@@ -131,7 +131,7 @@ void World::drawStats(const Vec2 &position) {
     game->getRenderer()->drawText(position, stringStream.str());
 
     stringStream.str("");
-    stringStream << "Meters ran:  " << (int)(stats.metersRan * 10) / 10.0 << "\n";
+    stringStream << "Meters ran:  " << (int) (stats.metersRan * 10) / 10.0 << "\n";
     game->getRenderer()->drawText(position + Vec2{0, 20}, stringStream.str());
 }
 

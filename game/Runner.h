@@ -65,7 +65,7 @@ public:
         longJumpStartVelocity = velocity;
     }
 
-    void setPosition(const engine::Vec2& position) {
+    void setPosition(const engine::Vec2 &position) {
         this->position = position;
     }
 
