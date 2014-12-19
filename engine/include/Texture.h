@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <iostream>
+#include <memory>
+#include <string>
 
 #include <SDL_surface.h>
 

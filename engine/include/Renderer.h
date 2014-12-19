@@ -22,7 +22,21 @@ namespace engine {
 
     class Renderer {
     public:
+
+        enum class TextureAnchor {
+            TOP_LEFT,
+            CENTER
+        };
+
         Renderer(SDL_Renderer *renderer);
+
+        ~Renderer();
+
+        Renderer(const Renderer &other) = delete;
+
+        void setTextureAnchor(TextureAnchor textureAnchor);
+
+        TextureAnchor getTextureAnchor();
 
         void setColor(unsigned int rgba);
 
@@ -36,9 +50,9 @@ namespace engine {
 
         void drawCircle(const Vec2 &origin, double radius);
 
-        void drawTexture(const Texture *source, const Vec2 &position, const Rect2 &sourceRect);
+        void drawTexture(const Texture *source, const Vec2 &position, const Rect2 *sourceRect, const double rotation = 0);
 
-        void drawTexture(const Texture *source, const Vec2 &position);
+        void drawTexture(const Texture *source, const Vec2 &position, double rotation = 0);
 
         void fillRect(const Rect2 &rect);
 
@@ -61,7 +75,7 @@ namespace engine {
     private:
         struct Implementation;
 
-        std::shared_ptr<Implementation> impl;
+        std::unique_ptr<Implementation> impl;
     };
 }
 #pragma clang diagnostic pop

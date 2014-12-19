@@ -14,7 +14,7 @@ namespace engine {
     }
 
 
-    double Timer::seconds() {
+    double Timer::seconds() const {
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
         return (double) (currentTime.QuadPart - timestamp) / TIMER_FREQUENCY.QuadPart;

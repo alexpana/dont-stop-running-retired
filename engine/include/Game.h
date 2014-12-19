@@ -6,9 +6,11 @@
 #include <SDL.h>
 
 #include "Filesystem.h"
+#include "Input.h"
 #include "Log.h"
 #include "Renderer.h"
 #include "Random.h"
+#include "Sound.h"
 #include "TextureFactory.h"
 #include "Timer.h"
 
@@ -17,7 +19,9 @@ namespace engine {
 
     typedef std::shared_ptr<Game> GamePtr;
 
-    class Sound;
+    class Updateable;
+
+    class Renderable;
 
     class Game {
     public:
@@ -27,26 +31,6 @@ namespace engine {
             int screenHeight;
             std::string windowTitle;
         };
-
-        class IUpdateable {
-        public:
-            virtual void update(double timeDelta) = 0;
-
-            virtual ~IUpdateable() {
-            };
-        };
-
-        typedef std::shared_ptr<IUpdateable> IUpdateablePtr;
-
-        class IDrawable {
-        public:
-            virtual void draw() = 0;
-
-            virtual ~IDrawable() {
-            };
-        };
-
-        typedef std::shared_ptr<IDrawable> IDrawablePtr;
 
     public:
         Game(const Params &params);
@@ -95,8 +79,19 @@ namespace engine {
             return sound.get();
         }
 
+        Input *getInput() {
+            return input.get();
+        }
+
         int getFrameCount() const {
             return frameCount;
+        }
+
+        /**
+        * Returns the seconds elapsed since starting the game with Game::start()
+        */
+        double getGameTime() const {
+            return gameTimer.seconds();
         }
 
         void startFrame();
@@ -105,9 +100,9 @@ namespace engine {
 
         void update();
 
-        void registerUpdateable(const IUpdateablePtr &updateable);
+        void registerUpdateable(Updateable *updateable);
 
-        void registerDrawable(const IDrawablePtr &drawable);
+        void registerRenderable(Renderable *renderable);
 
     private:
         bool initSDL();
@@ -136,21 +131,24 @@ namespace engine {
 
         std::unique_ptr<TextureFactory> imageFactory;
 
+        std::unique_ptr<Input> input;
+
         bool initialized = false;
 
         int frameCount = 0;
 
         double lastFrameTimeDelta = 0;
 
-        std::vector<IUpdateablePtr> registeredUpdateables;
+        std::vector<Updateable *> registeredUpdateables;
 
-        std::vector<IDrawablePtr> registeredDrawables;
+        std::vector<Renderable *> registeredRenderables;
 
-        Timer timer;
+        Timer frameTimer;
+
+        Timer gameTimer;
 
         const Params initParams;
 
         Log logger;
     };
-
 }

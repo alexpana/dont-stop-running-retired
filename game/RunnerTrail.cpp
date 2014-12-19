@@ -48,7 +48,7 @@ void RunnerTrail::update(double /*deltaTime*/) {
 
     int backBufferOffset = (int) (world->getCameraPosition().x - totalOffset);
 
-    game->getRenderer()->drawTexture(backBuffer.get(), Vec2{-backBufferOffset, 0});
+    game->getRenderer()->drawTexture(backBuffer.get(), Vec2{(double)-backBufferOffset, 0});
 
     game->getRenderer()->resetTarget();
 

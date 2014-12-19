@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Updateable.h"
 #include <Game.h>
 #include <Vec2.h>
 
 class World;
 
-class RunnerTrail : engine::Game::IUpdateable {
+class RunnerTrail : engine::Updateable {
 public:
     RunnerTrail(World *world);
 

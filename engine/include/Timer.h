@@ -9,7 +9,7 @@ namespace engine {
 
         void restart();
 
-        double seconds();
+        double seconds() const;
 
     private:
         uint64_t timestamp;

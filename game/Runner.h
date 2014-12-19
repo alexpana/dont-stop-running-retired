@@ -5,10 +5,12 @@
 #include <Game.h>
 #include <Vec2.h>
 #include <Timer.h>
+#include <Entity.h>
+#include <Physics.h>
 
 class World;
 
-class Runner : public engine::Game::IUpdateable {
+class Runner : public engine::Entity {
 public:
     explicit Runner(World *world) :
             size(20, 40),
@@ -78,7 +80,7 @@ private:
 
     double getDistanceToGround();
 
-public:
+private:
     double gravity = 3000.0;
 
     double longJumpStartVelocity = -700.0;
@@ -87,7 +89,6 @@ public:
 
     engine::Vec2 velocity;
 
-private:
     bool canJump = true;
 
     bool isJumping = false;
@@ -97,6 +98,8 @@ private:
     World *world;
 
     engine::Vec2 position;
+
+    engine::CollisionShape collisionShape;
 
     engine::Vec2 size;
 };

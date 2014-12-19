@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <ostream>
+
 namespace engine {
     class Vec2 {
     public:
@@ -28,6 +30,10 @@ namespace engine {
 
         Vec2 normalized() const;
     };
+
+    inline std::ostream &operator<<(std::ostream &lhs, const Vec2 &rhs) {
+        return lhs << "Vec2{" << rhs.x << ", " << rhs.y << "}";
+    }
 
     inline Vec2 &Vec2::operator+=(const Vec2 &rhs) {
         this->x += rhs.x;

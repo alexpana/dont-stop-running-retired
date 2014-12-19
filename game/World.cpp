@@ -2,24 +2,35 @@
 
 using namespace engine;
 
+class RotatingSpriteRenderable : Renderable {
+public:
+    void render(Renderer *renderer) {
+    }
+
+    Vec2 position;
+    double rotation;
+    std::unique_ptr<Texture> sprite;
+};
+
 World::World(GamePtr game, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
         game(game),
         logger("Game") {
-    runner = std::make_shared<Runner>(this);
+    runner = std::unique_ptr<Runner>{new Runner{this}};
 
-    game->registerUpdateable(runner);
+    game->registerUpdateable(runner.get());
 
     background = game->getTextureFactory()->loadImage("data/bg.png");
     backgroundFar = game->getTextureFactory()->loadImage("data/bg_far.png");
     backgroundMid = game->getTextureFactory()->loadImage("data/bg_mid.png");
     backgroundNear = game->getTextureFactory()->loadImage("data/bg_near.png");
+    sawTexture = game->getTextureFactory()->loadImage("data/saw.png");
 
     stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep.wav"));
     stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep2.wav"));
 
-    game->getSound()->setSampleVolume(stepSoundSamples[0].get(), 0.2);
-    game->getSound()->setSampleVolume(stepSoundSamples[1].get(), 0.2);
+    game->getSound()->setSampleVolume(stepSoundSamples[0].get(), 1.0);
+    game->getSound()->setSampleVolume(stepSoundSamples[1].get(), 1.0);
 
     // add initial block
     createBlock(0, 2048, 256);
@@ -27,14 +38,28 @@ World::World(GamePtr game, TileEnginePtr tileEngine) :
     runner->setPosition(Vec2{160, 256 - runner->getSize().y});
 
     runnerTrail = std::unique_ptr<RunnerTrail>(new RunnerTrail{this});
-}
+};
 
-void World::draw() {
+void World::render(Renderer *renderer) {
+    static Vec2 sawAccel{0, 0};
+    static Vec2 sawPos{100, 100};
+
     drawBackground();
+
+    // draw test saw
+    renderer->setTextureAnchor(Renderer::TextureAnchor::CENTER);
+
+    sawAccel = (mousePosition - sawPos) * 0.1;
+
+    sawPos += sawAccel;
+
+    renderer->drawTexture(sawTexture.get(), sawPos, game->getGameTime() * 300);
+
+    renderer->setTextureAnchor(Renderer::TextureAnchor::TOP_LEFT);
 
     drawBlocks();
 
-    game->getRenderer()->drawTexture(runnerTrail->getTrailTexture(), Vec2{0, 0});
+    renderer->drawTexture(runnerTrail->getTrailTexture(), Vec2{0, 0});
 
     drawRunner();
 
@@ -42,6 +67,11 @@ void World::draw() {
 }
 
 void World::update(double timeDelta) {
+
+    if (game->getInput()->keyIsDown(Key::SPACE) || game->getInput()->mouseButtonIsDown(MouseButton::LEFT)) {
+        runner->addJumpForce();
+    }
+
     if (runner->isInAir()) {
         stats.timeInAir += timeDelta;
     } else {
@@ -54,9 +84,10 @@ void World::update(double timeDelta) {
 
     stats.metersRan = runner->getPosition().x / PIXELS_PER_METER;
 
+#if 0
     if (stepPlayTime > stepPeriod) {
         stepPlayTime -= stepPeriod;
-        stepPeriod = game->getRandom()->nextInt(150, 180);
+        stepPeriod = game->getRandom()->nextInt(150, 180) / 1000.0;
 
         game->getSound()->playSampleOnce(stepSoundSamples[currentStepSample].get());
 
@@ -66,17 +97,12 @@ void World::update(double timeDelta) {
             std::random_shuffle(begin(stepSoundSamples), end(stepSoundSamples));
         }
     }
+#endif
 
     if (shouldGenerateNewBlock()) {
         generateNewBlock();
     }
 
-    // move blocks
-//    for (int i = 0; i < blocks.size(); ++i) {
-//        long double delta = std::sin(blockTimeOffset[i]) * 0.3;
-//        blocks[i].y += delta;
-//        blockTimeOffset[i] += blockVelocity[i];
-//    }
 }
 
 void World::drawBlocks() {
@@ -89,7 +115,7 @@ void World::drawRunner() {
     auto runnerPosition = runner->getPosition();
     auto runnerSize = runner->getSize();
 
-    // draw runner
+    // render runner
     game->getRenderer()->setColor(0x601030FF);
     game->getRenderer()->fillRect(Rect2(runner->getPosition().x - position.x, runnerPosition.y, runnerSize.x, runnerSize.y));
 }
@@ -170,9 +196,9 @@ Stats &World::getStats() {
 }
 
 void World::displayConstants() {
-    std::cout << "Gravity:             " << runner->gravity << std::endl;
-    std::cout << "Jump start velocity: " << runner->longJumpStartVelocity << std::endl;
-    std::cout << "Speed:               " << runner->velocity.x << std::endl;
+//    std::cout << "Gravity:             " << runner->gravity << std::endl;
+//    std::cout << "Jump start velocity: " << runner->longJumpStartVelocity << std::endl;
+//    std::cout << "Speed:               " << runner->velocity.x << std::endl;
 }
 
 void World::generateNewBlock() {
@@ -223,7 +249,7 @@ void World::drawTilingBackgroundTexture(Texture *texture, double offset) {
     Vec2 dst{0, 0};
 
     while (dst.x < game->getScreenWidth()) {
-        game->getRenderer()->drawTexture(texture, dst, src);
+        game->getRenderer()->drawTexture(texture, dst, &src, 0);
         dst.x += src.w;
 
         src.x = (int) (src.x + src.w) % texture->getWidth();

@@ -6,9 +6,8 @@
 #define SDL_MAIN_HANDLED
 #endif
 
-#include <SDL.h>
 
-#include "Event.h"
+#include "Input.h"
 #include "Sound.h"
 #include "TileMap.h"
 #include "TileEngine.h"
@@ -19,6 +18,7 @@ using namespace std;
 static bool running = true;
 
 int main(int argc, char **argv) {
+
     engine::Game::Params params;
     params.screenWidth = 800;
     params.screenHeight = 600;
@@ -44,8 +44,8 @@ int main(int argc, char **argv) {
 
     auto worldPtr = make_shared<World>(game, tileEngine);
 
-    game->registerUpdateable(worldPtr);
-    game->registerDrawable(worldPtr);
+    game->registerUpdateable(worldPtr.get());
+    game->registerRenderable(worldPtr.get());
 
     auto runner = worldPtr->getRunner();
 
@@ -82,51 +82,6 @@ int main(int argc, char **argv) {
 
     while (running) {
         game->startFrame();
-
-        SDL_Event e;
-        while (SDL_PollEvent(&e) != 0) {
-            using engine::Event;
-
-            if (Event::isQuit(e)) {
-                running = false;
-            }
-
-            if (Event::isKeyDown(e, SDLK_1)) {
-                runner->increaseSpeed();
-                worldPtr->displayConstants();
-            }
-
-            if (Event::isKeyDown(e, SDLK_2)) {
-                runner->decreaseSpeed();
-                worldPtr->displayConstants();
-            }
-
-            if (Event::isKeyDown(e, SDLK_3)) {
-                runner->increaseJumpVelocity();
-                worldPtr->displayConstants();
-            }
-
-            if (Event::isKeyDown(e, SDLK_4)) {
-                runner->decreaseJumpVelocity();
-                worldPtr->displayConstants();
-            }
-
-            if (Event::isKeyDown(e, SDLK_5)) {
-                runner->increaseGravity();
-                worldPtr->displayConstants();
-            }
-
-            if (Event::isKeyDown(e, SDLK_6)) {
-                runner->decreaseGravity();
-                worldPtr->displayConstants();
-            }
-        }
-
-        const Uint8 *state = SDL_GetKeyboardState(nullptr);
-
-        if (state[SDL_SCANCODE_SPACE]) {
-            runner->addJumpForce();
-        }
 
         game->update();
 

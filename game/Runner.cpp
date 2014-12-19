@@ -6,6 +6,13 @@
 using namespace std;
 using namespace engine;
 
+class RunnerDrawable : public engine::Renderable {
+public:
+    void render(Renderer *renderer) {
+
+    }
+};
+
 void Runner::update(double delta) {
 
     // update velocity

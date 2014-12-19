@@ -2,7 +2,9 @@
 
 #include <SDL_ttf.h>
 
-#include "Sound.h"
+#include "sdl/SDLInput.h"
+#include "Updateable.h"
+#include "Renderable.h"
 
 namespace engine {
 
@@ -51,7 +53,11 @@ namespace engine {
 
         random = std::unique_ptr<Random>(new Random);
 
+        input = std::unique_ptr<Input>(new SDLInput);
+
         initialized = true;
+
+        gameTimer.restart();
 
         return true;
     }
@@ -94,27 +100,30 @@ namespace engine {
         return TTF_Init() == 0;
     }
 
-    void Game::registerUpdateable(const IUpdateablePtr &updateable) {
+    void Game::registerUpdateable(Updateable *updateable) {
         registeredUpdateables.push_back(updateable);
     }
 
-    void Game::registerDrawable(const IDrawablePtr &drawable) {
-        registeredDrawables.push_back(drawable);
+    void Game::registerRenderable(Renderable *drawable) {
+        registeredRenderables.push_back(drawable);
     }
 
     void Game::startFrame() {
-        timer.restart();
+        frameTimer.restart();
     }
 
     void Game::endFrame() {
         frameCount += 1;
         renderer->flip();
 
-        lastFrameTimeDelta = timer.seconds();
+        lastFrameTimeDelta = frameTimer.seconds();
     }
 
     void Game::update() {
 //        lastFrameTimeDelta = 15;
+
+        input->update();
+
         for (auto &updateable : registeredUpdateables) {
             updateable->update(lastFrameTimeDelta);
         }
@@ -123,8 +132,8 @@ namespace engine {
         renderer->setColor(0x303132ff);
         renderer->clear();
 
-        for (auto &drawable : registeredDrawables) {
-            drawable->draw();
+        for (auto &drawable : registeredRenderables) {
+            drawable->render(renderer.get());
         }
     }
 

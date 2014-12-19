@@ -6,6 +6,9 @@ include_directories(include/)
 
 set(ROOT_SOURCES
     src/Game.cpp
+    src/sdl/SDLInput.cpp
+    src/Physics.cpp
+    src/Renderer.cpp
     src/Sound.cpp
     src/TextureFactory.cpp
     src/TileMap.cpp
@@ -13,46 +16,33 @@ set(ROOT_SOURCES
 
 set(ROOT_HEADERS
     include/Console.h
-	include/Event.h
+    include/Entity.h
 	include/Filesystem.h
     include/FrameCounter.h
     include/Game.h
+    include/Identity.h
+    include/Input.h
+    include/Updateable.h
+    include/Renderable.h
     include/Log.h
+    include/Physics.h
     include/Random.h
     include/Rect2.h
+    include/Renderer.h
     include/Sound.h
     include/Texture.h
     include/TextureFactory.h
     include/TileEngine.h
     include/TileMap.h
     include/Timer.h
+    include/Transform.h
     include/Vec2.h)
 
-# =======================================
-# Physics Sources
-# =======================================
+set(SDL_SOURCES
+    src/sdl/SDLInput.cpp)
 
-set(PHYSICS_SOURCES)
-
-set(PHYSICS_HEADERS)
-
-# =======================================
-# Physics Sources
-# =======================================
-
-set(GRAPHICS_SOURCES
-    src/Renderer.cpp)
-
-set(GRAPHICS_HEADERS
-    include/Renderer.h)
-
-# =======================================
-# Source groups
-# =======================================
-
-source_group(Physics FILES ${PHYSICS_SOURCES} ${PHYSICS_HEADERS})
-source_group(Engine FILES ${ROOT_SOURCES} ${ROOT_HEADERS})
-source_group(Graphics FILES ${GRAPHICS_SOURCES} ${GRAPHICS_HEADERS})
+set(SDL_HEADERS
+    include/SDL/SDLInput.h)
 
 # =======================================
 # Include Directories
@@ -74,11 +64,8 @@ add_library(engine STATIC
     ${ROOT_SOURCES}
     ${ROOT_HEADERS}
 
-    ${PHYSICS_SOURCES}
-    ${PHYSICS_HEADERS}
-
-    ${GRAPHICS_SOURCES}
-    ${GRAPHICS_HEADERS})
+    ${SDL_SOURCES}
+    ${SDL_HEADERS})
 
 target_link_libraries(engine
 

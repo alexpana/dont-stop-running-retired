@@ -2,6 +2,9 @@
 #include <sstream>
 #include <vector>
 
+#include "Renderable.h"
+#include "Updateable.h"
+
 #include "Runner.h"
 #include "RunnerTrail.h"
 #include "Sound.h"
@@ -12,14 +15,14 @@
 static const int TILE_SIZE = 32;
 static const double TOP_MIN = 300.0;
 
-class World : public engine::Game::IUpdateable, public engine::Game::IDrawable {
+class World : public engine::Updateable, public engine::Renderable {
 public:
 
     World(engine::GamePtr game, engine::TileEnginePtr tileEngine);
 
     void update(double timeDelta) override;
 
-    void draw() override;
+    void render(engine::Renderer *renderer) override;
 
     void createBlock(int left, int right, int top);
 
@@ -36,6 +39,8 @@ public:
     Stats &getStats();
 
     void displayConstants();
+
+    engine::Vec2 mousePosition;
 
 private:
     void drawBlocks();
@@ -57,13 +62,15 @@ private:
     void generateNewBlock();
 
 private:
-    std::shared_ptr<Runner> runner;
+    std::unique_ptr<Runner> runner;
 
     engine::Vec2 position;
 
     engine::GamePtr game;
 
     engine::TileEnginePtr tileEngine;
+
+    std::unique_ptr<engine::Texture> sawTexture;
 
     std::unique_ptr<engine::Texture> background;
 
@@ -84,7 +91,7 @@ private:
 
     double stepPlayTime = 0.0;
 
-    double stepPeriod = 140;
+    double stepPeriod = 0.6;
 
     Stats stats;
 
@@ -93,5 +100,7 @@ private:
     static const int PIXELS_PER_METER = 25;
 
     std::unique_ptr<RunnerTrail> runnerTrail;
+
+    std::unique_ptr<engine::Entity> runnerEntity;
 };
 

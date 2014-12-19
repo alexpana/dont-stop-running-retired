@@ -18,10 +18,21 @@ namespace engine {
         TTF_Font *font;
         Log logger;
 
+        Renderer::TextureAnchor textureAnchor = TextureAnchor::TOP_LEFT;
+
         Implementation(SDL_Renderer *renderer) : renderer(renderer), logger("Renderer") {
         }
 
         void drawSurface(SDL_Surface *surface, const Vec2 &position);
+
+        SDL_Point drawOffset(int width, int height) {
+            switch (textureAnchor) {
+                case TextureAnchor::TOP_LEFT:
+                    return SDL_Point{0, 0};
+                case TextureAnchor::CENTER:
+                    return SDL_Point{-width / 2, -height / 2};
+            };
+        }
     };
 
     Renderer::Renderer(SDL_Renderer *renderer) {
@@ -30,6 +41,9 @@ namespace engine {
         impl->font = TTF_OpenFont("data/minecraftia.ttf", 8);
 
         SDL_SetRenderDrawBlendMode(impl->renderer, SDL_BLENDMODE_BLEND);
+    }
+
+    Renderer::~Renderer() {
     }
 
     void Renderer::setColor(unsigned int rgba) {
@@ -71,15 +85,32 @@ namespace engine {
         SDL_RenderFillRect(impl->renderer, &sdlRect);
     }
 
-    void Renderer::drawTexture(const Texture *source, const Vec2 &position, const Rect2 &sourceRect) {
-        SDL_Rect srcRect = {(int) sourceRect.x, (int) sourceRect.y, (int) sourceRect.w, (int) sourceRect.h};
-        SDL_Rect dstRect = {(int) position.x, (int) position.y, (int) sourceRect.w, (int) sourceRect.h};
-        SDL_RenderCopy(impl->renderer, source->getNative(), &srcRect, &dstRect);
+    void Renderer::drawTexture(const Texture *source, const Vec2 &position, const Rect2 *sourceRect, const double rotation) {
+        SDL_Rect srcRect;
+        SDL_Rect dstRect;
+        bool hasSourceRect = false;
+
+        if (sourceRect) {
+            srcRect = {(int) sourceRect->x, (int) sourceRect->y, (int) sourceRect->w, (int) sourceRect->h};
+            hasSourceRect = true;
+        }
+
+        if (sourceRect) {
+            dstRect = {(int) position.x, (int) position.y, (int) sourceRect->w, (int) sourceRect->h};
+        } else {
+            dstRect = {(int) position.x, (int) position.y, source->getWidth(), source->getHeight()};
+        }
+
+        SDL_Point center = impl->drawOffset(source->getWidth(), source->getHeight());
+
+        dstRect.x += center.x;
+        dstRect.y += center.y;
+
+        SDL_RenderCopyEx(impl->renderer, source->getNative(), hasSourceRect ? &srcRect : (SDL_Rect*)nullptr, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
     }
 
-    void Renderer::drawTexture(const Texture *source, const Vec2 &position) {
-        SDL_Rect dstRect = {(int) position.x, (int) position.y, source->getWidth(), source->getHeight()};
-        SDL_RenderCopy(impl->renderer, source->getNative(), nullptr, &dstRect);
+    void Renderer::drawTexture(const Texture *source, const Vec2 &position, double rotation) {
+        drawTexture(source, position, nullptr, rotation);
     }
 
     void Renderer::flip() {
@@ -138,6 +169,14 @@ namespace engine {
         if (error) {
             impl->logger.error() << "Could not set alpha modulation. Reason: " << SDL_GetError() << "\n";
         }
+    }
+
+    void Renderer::setTextureAnchor(Renderer::TextureAnchor textureAnchor) {
+        impl->textureAnchor = textureAnchor;
+    }
+
+    Renderer::TextureAnchor Renderer::getTextureAnchor() {
+        return impl->textureAnchor;
     }
 }
 #pragma clang diagnostic pop
