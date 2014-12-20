@@ -27,17 +27,10 @@ namespace engine {
 
     static Key getKey(const SDL_Event &e) {
         if (!(e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)) {
-            return Key::NONE;
+            return Key::UNKNOWN;
         }
 
-        switch (e.key.keysym.sym) {
-            case SDLK_ESCAPE:
-                return Key::ESC;
-            case SDLK_SPACE:
-                return Key::SPACE;
-            default:
-                return Key::NONE;
-        }
+        return static_cast<Key>(static_cast<int>(e.key.keysym.sym));
     }
 
     static MouseButton getMouseButton(const SDL_Event &e) {

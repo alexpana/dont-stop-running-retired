@@ -68,7 +68,7 @@ void World::render(Renderer *renderer) {
 
 void World::update(double timeDelta) {
 
-    if (game->getInput()->keyIsDown(Key::SPACE) || game->getInput()->mouseButtonIsDown(MouseButton::LEFT)) {
+    if (game->getInput()->keyIsDown(Key::Y)) {
         runner->addJumpForce();
     }
 
