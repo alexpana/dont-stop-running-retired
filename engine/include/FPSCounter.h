@@ -5,7 +5,7 @@
 namespace engine {
     class FPSCounter {
     public:
-        explicit FPSCounter(const engine::Engine* game) :
+        explicit FPSCounter(const engine::Engine *game) :
                 engine(game),
                 lastFrameCount(engine->getFrameCount()) {
         }

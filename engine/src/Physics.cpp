@@ -1,7 +1,5 @@
 #include "Physics.h"
 
-#include <vector>
-
 namespace engine {
 
     static const int MAX_COLLISION_SHAPES = 128;

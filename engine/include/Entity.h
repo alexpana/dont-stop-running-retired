@@ -17,7 +17,7 @@ namespace engine {
             return renderComponent.get();
         };
 
-        void setRenderComponent(std::unique_ptr<Renderable>&& renderComponent) {
+        void setRenderComponent(std::unique_ptr<Renderable> &&renderComponent) {
             std::swap(this->renderComponent, renderComponent);
         }
 
