@@ -145,7 +145,5 @@ namespace engine {
         Timer gameTimer;
 
         const Params initParams;
-
-        Log logger;
     };
 }

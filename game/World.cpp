@@ -2,10 +2,11 @@
 
 using namespace engine;
 
+static engine::Log _log{"World"};
+
 World::World(Engine *game, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
-        engine(game),
-        logger("World") {
+        engine(game) {
     runner = std::unique_ptr<Runner>{new Runner{this}};
     runner->setSpeed(0);
 

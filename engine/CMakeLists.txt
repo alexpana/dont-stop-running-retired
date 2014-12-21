@@ -16,7 +16,7 @@ set(ROOT_HEADERS
     include/Console.h
     include/Entity.h
 	include/Filesystem.h
-    include/FrameCounter.h
+    include/FPSCounter.h
     include/Engine.h
     include/Identity.h
     include/Input.h

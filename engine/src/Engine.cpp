@@ -7,9 +7,11 @@
 #include "Updateable.h"
 #include "Renderable.h"
 
+static engine::Log _log{"Engine"};
+
 namespace engine {
 
-    Engine::Engine(Params const &params) : initParams(params), logger("Engine") {
+    Engine::Engine(Params const &params) : initParams(params) {
     }
 
     Engine::~Engine() {
@@ -40,7 +42,7 @@ namespace engine {
         mainWindow = SDL_CreateWindow(initParams.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, initParams.screenWidth, initParams.screenHeight, SDL_WINDOW_SHOWN);
 
         if (mainWindow == nullptr) {
-            logger.error() << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+            _log.error() << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
 
@@ -77,7 +79,7 @@ namespace engine {
 
     bool Engine::initSDL() {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
-            logger.error() << "Could not init SDL_VIDEO" << std::endl;
+            _log.error() << "Could not init SDL_VIDEO" << std::endl;
             return false;
         }
 
@@ -89,8 +91,8 @@ namespace engine {
 
         int status = IMG_Init(flags);
         if ((status & flags) != flags) {
-            logger.error() << "IMG_Init: Failed to init required png support!" << std::endl;
-            logger.error() << "IMG_Init: " << IMG_GetError() << std::endl;
+            _log.error() << "IMG_Init: Failed to init required png support!" << std::endl;
+            _log.error() << "IMG_Init: " << IMG_GetError() << std::endl;
             return false;
         }
 

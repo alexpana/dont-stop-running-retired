@@ -2,17 +2,19 @@
 
 #include "sdl/SDLTexture.h"
 
+static engine::Log _log{"SDLTextureFactory"};
+
 namespace engine {
 
-    SDLTextureFactory::SDLTextureFactory(Renderer *renderer) : renderer(renderer), log("SDLTextureFactory") {
+    SDLTextureFactory::SDLTextureFactory(Renderer *renderer) : renderer(renderer) {
     }
 
     std::unique_ptr<engine::Texture> SDLTextureFactory::loadTextureFromImage(std::string filename) {
         SDL_Surface *rawSurface = IMG_Load(filename.c_str());
 
         if (rawSurface == nullptr) {
-            log.error() << "Could not load surface" << filename << "\n";
-            log.error() << "IMG_Load: " << IMG_GetError() << "\n";
+            _log.error() << "Could not load surface" << filename << "\n";
+            _log.error() << "IMG_Load: " << IMG_GetError() << "\n";
             return nullptr;
         }
 

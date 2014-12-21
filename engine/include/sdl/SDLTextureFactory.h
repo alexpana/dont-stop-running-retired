@@ -18,6 +18,5 @@ namespace engine {
 
     private:
         Renderer *renderer;
-        Log log;
     };
 }

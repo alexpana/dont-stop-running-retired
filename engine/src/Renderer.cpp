@@ -10,17 +10,17 @@
 #include "Rect2.h"
 #include "sdl/SDLTexture.h"
 
+static engine::Log _log{"Renderer"};
+
 namespace engine {
 
     struct Renderer::Implementation {
     public:
         SDL_Renderer *renderer;
         TTF_Font *font;
-        Log logger;
-
         Renderer::TextureAnchor textureAnchor = TextureAnchor::TOP_LEFT;
 
-        Implementation(SDL_Renderer *renderer) : renderer(renderer), logger("Renderer") {
+        Implementation(SDL_Renderer *renderer) : renderer(renderer) {
         }
 
         void drawSurface(SDL_Surface *surface, const Vec2 &position);
@@ -138,7 +138,7 @@ namespace engine {
         SDL_Texture *sdlTexture = SDL_CreateTexture(impl->renderer, SDL_PIXELFORMAT_RGBA8888, access, (int) size.w, (int) size.h);
 
         if (!sdlTexture) {
-            impl->logger.error() << "Could not create texture. Reason: " << SDL_GetError() << "\n";
+            _log.error() << "Could not create texture. Reason: " << SDL_GetError() << "\n";
         } else {
             SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
         }
@@ -153,21 +153,21 @@ namespace engine {
     void Renderer::setTarget(Texture *texture) {
         int error = SDL_SetRenderTarget(impl->renderer, reinterpret_cast<SDL_Texture *>(texture->getNative()));
         if (error) {
-            impl->logger.error() << "Could not set render target. Reason: " << SDL_GetError() << "\n";
+            _log.error() << "Could not set render target. Reason: " << SDL_GetError() << "\n";
         }
     }
 
     void Renderer::resetTarget() {
         int error = SDL_SetRenderTarget(impl->renderer, nullptr);
         if (error) {
-            impl->logger.error() << "Could not reset render target. Reason: " << SDL_GetError() << "\n";
+            _log.error() << "Could not reset render target. Reason: " << SDL_GetError() << "\n";
         }
     }
 
     void Renderer::setAlphaModulation(Texture *texture, int modulation) {
         int error = SDL_SetTextureAlphaMod(reinterpret_cast<SDL_Texture *>(texture->getNative()), (Uint8) (modulation & 0xFF));
         if (error) {
-            impl->logger.error() << "Could not set alpha modulation. Reason: " << SDL_GetError() << "\n";
+            _log.error() << "Could not set alpha modulation. Reason: " << SDL_GetError() << "\n";
         }
     }
 

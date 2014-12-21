@@ -2,6 +2,8 @@
 
 #include <SDL_mixer.h>
 
+static engine::Log _log{"Sound"};
+
 namespace engine {
 
     struct SoundSample {
@@ -21,7 +23,7 @@ namespace engine {
     }
 
     void Sound::initialize() {
-        log.info() << "Initializing sound\n";
+        _log.info() << "Initializing sound\n";
 
         Mix_Init(0);
 
@@ -30,12 +32,12 @@ namespace engine {
         Mix_Volume(-1, 64);
 
         if (error == -1) {
-            log.error() << "Could not initialize SDL_mixer. Reason: " << Mix_GetError() << "\n";
+            _log.error() << "Could not initialize SDL_mixer. Reason: " << Mix_GetError() << "\n";
         }
     }
 
     void Sound::cleanup() {
-        log.info() << "Cleaning up sound\n";
+        _log.info() << "Cleaning up sound\n";
 
         Mix_CloseAudio();
         Mix_Quit();

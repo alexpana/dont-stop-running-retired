@@ -92,8 +92,6 @@ private:
 
     Stats stats;
 
-    engine::Log logger;
-
     static const int PIXELS_PER_METER = 25;
 
     std::unique_ptr<RunnerTrail> runnerTrail;
