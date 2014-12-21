@@ -8,7 +8,7 @@
 
 #include "Log.h"
 #include "Rect2.h"
-#include "Texture.h"
+#include "sdl/SDLTexture.h"
 
 namespace engine {
 
@@ -98,15 +98,15 @@ namespace engine {
         if (sourceRect) {
             dstRect = {(int) position.x, (int) position.y, (int) sourceRect->w, (int) sourceRect->h};
         } else {
-            dstRect = {(int) position.x, (int) position.y, source->getWidth(), source->getHeight()};
+            dstRect = {(int) position.x, (int) position.y, (int) source->getSize().w, (int) source->getSize().h};
         }
 
-        SDL_Point center = impl->drawOffset(source->getWidth(), source->getHeight());
+        SDL_Point center = impl->drawOffset((int) source->getSize().w, (int) source->getSize().h);
 
         dstRect.x += center.x;
         dstRect.y += center.y;
 
-        SDL_RenderCopyEx(impl->renderer, source->getNative(), hasSourceRect ? &srcRect : (SDL_Rect *) nullptr, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(impl->renderer, reinterpret_cast<SDL_Texture *>(source->getNative()), hasSourceRect ? &srcRect : (SDL_Rect *) nullptr, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
     }
 
     void Renderer::drawTexture(const Texture *source, const Vec2 &position, double rotation) {
@@ -115,10 +115,6 @@ namespace engine {
 
     void Renderer::flip() {
         SDL_RenderPresent(impl->renderer);
-    }
-
-    RendererPtr Renderer::create(SDL_Renderer *renderer) {
-        return std::make_shared<Renderer>(renderer);
     }
 
     void Renderer::drawText(const Vec2 &position, const std::string &text) {
@@ -137,21 +133,25 @@ namespace engine {
         SDL_DestroyTexture(texture);
     }
 
-    std::unique_ptr<Texture> Renderer::createTexture(int w, int h, int access = SDL_TEXTUREACCESS_TARGET) {
+    std::unique_ptr<Texture> Renderer::createTexture(const Vec2 &size, int access = SDL_TEXTUREACCESS_TARGET) {
 
-        SDL_Texture *newTexture = SDL_CreateTexture(impl->renderer, SDL_PIXELFORMAT_RGBA8888, access, w, h);
+        SDL_Texture *sdlTexture = SDL_CreateTexture(impl->renderer, SDL_PIXELFORMAT_RGBA8888, access, (int) size.w, (int) size.h);
 
-        if (!newTexture) {
+        if (!sdlTexture) {
             impl->logger.error() << "Could not create texture. Reason: " << SDL_GetError() << "\n";
         } else {
-            SDL_SetTextureBlendMode(newTexture, SDL_BLENDMODE_BLEND);
+            SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
         }
 
-        return std::unique_ptr<Texture>(new engine::Texture{newTexture});
-    };
+        Texture *texture = new SDLTexture{sdlTexture};
+
+        std::unique_ptr<Texture> result{texture};
+
+        return result;
+    }
 
     void Renderer::setTarget(Texture *texture) {
-        int error = SDL_SetRenderTarget(impl->renderer, texture->getNative());
+        int error = SDL_SetRenderTarget(impl->renderer, reinterpret_cast<SDL_Texture *>(texture->getNative()));
         if (error) {
             impl->logger.error() << "Could not set render target. Reason: " << SDL_GetError() << "\n";
         }
@@ -165,7 +165,7 @@ namespace engine {
     }
 
     void Renderer::setAlphaModulation(Texture *texture, int modulation) {
-        int error = SDL_SetTextureAlphaMod(texture->getNative(), (Uint8) (modulation & 0xFF));
+        int error = SDL_SetTextureAlphaMod(reinterpret_cast<SDL_Texture *>(texture->getNative()), (Uint8) (modulation & 0xFF));
         if (error) {
             impl->logger.error() << "Could not set alpha modulation. Reason: " << SDL_GetError() << "\n";
         }
@@ -182,7 +182,11 @@ namespace engine {
     Vec2 Renderer::getViewportSize() {
         SDL_Rect viewportRect;
         SDL_RenderGetViewport(impl->renderer, &viewportRect);
-        return engine::Vec2{viewportRect.w, viewportRect.h};
+        return engine::Vec2{(double) viewportRect.w, (double) viewportRect.h};
+    }
+
+    void *Renderer::getNativeRenderer() {
+        return impl->renderer;
     }
 }
 #pragma clang diagnostic pop

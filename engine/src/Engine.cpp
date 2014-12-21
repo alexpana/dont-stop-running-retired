@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 
 #include "sdl/SDLInput.h"
+#include "sdl/SDLTextureFactory.h"
 #include "Updateable.h"
 #include "Renderable.h"
 
@@ -49,7 +50,7 @@ namespace engine {
 
         renderer = std::unique_ptr<Renderer>(new Renderer{nativeRenderer});
 
-        imageFactory = std::unique_ptr<TextureFactory>(new TextureFactory{nativeRenderer, *frameBuffer->format});
+        imageFactory = std::unique_ptr<TextureFactory>(new SDLTextureFactory{renderer.get()});
 
         random = std::unique_ptr<Random>(new Random);
 

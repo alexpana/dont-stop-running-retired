@@ -7,8 +7,15 @@
 namespace engine {
     class Vec2 {
     public:
-        double x;
-        double y;
+        union {
+            double x;
+            double w;
+        };
+
+        union {
+            double y;
+            double h;
+        };
 
         Vec2() : x(0), y(0) {
         }

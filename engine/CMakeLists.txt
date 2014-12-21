@@ -6,11 +6,9 @@ include_directories(include/)
 
 set(ROOT_SOURCES
     src/Engine.cpp
-    src/sdl/SDLInput.cpp
     src/Physics.cpp
     src/Renderer.cpp
     src/Sound.cpp
-    src/TextureFactory.cpp
     src/TileMap.cpp
     src/Timer.cpp)
 
@@ -39,10 +37,14 @@ set(ROOT_HEADERS
     include/Vec2.h)
 
 set(SDL_SOURCES
-    src/sdl/SDLInput.cpp)
+    src/sdl/SDLInput.cpp
+    src/sdl/SDLTexture.cpp
+    src/sdl/SDLTextureFactory.cpp)
 
 set(SDL_HEADERS
-    include/SDL/SDLInput.h)
+    include/sdl/SDLInput.h
+    include/sdl/SDLTexture.h
+    include/sdl/SDLTextureFactory.h)
 
 # =======================================
 # Include Directories

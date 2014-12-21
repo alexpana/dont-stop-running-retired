@@ -20,24 +20,27 @@ struct BackgroundRenderer::Implementation {
 };
 
 void BackgroundRenderer::Implementation::drawTilingTexture(Renderer *renderer, Texture *texture, double offset) {
-    int roundedX = (int) offset % texture->getWidth();
+    int roundedX = (int) offset % (int) texture->getSize().w;
     Vec2 viewport = renderer->getViewportSize();
 
     if (roundedX > 0) {
-        roundedX -= texture->getWidth();
+        roundedX -= texture->getSize().w;
     }
 
-    Rect2 src{std::abs(roundedX), 0,
-            std::min((int) viewport.x, texture->getWidth() + roundedX),
-            texture->getHeight()};
+    Rect2 src{
+            (int) std::abs(roundedX),
+            0,
+            (int) std::min(viewport.x, texture->getSize().w + roundedX),
+            (int) texture->getSize().h};
+
     Vec2 dst{0, 0};
 
     while (dst.x < viewport.x) {
         renderer->drawTexture(texture, dst, &src, 0);
         dst.x += src.w;
 
-        src.x = (int) (src.x + src.w) % texture->getWidth();
-        src.w = std::min((int) (viewport.x - dst.x), texture->getWidth());
+        src.x = (int) (src.x + src.w) % (int) texture->getSize().w;
+        src.w = std::min((viewport.x - dst.x), texture->getSize().w);
     }
 }
 

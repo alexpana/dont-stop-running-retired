@@ -48,11 +48,7 @@ private:
 
     void drawBlock(const engine::Rect2 &block);
 
-    void drawBackground();
-
     void drawRunner();
-
-    void drawTilingBackgroundTexture(engine::Texture *texture, double offset);
 
     void drawStats(engine::Vec2 const &position);
 

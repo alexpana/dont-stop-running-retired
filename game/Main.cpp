@@ -35,7 +35,9 @@ int main(int argc, char **argv) {
 
     auto tiles = make_shared<engine::TileMap>();
 
-    auto tileEngine = make_shared<engine::TileEngine>(engine->getRenderer(), tiles, textureFactory->loadImage("./data/tiles.png"));
+    auto tileMap = textureFactory->loadTextureFromImage("./data/tiles.png");
+
+    auto tileEngine = make_shared<engine::TileEngine>(engine->getRenderer(), tiles, tileMap.get());
 
     auto worldPtr = make_shared<World>(engine.get(), tileEngine);
 
@@ -44,6 +46,8 @@ int main(int argc, char **argv) {
 
     ConsoleHandler consoleHandler{worldPtr.get()};
 
+    consoleHandler.start();
+
     while (running) {
         engine->startFrame();
 
@@ -51,6 +55,8 @@ int main(int argc, char **argv) {
 
         engine->endFrame();
     }
+
+    consoleHandler.stop();
 
     engine->stop();
     return 0;

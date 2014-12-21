@@ -14,12 +14,6 @@ namespace engine {
 
     class Texture;
 
-    typedef std::shared_ptr<Texture> TexturePtr;
-
-    class Renderer;
-
-    typedef std::shared_ptr<Renderer> RendererPtr;
-
     class Renderer {
     public:
 
@@ -64,7 +58,7 @@ namespace engine {
 
         void flip();
 
-        std::unique_ptr<Texture> createTexture(int w, int h, int access);
+        std::unique_ptr<Texture> createTexture(const Vec2 &size, int access);
 
         void setTarget(Texture *texture);
 
@@ -72,7 +66,7 @@ namespace engine {
 
         void setAlphaModulation(Texture *texture, int modulation);
 
-        static RendererPtr create(SDL_Renderer *renderer);
+        void *getNativeRenderer();
 
     private:
         struct Implementation;

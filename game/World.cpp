@@ -11,11 +11,11 @@ World::World(Engine *game, TileEnginePtr tileEngine) :
 
     game->registerUpdateable(runner.get());
 
-    background = game->getTextureFactory()->loadImage("data/bg.png");
-    backgroundFar = game->getTextureFactory()->loadImage("data/bg_far.png");
-    backgroundMid = game->getTextureFactory()->loadImage("data/bg_mid.png");
-    backgroundNear = game->getTextureFactory()->loadImage("data/bg_near.png");
-    sawTexture = game->getTextureFactory()->loadImage("data/saw.png");
+    background = game->getTextureFactory()->loadTextureFromImage("data/bg.png");
+    backgroundFar = game->getTextureFactory()->loadTextureFromImage("data/bg_far.png");
+    backgroundMid = game->getTextureFactory()->loadTextureFromImage("data/bg_mid.png");
+    backgroundNear = game->getTextureFactory()->loadTextureFromImage("data/bg_near.png");
+    sawTexture = game->getTextureFactory()->loadTextureFromImage("data/saw.png");
 
     stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep.wav"));
     stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep2.wav"));
@@ -41,7 +41,7 @@ void World::render(Renderer *renderer) {
 
     drawBlocks();
 
-    renderer->drawTexture(runnerTrail->getTrailTexture(), Vec2{0, 0});
+//    renderer->drawTexture(runnerTrail->getTrailTexture(), Vec2{0, 0});
 
     drawRunner();
 
@@ -79,7 +79,7 @@ void World::update(double timeDelta) {
 
 //    position.x = runner->getPosition().x - 160;
 
-    runnerTrail->update(timeDelta);
+//    runnerTrail->update(timeDelta);
 
     stats.metersRan = runner->getPosition().x / PIXELS_PER_METER;
 

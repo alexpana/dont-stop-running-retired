@@ -5,10 +5,12 @@
 using namespace engine;
 
 RunnerTrail::RunnerTrail(World *world) : world(world) {
-    Engine *game = world->getEngine();
-    frontBuffer = game->getRenderer()->createTexture(game->getScreenWidth(), game->getScreenHeight(), SDL_TEXTUREACCESS_TARGET);
-    backBuffer = game->getRenderer()->createTexture(game->getScreenWidth(), game->getScreenHeight(), SDL_TEXTUREACCESS_TARGET);
-    trailGradient = game->getTextureFactory()->loadImage("data/trail.png");
+    Engine *engine = world->getEngine();
+    Renderer *renderer = engine->getRenderer();
+
+    frontBuffer = renderer->createTexture(renderer->getViewportSize(), SDL_TEXTUREACCESS_TARGET);
+    backBuffer = renderer->createTexture(renderer->getViewportSize(), SDL_TEXTUREACCESS_TARGET);
+    trailGradient = engine->getTextureFactory()->loadTextureFromImage("data/trail.png");
 }
 
 void RunnerTrail::update(double /*deltaTime*/) {
