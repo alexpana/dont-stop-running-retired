@@ -9,8 +9,6 @@
 namespace engine {
     class Texture;
 
-    typedef std::shared_ptr<Texture> TexturePtr;
-
     class Texture {
     public:
         Texture(SDL_Texture *texture) : m_texture(texture) {
@@ -34,10 +32,6 @@ namespace engine {
 
         int getHeight() const {
             return m_height;
-        }
-
-        static TexturePtr create(SDL_Texture *native) {
-            return std::make_shared<Texture>(native);
         }
 
     private:

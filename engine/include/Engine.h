@@ -15,29 +15,26 @@
 #include "Timer.h"
 
 namespace engine {
-    class Game;
-
-    typedef std::shared_ptr<Game> GamePtr;
+    class Engine;
 
     class Updateable;
 
     class Renderable;
 
-    class Game {
+    class Engine {
     public:
-        class Params {
-        public:
+        struct Params {
             int screenWidth;
             int screenHeight;
             std::string windowTitle;
         };
 
     public:
-        Game(const Params &params);
+        Engine(const Params &params);
 
-        Game(const Game &other) = delete;
+        Engine(const Engine &other) = delete;
 
-        ~Game();
+        ~Engine();
 
         bool start();
 
@@ -88,9 +85,9 @@ namespace engine {
         }
 
         /**
-        * Returns the seconds elapsed since starting the game with Game::start()
+        * Returns the seconds elapsed since starting the engine with Engine::start()
         */
-        double getGameTime() const {
+        double getElapsedTime() const {
             return gameTimer.seconds();
         }
 

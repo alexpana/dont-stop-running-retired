@@ -5,7 +5,7 @@ include_directories(include/)
 # =======================================
 
 set(ROOT_SOURCES
-    src/Game.cpp
+    src/Engine.cpp
     src/sdl/SDLInput.cpp
     src/Physics.cpp
     src/Renderer.cpp
@@ -19,7 +19,7 @@ set(ROOT_HEADERS
     include/Entity.h
 	include/Filesystem.h
     include/FrameCounter.h
-    include/Game.h
+    include/Engine.h
     include/Identity.h
     include/Input.h
     include/Updateable.h

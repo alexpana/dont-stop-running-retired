@@ -58,6 +58,8 @@ namespace engine {
 
         void drawText(const Vec2 &position, const std::string &text);
 
+        Vec2 getViewportSize();
+
         void clear();
 
         void flip();

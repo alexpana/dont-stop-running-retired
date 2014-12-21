@@ -24,7 +24,5 @@ namespace engine {
         const SDL_PixelFormat m_optimizedPixelFormat;
 
         SDL_Renderer *m_nativeRenderer;
-
-        const TexturePtr m_dummyImage;
     };
 }

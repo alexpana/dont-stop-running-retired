@@ -6,8 +6,7 @@ namespace engine {
 
     TextureFactory::TextureFactory(SDL_Renderer *renderer, const SDL_PixelFormat &optimizedPixelFormat) :
             m_optimizedPixelFormat(optimizedPixelFormat),
-            m_nativeRenderer(renderer),
-            m_dummyImage(nullptr) {
+            m_nativeRenderer(renderer) {
     }
 
     std::unique_ptr<engine::Texture> TextureFactory::loadImage(std::string filename) {

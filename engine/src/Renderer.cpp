@@ -106,7 +106,7 @@ namespace engine {
         dstRect.x += center.x;
         dstRect.y += center.y;
 
-        SDL_RenderCopyEx(impl->renderer, source->getNative(), hasSourceRect ? &srcRect : (SDL_Rect*)nullptr, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(impl->renderer, source->getNative(), hasSourceRect ? &srcRect : (SDL_Rect *) nullptr, &dstRect, rotation, nullptr, SDL_FLIP_NONE);
     }
 
     void Renderer::drawTexture(const Texture *source, const Vec2 &position, double rotation) {
@@ -177,6 +177,12 @@ namespace engine {
 
     Renderer::TextureAnchor Renderer::getTextureAnchor() {
         return impl->textureAnchor;
+    }
+
+    Vec2 Renderer::getViewportSize() {
+        SDL_Rect viewportRect;
+        SDL_RenderGetViewport(impl->renderer, &viewportRect);
+        return engine::Vec2{viewportRect.w, viewportRect.h};
     }
 }
 #pragma clang diagnostic pop

@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "Engine.h"
 
 #include <SDL_ttf.h>
 
@@ -8,16 +8,16 @@
 
 namespace engine {
 
-    Game::Game(Params const &params) : initParams(params), logger("Game") {
+    Engine::Engine(Params const &params) : initParams(params), logger("Engine") {
     }
 
-    Game::~Game() {
+    Engine::~Engine() {
         //Destroy window
         SDL_DestroyWindow(mainWindow);
         mainWindow = nullptr;
     }
 
-    bool Game::start() {
+    bool Engine::start() {
         using namespace std;
 
         if (!initSDL()) {
@@ -62,7 +62,7 @@ namespace engine {
         return true;
     }
 
-    void Game::stop() {
+    void Engine::stop() {
         if (initialized) {
             sound->cleanup();
 
@@ -74,7 +74,7 @@ namespace engine {
         }
     }
 
-    bool Game::initSDL() {
+    bool Engine::initSDL() {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
             logger.error() << "Could not init SDL_VIDEO" << std::endl;
             return false;
@@ -83,7 +83,7 @@ namespace engine {
         return true;
     }
 
-    bool Game::initSDLImage() {
+    bool Engine::initSDLImage() {
         int flags = IMG_INIT_PNG;
 
         int status = IMG_Init(flags);
@@ -96,30 +96,30 @@ namespace engine {
         return true;
     }
 
-    bool Game::initSDLTTF() {
+    bool Engine::initSDLTTF() {
         return TTF_Init() == 0;
     }
 
-    void Game::registerUpdateable(Updateable *updateable) {
+    void Engine::registerUpdateable(Updateable *updateable) {
         registeredUpdateables.push_back(updateable);
     }
 
-    void Game::registerRenderable(Renderable *drawable) {
+    void Engine::registerRenderable(Renderable *drawable) {
         registeredRenderables.push_back(drawable);
     }
 
-    void Game::startFrame() {
+    void Engine::startFrame() {
         frameTimer.restart();
     }
 
-    void Game::endFrame() {
+    void Engine::endFrame() {
         frameCount += 1;
         renderer->flip();
 
         lastFrameTimeDelta = frameTimer.seconds();
     }
 
-    void Game::update() {
+    void Engine::update() {
 //        lastFrameTimeDelta = 15;
 
         input->update();
@@ -137,15 +137,15 @@ namespace engine {
         }
     }
 
-    void Game::stopSDL() {
+    void Engine::stopSDL() {
         SDL_Quit();
     }
 
-    void Game::stopSDLImage() {
+    void Engine::stopSDLImage() {
         IMG_Quit();
     }
 
-    void Game::stopSDLTTF() {
+    void Engine::stopSDLTTF() {
         TTF_Quit();
     }
 }

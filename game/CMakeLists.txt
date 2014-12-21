@@ -1,14 +1,17 @@
 # =======================================
-# Game Sources
+# Engine Sources
 # =======================================
 
 set(GAME_SOURCES
+    BackgroundRenderer.cpp
     Main.cpp
     Runner.cpp
     RunnerTrail.cpp
     World.cpp)
 
 set(GAME_HEADERS
+    BackgroundRenderer.h
+    ConsoleHandler.h
     RunnerTrail.h
     Runner.h
     Stats.h
@@ -18,7 +21,7 @@ set(GAME_HEADERS
 # Source groups
 # =======================================
 
-source_group(Game FILES ${GAME_SOURCES} ${GAME_HEADERS})
+source_group(Engine FILES ${GAME_SOURCES} ${GAME_HEADERS})
 
 # =======================================
 # Executable
@@ -42,7 +45,7 @@ include_directories(../engine/include/)
 # Link libraries
 # =======================================
 
-target_link_libraries(game 
+target_link_libraries(game
     engine
 
     ${SDL2MAIN_LIBRARY}
@@ -59,4 +62,4 @@ target_link_libraries(game
 # =======================================
 # Dependencies libraries
 # =======================================
-add_dependencies(game engine)
+add_dependencies(engine engine)

@@ -5,14 +5,14 @@
 using namespace engine;
 
 RunnerTrail::RunnerTrail(World *world) : world(world) {
-    Game *game = world->getGame();
+    Engine *game = world->getEngine();
     frontBuffer = game->getRenderer()->createTexture(game->getScreenWidth(), game->getScreenHeight(), SDL_TEXTUREACCESS_TARGET);
     backBuffer = game->getRenderer()->createTexture(game->getScreenWidth(), game->getScreenHeight(), SDL_TEXTUREACCESS_TARGET);
     trailGradient = game->getTextureFactory()->loadImage("data/trail.png");
 }
 
 void RunnerTrail::update(double /*deltaTime*/) {
-    Game *game = world->getGame();
+    Engine *game = world->getEngine();
     Runner *runner = world->getRunner();
 
     if (!trailInitialized) {
@@ -61,7 +61,7 @@ void RunnerTrail::update(double /*deltaTime*/) {
 
 void RunnerTrail::drawTrailSegment(int interpolatedX, int interpolatedY) {
     Vec2 position = world->getCameraPosition();
-    world->getGame()->getRenderer()->drawTexture(trailGradient.get(),
+    world->getEngine()->getRenderer()->drawTexture(trailGradient.get(),
             Vec2{interpolatedX - position.x, interpolatedY - position.y});
 }
 

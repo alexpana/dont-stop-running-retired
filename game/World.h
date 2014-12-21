@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 #include <sstream>
 #include <vector>
@@ -11,6 +13,7 @@
 #include "Stats.h"
 #include "TileEngine.h"
 #include "Vec2.h"
+#include "BackgroundRenderer.h"
 
 static const int TILE_SIZE = 32;
 static const double TOP_MIN = 300.0;
@@ -18,7 +21,7 @@ static const double TOP_MIN = 300.0;
 class World : public engine::Updateable, public engine::Renderable {
 public:
 
-    World(engine::GamePtr game, engine::TileEnginePtr tileEngine);
+    World(engine::Engine *game, engine::TileEnginePtr tileEngine);
 
     void update(double timeDelta) override;
 
@@ -32,15 +35,13 @@ public:
 
     Runner *getRunner();
 
-    engine::Game *getGame();
+    engine::Engine *getEngine();
 
     engine::Vec2 getCameraPosition();
 
     Stats &getStats();
 
     void displayConstants();
-
-    engine::Vec2 mousePosition;
 
 private:
     void drawBlocks();
@@ -66,7 +67,7 @@ private:
 
     engine::Vec2 position;
 
-    engine::GamePtr game;
+    engine::Engine *engine;
 
     engine::TileEnginePtr tileEngine;
 
@@ -102,5 +103,7 @@ private:
     std::unique_ptr<RunnerTrail> runnerTrail;
 
     std::unique_ptr<engine::Entity> runnerEntity;
+
+    BackgroundRenderer backgroundPainter;
 };
 
