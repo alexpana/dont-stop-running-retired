@@ -3,8 +3,6 @@
 #include <memory>
 #include <string>
 
-#include "Log.h"
-
 namespace engine {
 
     class SoundSample;

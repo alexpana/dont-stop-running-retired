@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Log.h"
 #include "Renderer.h"
 #include "TextureFactory.h"
 

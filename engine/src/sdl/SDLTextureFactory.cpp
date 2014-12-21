@@ -1,5 +1,6 @@
 #include "sdl/SDLTextureFactory.h"
 
+#include "Log.h"
 #include "sdl/SDLTexture.h"
 
 static engine::Log _log{"SDLTextureFactory"};

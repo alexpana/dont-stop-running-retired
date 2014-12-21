@@ -1,5 +1,7 @@
 #include "World.h"
 
+#include "Log.h"
+
 using namespace engine;
 
 static engine::Log _log{"World"};

@@ -2,6 +2,8 @@
 
 #include <SDL_mixer.h>
 
+#include "Log.h"
+
 static engine::Log _log{"Sound"};
 
 namespace engine {

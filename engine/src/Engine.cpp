@@ -2,6 +2,7 @@
 
 #include <SDL_ttf.h>
 
+#include "Log.h"
 #include "sdl/SDLInput.h"
 #include "sdl/SDLTextureFactory.h"
 #include "Updateable.h"

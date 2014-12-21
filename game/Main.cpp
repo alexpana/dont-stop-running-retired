@@ -6,16 +6,17 @@
 #define SDL_MAIN_HANDLED
 #endif
 
+#include "Log.h"
 #include "World.h"
+
 #include "ConsoleHandler.h"
 
 using namespace std;
 
 static bool running = true;
+engine::Log _log{"Main"};
 
 int main(int argc, char **argv) {
-    engine::Log log{"Main"};
-
     engine::Engine::Params params;
     params.screenWidth = 800;
     params.screenHeight = 600;
@@ -29,7 +30,7 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    log.info() << "Running engine from: " << engine->getFilesystem()->getCurrentWorkingDirectory() << endl;
+    _log.info() << "Running engine from: " << engine->getFilesystem()->getCurrentWorkingDirectory() << endl;
 
     auto textureFactory = engine->getTextureFactory();
 

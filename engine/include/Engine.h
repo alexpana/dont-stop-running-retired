@@ -7,7 +7,6 @@
 
 #include "Filesystem.h"
 #include "Input.h"
-#include "Log.h"
 #include "Renderer.h"
 #include "Random.h"
 #include "Sound.h"
