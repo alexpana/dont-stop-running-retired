@@ -17,15 +17,15 @@ namespace engine {
     class TileEngine {
     public:
         TileEngine(Renderer *renderer, TileMapPtr tileMap, Texture *tileAtlas) :
-                m_renderer(renderer),
-                m_tileMap(tileMap),
-                m_atlas(tileAtlas) {
+                renderer(renderer),
+                tileMap(tileMap),
+                atlas(tileAtlas) {
         }
 
         void drawTile(double x, double y, TileType type) {
-            const Rect2 tileSourceRect = m_tileMap->getTileRect(type);
+            const Rect2 tileSourceRect = tileMap->getTileRect(type);
 
-            m_renderer->drawTexture(m_atlas, Vec2(x, y), &tileSourceRect);
+            renderer->drawTexture(atlas, Vec2(x, y), &tileSourceRect);
         }
 
         void drawTile(Vec2 v, TileType type) {
@@ -33,10 +33,10 @@ namespace engine {
         }
 
     private:
-        Renderer *m_renderer;
+        Renderer *renderer;
 
-        TileMapPtr m_tileMap;
+        TileMapPtr tileMap;
 
-        Texture *m_atlas;
+        Texture *atlas;
     };
 }

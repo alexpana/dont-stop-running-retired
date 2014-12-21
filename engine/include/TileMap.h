@@ -32,6 +32,6 @@ namespace engine {
         const Rect2 getTileRect(TileType tileType);
 
     private:
-        std::vector<Rect2> m_tiles;
+        std::vector<Rect2> tiles;
     };
 }
