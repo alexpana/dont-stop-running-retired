@@ -22,56 +22,48 @@ namespace engine {
             CENTER
         };
 
-        Renderer(SDL_Renderer *renderer);
+        virtual ~Renderer() {
+        };
 
-        ~Renderer();
+        virtual void setTextureAnchor(TextureAnchor textureAnchor) = 0;
 
-        Renderer(const Renderer &other) = delete;
+        virtual TextureAnchor getTextureAnchor() = 0;
 
-        void setTextureAnchor(TextureAnchor textureAnchor);
+        virtual void setColor(unsigned int rgba) = 0;
 
-        TextureAnchor getTextureAnchor();
+        virtual void setColor(int red, int green, int blue, int alpha) = 0;
 
-        void setColor(unsigned int rgba);
+        virtual void setColor(int red, int green, int blue) = 0;
 
-        void setColor(int red, int green, int blue, int alpha);
+        virtual void drawLine(const Vec2 &from, const Vec2 &to) = 0;
 
-        void setColor(int red, int green, int blue);
+        virtual void drawRect(const Rect2 &rect) = 0;
 
-        void drawLine(const Vec2 &from, const Vec2 &to);
+        virtual void drawCircle(const Vec2 &origin, double radius) = 0;
 
-        void drawRect(const Rect2 &rect);
+        virtual void drawTexture(const Texture *source, const Vec2 &position, const Rect2 *sourceRect, const double rotation = 0) = 0;
 
-        void drawCircle(const Vec2 &origin, double radius);
+        virtual void drawTexture(const Texture *source, const Vec2 &position, double rotation = 0) = 0;
 
-        void drawTexture(const Texture *source, const Vec2 &position, const Rect2 *sourceRect, const double rotation = 0);
+        virtual void fillRect(const Rect2 &rect) = 0;
 
-        void drawTexture(const Texture *source, const Vec2 &position, double rotation = 0);
+        virtual void drawText(const Vec2 &position, const std::string &text) = 0;
 
-        void fillRect(const Rect2 &rect);
+        virtual Vec2 getViewportSize() = 0;
 
-        void drawText(const Vec2 &position, const std::string &text);
+        virtual void clear() = 0;
 
-        Vec2 getViewportSize();
+        virtual void flip() = 0;
 
-        void clear();
+        virtual std::unique_ptr<Texture> createTexture(const Vec2 &size, int access) = 0;
 
-        void flip();
+        virtual void setTarget(Texture *texture) = 0;
 
-        std::unique_ptr<Texture> createTexture(const Vec2 &size, int access);
+        virtual void resetTarget() = 0;
 
-        void setTarget(Texture *texture);
+        virtual void setAlphaModulation(Texture *texture, int modulation) = 0;
 
-        void resetTarget();
-
-        void setAlphaModulation(Texture *texture, int modulation);
-
-        void *getNativeRenderer();
-
-    private:
-        struct Implementation;
-
-        std::unique_ptr<Implementation> impl;
+        virtual void *getNativeRenderer() = 0;
     };
 }
 #pragma clang diagnostic pop

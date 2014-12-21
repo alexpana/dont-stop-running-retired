@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include <SDL_ttf.h>
+#include <sdl/SDLRenderer.h>
 
 #include "Log.h"
 #include "sdl/SDLInput.h"
@@ -51,7 +52,7 @@ namespace engine {
 
         frameBuffer = SDL_GetWindowSurface(mainWindow);
 
-        renderer = std::unique_ptr<Renderer>(new Renderer{nativeRenderer});
+        renderer = std::unique_ptr<Renderer>(new SDLRenderer{nativeRenderer});
 
         imageFactory = std::unique_ptr<TextureFactory>(new SDLTextureFactory{renderer.get()});
 

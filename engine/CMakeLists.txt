@@ -7,7 +7,6 @@ include_directories(include/)
 set(ROOT_SOURCES
     src/Engine.cpp
     src/Physics.cpp
-    src/Renderer.cpp
     src/Sound.cpp
     src/TileMap.cpp
     src/Timer.cpp)
@@ -38,11 +37,13 @@ set(ROOT_HEADERS
 
 set(SDL_SOURCES
     src/sdl/SDLInput.cpp
+    src/sdl/SDLRenderer.cpp
     src/sdl/SDLTexture.cpp
     src/sdl/SDLTextureFactory.cpp)
 
 set(SDL_HEADERS
     include/sdl/SDLInput.h
+    include/sdl/SDLRenderer.h
     include/sdl/SDLTexture.h
     include/sdl/SDLTextureFactory.h)
 
