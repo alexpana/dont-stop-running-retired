@@ -6,7 +6,7 @@
 #include <SDL.h>
 
 #include "Filesystem.h"
-#include "Input.h"
+#include "InputSystem.h"
 #include "Renderer.h"
 #include "Random.h"
 #include "Sound.h"
@@ -75,7 +75,7 @@ namespace engine {
             return sound.get();
         }
 
-        Input *getInput() {
+        InputSystem *getInput() {
             return input.get();
         }
 
@@ -127,7 +127,7 @@ namespace engine {
 
         std::unique_ptr<TextureFactory> imageFactory;
 
-        std::unique_ptr<Input> input;
+        std::unique_ptr<InputSystem> input;
 
         bool initialized = false;
 

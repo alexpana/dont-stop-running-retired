@@ -1,51 +1,14 @@
 #pragma once
 
-#include <thread>
-
-#include "World.h"
+class World;
 
 class ConsoleHandler {
 public:
-    ConsoleHandler(World *world) {
-        std::thread{[&]() {
-            while (!started) {
-                std::this_thread::yield();
-            }
+    ConsoleHandler(World *world);
 
-            while (!stopped) {
-                std::string cmd;
-                int n;
-                std::cin >> cmd;
+    void start();
 
-                if (cmd == "setv") {
-                    std::cin >> n;
-                    world->getRunner()->setSpeed(n);
-                }
-
-                if (cmd == "setg") {
-                    std::cin >> n;
-                    world->getRunner()->setGravity(n);
-                }
-
-                if (cmd == "setj") {
-                    std::cin >> n;
-                    world->getRunner()->setJumpVelocity(n);
-                }
-
-                if (cmd == "p") {
-                    world->displayConstants();
-                }
-            }
-        }}.detach();
-    }
-
-    void start() {
-        started = true;
-    }
-
-    void stop() {
-        stopped = true;
-    }
+    void stop();
 
 private:
     bool started = false;

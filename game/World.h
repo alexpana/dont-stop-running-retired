@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <StateInput.h>
 
 #include "Renderable.h"
 #include "Updateable.h"
@@ -21,7 +22,9 @@ static const double TOP_MIN = 300.0;
 class World : public engine::Updateable, public engine::Renderable {
 public:
 
-    World(engine::Engine *game, engine::TileEnginePtr tileEngine);
+    World(engine::Engine *engine, engine::TileEnginePtr tileEngine);
+
+    ~World();
 
     void update(double timeDelta) override;
 
@@ -97,6 +100,8 @@ private:
     std::unique_ptr<RunnerTrail> runnerTrail;
 
     std::unique_ptr<engine::Entity> runnerEntity;
+
+    std::unique_ptr<engine::StateInput> input;
 
     BackgroundRenderer backgroundPainter;
 };

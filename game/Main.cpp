@@ -1,15 +1,15 @@
-#include <iostream>
-#include <map>
-#include <thread>
-
 #ifndef SDL_MAIN_HANDLED
 #define SDL_MAIN_HANDLED
 #endif
 
-#include "Log.h"
-#include "World.h"
+#include <iostream>
+
+#include <Engine.h>
+#include <Log.h>
+#include <TileEngine.h>
 
 #include "ConsoleHandler.h"
+#include "World.h"
 
 using namespace std;
 
@@ -42,9 +42,6 @@ int main(int argc, char **argv) {
 
     auto worldPtr = make_shared<World>(engine.get(), tileEngine);
 
-    engine->registerUpdateable(worldPtr.get());
-    engine->registerRenderable(worldPtr.get());
-
     ConsoleHandler consoleHandler{worldPtr.get()};
 
     consoleHandler.start();
@@ -60,5 +57,6 @@ int main(int argc, char **argv) {
     consoleHandler.stop();
 
     engine->stop();
+
     return 0;
 }

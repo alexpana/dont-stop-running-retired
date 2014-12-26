@@ -4,6 +4,7 @@
 
 set(GAME_SOURCES
     BackgroundRenderer.cpp
+    ConsoleHandler.cpp
     Main.cpp
     Runner.cpp
     RunnerTrail.cpp

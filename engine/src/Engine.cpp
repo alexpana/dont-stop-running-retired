@@ -4,7 +4,7 @@
 #include <sdl/SDLRenderer.h>
 
 #include "Log.h"
-#include "sdl/SDLInput.h"
+#include "sdl/SDLInputSystem.h"
 #include "sdl/SDLTextureFactory.h"
 #include "Updateable.h"
 #include "Renderable.h"
@@ -17,7 +17,6 @@ namespace engine {
     }
 
     Engine::~Engine() {
-        //Destroy window
         SDL_DestroyWindow(mainWindow);
         mainWindow = nullptr;
     }
@@ -40,7 +39,6 @@ namespace engine {
         sound = std::unique_ptr<Sound>(new Sound);
         sound->initialize();
 
-        //Create window
         mainWindow = SDL_CreateWindow(initParams.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, initParams.screenWidth, initParams.screenHeight, SDL_WINDOW_SHOWN);
 
         if (mainWindow == nullptr) {
@@ -58,7 +56,7 @@ namespace engine {
 
         random = std::unique_ptr<Random>(new Random);
 
-        input = std::unique_ptr<Input>(new SDLInput);
+        input = std::unique_ptr<InputSystem>(new SDLInputSystem);
 
         initialized = true;
 

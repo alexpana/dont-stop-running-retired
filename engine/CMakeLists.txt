@@ -6,19 +6,23 @@ include_directories(include/)
 
 set(ROOT_SOURCES
     src/Engine.cpp
+    src/InputSystem.cpp
     src/Physics.cpp
     src/Sound.cpp
+    src/StateInput.cpp
     src/TileMap.cpp
     src/Timer.cpp)
 
 set(ROOT_HEADERS
     include/Console.h
+    include/Constants.h
     include/Entity.h
 	include/Filesystem.h
     include/FPSCounter.h
     include/Engine.h
     include/Identity.h
-    include/Input.h
+    include/StateInput.h
+    include/InputSystem.h
     include/Updateable.h
     include/Renderable.h
     include/Log.h
@@ -36,13 +40,13 @@ set(ROOT_HEADERS
     include/Vec2.h)
 
 set(SDL_SOURCES
-    src/sdl/SDLInput.cpp
+    src/sdl/SDLInputSystem.cpp
     src/sdl/SDLRenderer.cpp
     src/sdl/SDLTexture.cpp
     src/sdl/SDLTextureFactory.cpp)
 
 set(SDL_HEADERS
-    include/sdl/SDLInput.h
+    include/sdl/SDLInputSystem.h
     include/sdl/SDLRenderer.h
     include/sdl/SDLTexture.h
     include/sdl/SDLTextureFactory.h)

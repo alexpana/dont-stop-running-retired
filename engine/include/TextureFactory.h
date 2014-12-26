@@ -7,9 +7,10 @@
 #include "Texture.h"
 
 namespace engine {
-    class TextureFactory {
-
-    public:
+    struct TextureFactory {
         virtual std::unique_ptr<engine::Texture> loadTextureFromImage(std::string filename) = 0;
+
+        virtual ~TextureFactory() {
+        }
     };
 }

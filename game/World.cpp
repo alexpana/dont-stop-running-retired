@@ -6,45 +6,59 @@ using namespace engine;
 
 static engine::Log _log{"World"};
 
-World::World(Engine *game, TileEnginePtr tileEngine) :
+World::World(Engine *engine, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
-        engine(game) {
+        engine(engine) {
+
+    engine->registerUpdateable(this);
+    engine->registerRenderable(this);
+
     runner = std::unique_ptr<Runner>{new Runner{this}};
-    runner->setSpeed(0);
+    runner->setPosition({160, 256 - runner->getSize().y});
+    engine->registerUpdateable(runner.get());
 
-    game->registerUpdateable(runner.get());
-
-    background = game->getTextureFactory()->loadTextureFromImage("data/bg.png");
-    backgroundFar = game->getTextureFactory()->loadTextureFromImage("data/bg_far.png");
-    backgroundMid = game->getTextureFactory()->loadTextureFromImage("data/bg_mid.png");
-    backgroundNear = game->getTextureFactory()->loadTextureFromImage("data/bg_near.png");
-    sawTexture = game->getTextureFactory()->loadTextureFromImage("data/saw.png");
-
-    stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep.wav"));
-    stepSoundSamples.push_back(game->getSound()->loadSample("data/footstep2.wav"));
-
-    game->getSound()->setSampleVolume(stepSoundSamples[0].get(), 1.0);
-    game->getSound()->setSampleVolume(stepSoundSamples[1].get(), 1.0);
-
-    // add initial block
-    createBlock(0, 2048, 256);
-
-    runner->setPosition(Vec2{160, 256 - runner->getSize().y});
-
-    runnerTrail = std::unique_ptr<RunnerTrail>(new RunnerTrail{this});
+    background = engine->getTextureFactory()->loadTextureFromImage("data/bg.png");
+    backgroundFar = engine->getTextureFactory()->loadTextureFromImage("data/bg_far.png");
+    backgroundMid = engine->getTextureFactory()->loadTextureFromImage("data/bg_mid.png");
+    backgroundNear = engine->getTextureFactory()->loadTextureFromImage("data/bg_near.png");
 
     backgroundPainter.addTexture(background.get(), 0);
     backgroundPainter.addTexture(backgroundFar.get(), 0.25);
     backgroundPainter.addTexture(backgroundMid.get(), 0.41);
     backgroundPainter.addTexture(backgroundNear.get(), 0.83);
+
+    sawTexture = engine->getTextureFactory()->loadTextureFromImage("data/saw.png");
+
+    stepSoundSamples.push_back(engine->getSound()->loadSample("data/footstep.wav"));
+    stepSoundSamples.push_back(engine->getSound()->loadSample("data/footstep2.wav"));
+
+    runnerTrail = std::unique_ptr<RunnerTrail>(new RunnerTrail{this});
+
+    input = std::unique_ptr<StateInput>(new StateInput);
+    engine->getInput()->addEventHandler(input->getEventHandler(), 1);
+
+    createBlock(0, 2048, 256);
 };
+
+World::~World() {
+    engine->getInput()->removeEventHandler(input->getEventHandler());
+
+    backgroundPainter.removeTexture(backgroundNear.get());
+    backgroundPainter.removeTexture(backgroundMid.get());
+    backgroundPainter.removeTexture(backgroundFar.get());
+    backgroundPainter.removeTexture(background.get());
+
+    // todo: unregister runner updateable
+
+    // todo: unregister this updateable and drawable
+}
 
 void World::render(Renderer *renderer) {
     backgroundPainter.render(renderer, -position.x);
 
     drawBlocks();
 
-//    renderer->drawTexture(runnerTrail->getTrailTexture(), Vec2{0, 0});
+    renderer->drawTexture(runnerTrail->getTrailTexture(), {0, 0});
 
     drawRunner();
 
@@ -55,22 +69,22 @@ void World::update(double timeDelta) {
     static Vec2 previousMousePosition;
     static bool dragWorld;
 
-    if (engine->getInput()->mouseButtonIsDown(MouseButton::LEFT) && !dragWorld) {
-        previousMousePosition = engine->getInput()->getMousePosition();
+    if (input->mouseButtonIsDown(MouseButton::LEFT) && !dragWorld) {
+        previousMousePosition = input->getMousePosition();
         dragWorld = true;
     }
 
-    if (!engine->getInput()->mouseButtonIsDown(MouseButton::LEFT) && dragWorld) {
+    if (!input->mouseButtonIsDown(MouseButton::LEFT) && dragWorld) {
         dragWorld = false;
     }
 
     if (dragWorld) {
-        Vec2 offset = previousMousePosition - engine->getInput()->getMousePosition();
+        Vec2 offset = previousMousePosition - input->getMousePosition();
         position += offset;
-        previousMousePosition = engine->getInput()->getMousePosition();
+        previousMousePosition = input->getMousePosition();
     }
 
-    if (engine->getInput()->keyIsDown(Key::Y)) {
+    if (input->keyIsDown(Key::SPACE)) {
         runner->addJumpForce();
     }
 
@@ -80,9 +94,9 @@ void World::update(double timeDelta) {
         stepPlayTime += timeDelta;
     }
 
-//    position.x = runner->getPosition().x - 160;
+    position.x = runner->getPosition().x - 160;
 
-//    runnerTrail->update(timeDelta);
+    runnerTrail->update(timeDelta);
 
     stats.metersRan = runner->getPosition().x / PIXELS_PER_METER;
 
@@ -119,7 +133,7 @@ void World::drawRunner() {
 
     // render runner
     engine->getRenderer()->setColor(0x601030FF);
-    engine->getRenderer()->fillRect(Rect2(runner->getPosition().x - position.x, runnerPosition.y, runnerSize.x, runnerSize.y));
+    engine->getRenderer()->fillRect({runner->getPosition().x - position.x, runnerPosition.y, runnerSize.x, runnerSize.y});
 }
 
 inline void World::drawBlock(Rect2 const &block) {
@@ -152,7 +166,7 @@ void World::drawStats(const Vec2 &position) {
 }
 
 void World::createBlock(int left, int right, int top) {
-    addBlock(Rect2(left, top, right, 800));
+    addBlock({left, top, right, 800});
 }
 
 double World::obstacleDistance(Vec2 position) {

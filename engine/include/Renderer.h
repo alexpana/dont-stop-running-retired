@@ -14,15 +14,10 @@ namespace engine {
 
     class Texture;
 
-    class Renderer {
-    public:
-
+    struct Renderer {
         enum class TextureAnchor {
             TOP_LEFT,
             CENTER
-        };
-
-        virtual ~Renderer() {
         };
 
         virtual void setTextureAnchor(TextureAnchor textureAnchor) = 0;
@@ -64,6 +59,9 @@ namespace engine {
         virtual void setAlphaModulation(Texture *texture, int modulation) = 0;
 
         virtual void *getNativeRenderer() = 0;
+
+        virtual ~Renderer() {
+        };
     };
 }
 #pragma clang diagnostic pop
