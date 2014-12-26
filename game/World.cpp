@@ -10,9 +10,6 @@ World::World(Engine *engine, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
         engine(engine) {
 
-    engine->registerUpdateable(this);
-    engine->registerRenderable(this);
-
     runner = std::unique_ptr<Runner>{new Runner{this}};
     runner->setPosition({160, 256 - runner->getSize().y});
     engine->registerUpdateable(runner.get());
@@ -38,6 +35,9 @@ World::World(Engine *engine, TileEnginePtr tileEngine) :
     engine->getInput()->addEventHandler(input->getEventHandler(), 1);
 
     createBlock(0, 2048, 256);
+
+    engine->registerUpdateable(this);
+    engine->registerRenderable(this);
 };
 
 World::~World() {
@@ -133,7 +133,7 @@ void World::drawRunner() {
 
     // render runner
     engine->getRenderer()->setColor(0x601030FF);
-    engine->getRenderer()->fillRect({runner->getPosition().x - position.x, runnerPosition.y, runnerSize.x, runnerSize.y});
+    engine->getRenderer()->fillRect({runner->getPosition().x - position.x, runnerPosition.y - position.y, runnerSize.x, runnerSize.y});
 }
 
 inline void World::drawBlock(Rect2 const &block) {
@@ -143,13 +143,13 @@ inline void World::drawBlock(Rect2 const &block) {
     double screenX = block.x - position.x;
 
     for (int i = 0; i < block.w / TILE_SIZE; ++i) {
-        tileEngine->drawTile(screenX + i * TILE_SIZE, block.y, GRASS_TOP);
+        tileEngine->drawTile(screenX + i * TILE_SIZE, block.y - position.y, GRASS_TOP);
     }
 
     for (int i = 0; i < block.w / TILE_SIZE; ++i) {
         for (int j = 1; j < 100; ++j) {
-            if (j * TILE_SIZE + block.y > engine->getScreenHeight()) break;
-            tileEngine->drawTile(screenX + i * TILE_SIZE, block.y + j * TILE_SIZE, GROUND);
+            if (j * TILE_SIZE + block.y - position.y > engine->getScreenHeight()) break;
+            tileEngine->drawTile(screenX + i * TILE_SIZE, block.y + j * TILE_SIZE - position.y, GROUND);
         }
     }
 }
