@@ -14,6 +14,7 @@ set(ROOT_SOURCES
     src/Timer.cpp)
 
 set(ROOT_HEADERS
+    include/CompileFlags.h
     include/Console.h
     include/Constants.h
     include/Entity.h
@@ -26,6 +27,7 @@ set(ROOT_HEADERS
     include/Updateable.h
     include/Renderable.h
     include/Log.h
+    include/Memory.h
     include/Physics.h
     include/Random.h
     include/Rect2.h
