@@ -1,12 +1,10 @@
 #pragma once
 
-#include <memory>
-
-#include "Engine.h"
-#include <Vec2.h>
-#include <Timer.h>
+#include <Engine.h>
 #include <Entity.h>
+#include <Timer.h>
 #include <Physics.h>
+#include <Vec2.h>
 
 class World;
 

@@ -3,9 +3,8 @@
 
 #pragma once
 
-#include <memory>
-
 #include "Constants.h"
+#include "Memory.h"
 
 namespace engine {
     class Vec2;

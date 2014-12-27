@@ -20,6 +20,9 @@ namespace engine {
         Mix_Chunk *mixChunk;
     };
 
+    void SoundSampleDeleter::operator()(SoundSample *sample) {
+        delete sample;
+    }
 
     Sound::Sound() {
     }
@@ -58,10 +61,6 @@ namespace engine {
 
     void Sound::playSampleRepeated(SoundSample *sample) {
         Mix_PlayChannel(-1, sample->mixChunk, -1);
-    }
-
-    void SoundSampleDeleter::operator()(SoundSample *sample) {
-        delete sample;
     }
 
     void Sound::setVolume(double volume) {

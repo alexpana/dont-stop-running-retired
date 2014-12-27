@@ -22,10 +22,6 @@ namespace engine {
         SDL_Texture *sdlTexture = SDL_CreateTextureFromSurface(
                 reinterpret_cast<SDL_Renderer *>(renderer->getNativeRenderer()), rawSurface);
 
-        SDLTexture *texture = new SDLTexture{sdlTexture};
-
-        auto result = std::unique_ptr<Texture>(texture);
-
-        return result;
+        return std::make_unique<SDLTexture>(sdlTexture);
     }
 }

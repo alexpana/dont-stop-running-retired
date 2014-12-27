@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 
 #include <SDL.h>
+
+#include "Memory.h"
 
 namespace engine {
 
@@ -16,10 +17,6 @@ namespace engine {
         RUNNER,
         TILE_TYPE_COUNT
     };
-
-    class TileMap;
-
-    typedef std::shared_ptr<TileMap> TileMapPtr;
 
     class TileMap {
     public:

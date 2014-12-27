@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-
-#include <Texture.h>
+#include "Texture.h"
+#include "Memory.h"
 
 struct SDL_Texture;
 

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-
 #include "Constants.h"
+#include "Memory.h"
 #include "Vec2.h"
 
 namespace engine {

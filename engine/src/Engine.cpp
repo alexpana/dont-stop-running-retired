@@ -36,7 +36,7 @@ namespace engine {
             return false;
         }
 
-        sound = std::unique_ptr<Sound>(new Sound);
+        sound = std::make_unique<Sound>();
         sound->initialize();
 
         mainWindow = SDL_CreateWindow(initParams.windowTitle.c_str(), 1000, SDL_WINDOWPOS_UNDEFINED, initParams.screenWidth, initParams.screenHeight, SDL_WINDOW_SHOWN);
@@ -50,13 +50,13 @@ namespace engine {
 
         frameBuffer = SDL_GetWindowSurface(mainWindow);
 
-        renderer = std::unique_ptr<Renderer>(new SDLRenderer{nativeRenderer});
+        renderer = std::make_unique<SDLRenderer>(nativeRenderer);
 
-        imageFactory = std::unique_ptr<TextureFactory>(new SDLTextureFactory{renderer.get()});
+        imageFactory = std::make_unique<SDLTextureFactory>(renderer.get());
 
-        random = std::unique_ptr<Random>(new Random);
+        random = std::make_unique<Random>();
 
-        input = std::unique_ptr<InputSystem>(new SDLInputSystem);
+        input = std::make_unique<SDLInputSystem>();
 
         initialized = true;
 

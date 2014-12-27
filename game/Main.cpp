@@ -34,11 +34,11 @@ int main(int argc, char **argv) {
 
     auto textureFactory = engine->getTextureFactory();
 
-    auto tiles = make_shared<engine::TileMap>();
+    auto tiles = make_unique<engine::TileMap>();
 
     auto tileMap = textureFactory->loadTextureFromImage("./data/tiles.png");
 
-    auto tileEngine = make_shared<engine::TileEngine>(engine->getRenderer(), tiles, tileMap.get());
+    auto tileEngine = make_shared<engine::TileEngine>(engine->getRenderer(), tiles.get(), tileMap.get());
 
     auto worldPtr = make_shared<World>(engine.get(), tileEngine);
 

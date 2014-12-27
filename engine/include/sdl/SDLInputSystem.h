@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-
 #include "InputSystem.h"
+#include "Memory.h"
 
 namespace engine {
     class SDLInputSystem : public InputSystem {

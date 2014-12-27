@@ -63,7 +63,7 @@ void BackgroundRenderer::render(Renderer *renderer, double offset) {
 }
 
 BackgroundRenderer::BackgroundRenderer() {
-    impl = std::unique_ptr<Implementation>(new Implementation);
+    impl = std::make_unique<Implementation>();
 }
 
 BackgroundRenderer::~BackgroundRenderer() {

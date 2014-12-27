@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include <memory>
 #include <string>
 
 #include <SDL.h>
 
 #include "Filesystem.h"
 #include "InputSystem.h"
+#include "Memory.h"
 #include "Renderer.h"
 #include "Random.h"
 #include "Sound.h"

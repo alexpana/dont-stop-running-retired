@@ -13,7 +13,7 @@ namespace engine {
     };
 
     SDLTexture::SDLTexture(void *texture) {
-        impl = std::unique_ptr<Implementation>(new Implementation);
+        impl = std::make_unique<Implementation>();
         impl->nativeTexture = reinterpret_cast<SDL_Texture *>(texture);
 
         int w, h;

@@ -91,7 +91,7 @@ namespace engine {
     }
 
     SDLInputSystem::SDLInputSystem() {
-        impl = std::unique_ptr<SDLInputSystem::Implementation>(new SDLInputSystem::Implementation);
+        impl = std::make_unique<Implementation>();
     }
 
     SDLInputSystem::~SDLInputSystem() {

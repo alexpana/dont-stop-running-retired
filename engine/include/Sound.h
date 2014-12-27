@@ -1,7 +1,8 @@
 #pragma once
 
-#include <memory>
 #include <string>
+
+#include "Memory.h"
 
 namespace engine {
 
@@ -9,10 +10,11 @@ namespace engine {
 
     class SoundSampleDeleter {
     public:
+        // Implement this to destroy and release a SoundSample*
         void operator()(SoundSample *);
     };
 
-    typedef std::unique_ptr<SoundSample, SoundSampleDeleter> SoundSamplePtr;
+    using SoundSamplePtr = std::unique_ptr<SoundSample, SoundSampleDeleter>;
 
     class Sound {
 

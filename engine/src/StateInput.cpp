@@ -61,7 +61,7 @@ namespace engine {
     }
 
     StateInput::StateInput() {
-        impl = std::unique_ptr<StateInput::Implementation>(new StateInput::Implementation);
+        impl = std::make_unique<StateInput::Implementation>();
     }
 
     StateInput::~StateInput() {

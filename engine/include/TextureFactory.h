@@ -1,9 +1,8 @@
 #pragma once
 
-#include <memory>
-
 #include <SDL_image.h>
 
+#include "Memory.h"
 #include "Texture.h"
 
 namespace engine {

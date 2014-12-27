@@ -2,7 +2,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include <memory>
+#include "Memory.h"
 
 class SDL_Renderer;
 

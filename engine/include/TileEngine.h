@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-
 #include "Engine.h"
+#include "Memory.h"
 #include "Renderer.h"
 #include "Rect2.h"
 #include "Texture.h"
@@ -16,7 +15,7 @@ namespace engine {
 
     class TileEngine {
     public:
-        TileEngine(Renderer *renderer, TileMapPtr tileMap, Texture *tileAtlas) :
+        TileEngine(Renderer *renderer, TileMap *tileMap, Texture *tileAtlas) :
                 renderer(renderer),
                 tileMap(tileMap),
                 atlas(tileAtlas) {
@@ -35,7 +34,7 @@ namespace engine {
     private:
         Renderer *renderer;
 
-        TileMapPtr tileMap;
+        TileMap *tileMap;
 
         Texture *atlas;
     };

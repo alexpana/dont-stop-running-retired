@@ -1,6 +1,7 @@
 #include "World.h"
 
-#include "Log.h"
+#include <Log.h>
+#include <Memory.h>
 
 using namespace engine;
 
@@ -10,7 +11,7 @@ World::World(Engine *engine, TileEnginePtr tileEngine) :
         tileEngine(tileEngine),
         engine(engine) {
 
-    runner = std::unique_ptr<Runner>{new Runner{this}};
+    runner = std::make_unique<Runner>(this);
     runner->setPosition({160, 256 - runner->getSize().y});
     engine->registerUpdateable(runner.get());
 
@@ -29,9 +30,9 @@ World::World(Engine *engine, TileEnginePtr tileEngine) :
     stepSoundSamples.push_back(engine->getSound()->loadSample("data/footstep.wav"));
     stepSoundSamples.push_back(engine->getSound()->loadSample("data/footstep2.wav"));
 
-    runnerTrail = std::unique_ptr<RunnerTrail>(new RunnerTrail{this});
+    runnerTrail = std::make_unique<RunnerTrail>(this);
 
-    input = std::unique_ptr<StateInput>(new StateInput);
+    input = std::make_unique<StateInput>();
     engine->getInput()->addEventHandler(input->getEventHandler(), 1);
 
     createBlock(0, 2048, 256);

@@ -32,7 +32,7 @@ namespace engine {
     };
 
     SDLRenderer::SDLRenderer(void *nativeRenderer) {
-        impl = std::unique_ptr<Implementation>(new Implementation{reinterpret_cast<SDL_Renderer*>(nativeRenderer)});
+        impl = std::make_unique<Implementation>(reinterpret_cast<SDL_Renderer*>(nativeRenderer));
 
         impl->font = TTF_OpenFont("data/minecraftia.ttf", 8);
 
@@ -131,19 +131,15 @@ namespace engine {
 
     std::unique_ptr<Texture> SDLRenderer::createTexture(const Vec2 &size, int access = SDL_TEXTUREACCESS_TARGET) {
 
-        SDL_Texture *sdlTexture = SDL_CreateTexture(impl->renderer, SDL_PIXELFORMAT_RGBA8888, access, (int) size.w, (int) size.h);
+        SDL_Texture *nativeTexture = SDL_CreateTexture(impl->renderer, SDL_PIXELFORMAT_RGBA8888, access, (int) size.w, (int) size.h);
 
-        if (!sdlTexture) {
+        if (!nativeTexture) {
             _log.error() << "Could not create texture. Reason: " << SDL_GetError() << "\n";
         } else {
-            SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
+            SDL_SetTextureBlendMode(nativeTexture, SDL_BLENDMODE_BLEND);
         }
 
-        Texture *texture = new SDLTexture{sdlTexture};
-
-        std::unique_ptr<Texture> result{texture};
-
-        return result;
+        return std::make_unique<SDLTexture>(nativeTexture);
     }
 
     void SDLRenderer::setTarget(Texture *texture) {
