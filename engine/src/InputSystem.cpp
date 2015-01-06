@@ -47,8 +47,8 @@ namespace engine {
         }
     }
 
-    InputSystem::InputSystem() {
-        impl = std::make_unique<InputSystem::Implementation>();
+    InputSystem::InputSystem() :
+            impl{std::make_unique<InputSystem::Implementation>()} {
     }
 
     InputSystem::~InputSystem() {
