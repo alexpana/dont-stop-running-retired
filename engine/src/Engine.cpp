@@ -123,6 +123,11 @@ namespace engine {
     }
 
     void Engine::update() {
+        if (!isInitialized()) {
+            _log.error() << "Engine::updated() called without starting the engine." << std::endl;
+            return;
+        }
+
 //        lastFrameTimeDelta = 15;
 
         input->update();
