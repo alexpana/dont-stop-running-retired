@@ -45,13 +45,15 @@ set(SDL_SOURCES
     src/sdl/SDLInputSystem.cpp
     src/sdl/SDLRenderer.cpp
     src/sdl/SDLTexture.cpp
-    src/sdl/SDLTextureFactory.cpp)
+    src/sdl/SDLTextureFactory.cpp
+    src/sdl/SDLUtils.cpp)
 
 set(SDL_HEADERS
     include/sdl/SDLInputSystem.h
     include/sdl/SDLRenderer.h
     include/sdl/SDLTexture.h
-    include/sdl/SDLTextureFactory.h)
+    include/sdl/SDLTextureFactory.h
+    include/sdl/SDLUtils.h)
 
 # =======================================
 # Include Directories
