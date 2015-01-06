@@ -8,13 +8,7 @@ namespace engine {
 
     class SoundSample;
 
-    class SoundSampleDeleter {
-    public:
-        // Implement this to destroy and release a SoundSample*
-        void operator()(SoundSample *);
-    };
-
-    using SoundSamplePtr = std::unique_ptr<SoundSample, SoundSampleDeleter>;
+    using SoundSamplePtr = std::unique_ptr<SoundSample, std::function<void(SoundSample*)>>;
 
     class Sound {
 

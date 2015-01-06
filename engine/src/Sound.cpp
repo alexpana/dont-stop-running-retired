@@ -20,9 +20,9 @@ namespace engine {
         Mix_Chunk *mixChunk;
     };
 
-    void SoundSampleDeleter::operator()(SoundSample *sample) {
+    static auto soundSampleDeleter = [](SoundSample *sample) {
         delete sample;
-    }
+    };
 
     Sound::Sound() {
     }
@@ -52,7 +52,7 @@ namespace engine {
         Mix_Chunk *chunk = Mix_LoadWAV(filename.c_str());
         Mix_VolumeChunk(chunk, 64);
 
-        return SoundSamplePtr(new SoundSample{chunk});
+        return SoundSamplePtr(new SoundSample{chunk}, soundSampleDeleter);
     }
 
     void Sound::playSampleOnce(SoundSample *sample) {
