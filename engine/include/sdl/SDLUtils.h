@@ -1,5 +1,14 @@
 #pragma once
 
+#include <SDL.h>
+
 namespace engine {
-    // todo: add conversions / util functions here
+
+    class Rect2;
+
+    class Vec2;
+
+    SDL_Rect toSdlRect(const Rect2 &rect);
+
+    SDL_Point toSdlPoint(const Vec2 &vec);
 }
