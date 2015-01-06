@@ -16,11 +16,6 @@ namespace engine {
         Rect2(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {
         }
 
-        SDL_Rect toSDLRect() const {
-            SDL_Rect sdlRect = {(int) x, (int) y, (int) w, (int) h};
-            return sdlRect;
-        }
-
         bool contains(const Vec2 &point) const {
             return point.x >= x && point.x <= x + w && point.y >= y && point.y <= y + w;
         }
@@ -51,6 +46,10 @@ namespace engine {
 
         Vec2 bottomRight() const {
             return Vec2(x + w, y + h);
+        }
+
+        Vec2 size() const {
+            return Vec2{w, h};
         }
 
     public:
