@@ -3,13 +3,13 @@
 #include <SDL_render.h>
 
 #include "Log.h"
-#include "Vec2.h"
+#include "Rect2.h"
 
 namespace engine {
 
     struct SDLTexture::Implementation {
         SDL_Texture *nativeTexture = nullptr;
-        Vec2 size = Vec2{0, 0};
+        Rect2 bounds;
     };
 
     SDLTexture::SDLTexture(void *texture) {
@@ -18,8 +18,7 @@ namespace engine {
 
         int w, h;
         SDL_QueryTexture(impl->nativeTexture, nullptr, nullptr, &w, &h);
-        impl->size.w = w;
-        impl->size.h = h;
+        impl->bounds = Rect2{0, 0, w, h};
     }
 
     SDLTexture::~SDLTexture() {
@@ -33,6 +32,10 @@ namespace engine {
     }
 
     Vec2 SDLTexture::getSize() const {
-        return impl->size;
+        return impl->bounds.size();
+    }
+
+    Rect2 SDLTexture::getBounds() const {
+        return impl->bounds;
     }
 }

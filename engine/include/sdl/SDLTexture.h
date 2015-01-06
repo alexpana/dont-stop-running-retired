@@ -3,10 +3,10 @@
 #include "Texture.h"
 #include "Memory.h"
 
-struct SDL_Texture;
-
 namespace engine {
     class Vec2;
+
+    class Rect2;
 
     class SDLTexture : public Texture {
     public:
@@ -20,6 +20,8 @@ namespace engine {
         void *getNative() const override;
 
         Vec2 getSize() const override;
+
+        Rect2 getBounds() const override;
 
     private:
         struct Implementation;
