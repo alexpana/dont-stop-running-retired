@@ -1,16 +1,16 @@
-#include "sdl/SDLTextureFactory.h"
+#include "sdl/SDLTextureLoader.h"
 
 #include "Log.h"
 #include "sdl/SDLTexture.h"
 
-static engine::Log _log{"SDLTextureFactory"};
+static engine::Log _log{"SDLTextureLoader"};
 
 namespace engine {
 
-    SDLTextureFactory::SDLTextureFactory(Renderer *renderer) : renderer(renderer) {
+    SDLTextureLoader::SDLTextureLoader(Renderer *renderer) : renderer(renderer) {
     }
 
-    std::unique_ptr<engine::Texture> SDLTextureFactory::loadTextureFromImage(std::string filename) {
+    std::unique_ptr<engine::Texture> SDLTextureLoader::load(std::string filename) {
         SDL_Surface *rawSurface = IMG_Load(filename.c_str());
 
         if (rawSurface == nullptr) {

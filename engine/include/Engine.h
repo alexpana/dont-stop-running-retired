@@ -10,7 +10,7 @@
 #include "Renderer.h"
 #include "Random.h"
 #include "Sound.h"
-#include "TextureFactory.h"
+#include "TextureLoader.h"
 #include "Timer.h"
 
 namespace engine {
@@ -63,7 +63,7 @@ namespace engine {
             return renderer.get();
         }
 
-        TextureFactory *getTextureFactory() {
+        TextureLoader *getTextureFactory() {
             return imageFactory.get();
         }
 
@@ -125,7 +125,7 @@ namespace engine {
 
         std::unique_ptr<Filesystem> filesystem;
 
-        std::unique_ptr<TextureFactory> imageFactory;
+        std::unique_ptr<TextureLoader> imageFactory;
 
         std::unique_ptr<InputSystem> input;
 

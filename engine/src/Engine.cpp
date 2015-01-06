@@ -5,7 +5,7 @@
 
 #include "Log.h"
 #include "sdl/SDLInputSystem.h"
-#include "sdl/SDLTextureFactory.h"
+#include "sdl/SDLTextureLoader.h"
 #include "Updateable.h"
 #include "Renderable.h"
 
@@ -52,7 +52,7 @@ namespace engine {
 
         renderer = std::make_unique<SDLRenderer>(nativeRenderer);
 
-        imageFactory = std::make_unique<SDLTextureFactory>(renderer.get());
+        imageFactory = std::make_unique<SDLTextureLoader>(renderer.get());
 
         random = std::make_unique<Random>();
 

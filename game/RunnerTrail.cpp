@@ -10,7 +10,7 @@ RunnerTrail::RunnerTrail(World *world) : world(world) {
 
     frontBuffer = renderer->createTexture(renderer->getViewportSize(), SDL_TEXTUREACCESS_TARGET);
     backBuffer = renderer->createTexture(renderer->getViewportSize(), SDL_TEXTUREACCESS_TARGET);
-    trailGradient = engine->getTextureFactory()->loadTextureFromImage("data/trail.png");
+    trailGradient = engine->getTextureFactory()->load("data/trail.png");
 }
 
 void RunnerTrail::update(double /*deltaTime*/) {

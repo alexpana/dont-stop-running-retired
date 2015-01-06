@@ -33,8 +33,10 @@ set(ROOT_HEADERS
     include/Rect2.h
     include/Renderer.h
     include/Sound.h
+    include/Sprite.h
+    include/Spritesheet.h
     include/Texture.h
-    include/TextureFactory.h
+    include/TextureLoader.h
     include/TileEngine.h
     include/TileMap.h
     include/Timer.h
@@ -45,14 +47,14 @@ set(SDL_SOURCES
     src/sdl/SDLInputSystem.cpp
     src/sdl/SDLRenderer.cpp
     src/sdl/SDLTexture.cpp
-    src/sdl/SDLTextureFactory.cpp
+    src/sdl/SDLTextureLoader.cpp
     src/sdl/SDLUtils.cpp)
 
 set(SDL_HEADERS
     include/sdl/SDLInputSystem.h
     include/sdl/SDLRenderer.h
     include/sdl/SDLTexture.h
-    include/sdl/SDLTextureFactory.h
+    include/sdl/SDLTextureLoader.h
     include/sdl/SDLUtils.h)
 
 # =======================================

@@ -6,6 +6,7 @@
 
 #include <Engine.h>
 #include <Log.h>
+#include <Renderable.h>
 #include <TileEngine.h>
 
 #include "ConsoleHandler.h"
@@ -16,7 +17,7 @@ using namespace std;
 static bool running = true;
 engine::Log _log{"Main"};
 
-int main(int argc, char **argv) {
+int runGame() {
     engine::Engine::Params params;
     params.screenWidth = 800;
     params.screenHeight = 600;
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
 
     auto tiles = make_unique<engine::TileMap>();
 
-    auto tileMap = textureFactory->loadTextureFromImage("./data/tiles.png");
+    auto tileMap = textureFactory->load("./data/tiles.png");
 
     auto tileEngine = make_shared<engine::TileEngine>(engine->getRenderer(), tiles.get(), tileMap.get());
 
@@ -59,4 +60,63 @@ int main(int argc, char **argv) {
     engine->stop();
 
     return 0;
+}
+
+class AssetRenderer : public engine::Renderable {
+public:
+    AssetRenderer(engine::Engine *engine, std::unique_ptr<engine::Texture> &&texture) :
+            engine(engine),
+            texture(std::move(texture)) {
+    };
+
+    void render(engine::Renderer *renderer) override {
+        using engine::Vec2;
+
+        renderer->setTextureOrigin(texture->getBounds().centerOfMass());
+
+        renderer->drawTexture(texture.get(), Vec2{000, 000}, engine->getElapsedTime() * 100);
+
+        renderer->setTextureOrigin({0, 0});
+    }
+
+private:
+    std::unique_ptr<engine::Texture> texture;
+    engine::Engine *engine;
+};
+
+int runAssetView() {
+    engine::Engine::Params params;
+    params.screenWidth = 400;
+    params.screenHeight = 400;
+    params.windowTitle = "Asset Viewer";
+
+    auto engine = std::unique_ptr<engine::Engine>(new engine::Engine{params});
+
+    engine->start();
+
+    auto texture = engine->getTextureFactory()->load("data/tree_test_0.png");
+
+    auto textureRenderer = std::make_unique<AssetRenderer>(engine.get(), std::move(texture));
+
+    engine->registerRenderable(textureRenderer.get());
+
+    if (!engine->isInitialized()) {
+        return -1;
+    }
+
+    while (running) {
+        engine->startFrame();
+
+        engine->update();
+
+        engine->endFrame();
+    }
+
+    engine->stop();
+
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    return runAssetView();
 }
