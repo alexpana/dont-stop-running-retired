@@ -14,7 +14,7 @@ namespace engine {
         SDL_Surface *rawSurface = IMG_Load(filename.c_str());
 
         if (rawSurface == nullptr) {
-            _log.error() << "Could not load surface" << filename << "\n";
+            _log.error() << "Could not load surface " << filename << "\n";
             _log.error() << "IMG_Load: " << IMG_GetError() << "\n";
             return nullptr;
         }
