@@ -15,14 +15,10 @@ namespace engine {
     class Texture;
 
     struct Renderer {
-        enum class TextureAnchor {
-            TOP_LEFT,
-            CENTER
-        };
 
-        virtual void setTextureAnchor(TextureAnchor textureAnchor) = 0;
+        virtual void setTextureOrigin(const Vec2 &anchor) = 0;
 
-        virtual TextureAnchor getTextureAnchor() = 0;
+        virtual Vec2 getTextureOrigin() = 0;
 
         virtual void setColor(unsigned int rgba) = 0;
 

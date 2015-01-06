@@ -9,9 +9,9 @@ namespace engine {
 
         ~SDLRenderer();
 
-        void setTextureAnchor(TextureAnchor textureAnchor) override;
+        void setTextureOrigin(const Vec2 &textureAnchor) override;
 
-        TextureAnchor getTextureAnchor() override;
+        Vec2 getTextureOrigin() override;
 
         void setColor(unsigned int rgba) override;
 

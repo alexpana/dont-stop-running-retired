@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <sdl/SDLUtils.h>
 
 #include "Log.h"
 #include "Rect2.h"
@@ -14,25 +15,16 @@ namespace engine {
     struct SDLRenderer::Implementation {
         SDL_Renderer *renderer;
         TTF_Font *font;
-        SDLRenderer::TextureAnchor textureAnchor = TextureAnchor::TOP_LEFT;
+        Vec2 textureOrigin = Vec2{0, 0};
 
         Implementation(SDL_Renderer *renderer) : renderer(renderer) {
         }
 
         void drawSurface(SDL_Surface *surface, const Vec2 &position);
-
-        SDL_Point drawOffset(int width, int height) {
-            switch (textureAnchor) {
-                case TextureAnchor::TOP_LEFT:
-                    return SDL_Point{0, 0};
-                case TextureAnchor::CENTER:
-                    return SDL_Point{-width / 2, -height / 2};
-            };
-        }
     };
 
     SDLRenderer::SDLRenderer(void *nativeRenderer) {
-        impl = std::make_unique<Implementation>(reinterpret_cast<SDL_Renderer*>(nativeRenderer));
+        impl = std::make_unique<Implementation>(reinterpret_cast<SDL_Renderer *>(nativeRenderer));
 
         impl->font = TTF_OpenFont("data/minecraftia.ttf", 8);
 
@@ -63,7 +55,7 @@ namespace engine {
     }
 
     void SDLRenderer::drawRect(const Rect2 &rect) {
-        auto sdlRect = rect.toSDLRect();
+        auto sdlRect = toSdlRect(rect);
         SDL_RenderDrawRect(impl->renderer, &sdlRect);
     }
 
@@ -77,7 +69,7 @@ namespace engine {
     }
 
     void SDLRenderer::fillRect(const Rect2 &rect) {
-        auto sdlRect = rect.toSDLRect();
+        auto sdlRect = toSdlRect(rect);
         SDL_RenderFillRect(impl->renderer, &sdlRect);
     }
 
@@ -97,7 +89,7 @@ namespace engine {
             dstRect = {(int) position.x, (int) position.y, (int) source->getSize().w, (int) source->getSize().h};
         }
 
-        SDL_Point center = impl->drawOffset((int) source->getSize().w, (int) source->getSize().h);
+        SDL_Point center = toSdlPoint(impl->textureOrigin);
 
         dstRect.x += center.x;
         dstRect.y += center.y;
@@ -163,12 +155,12 @@ namespace engine {
         }
     }
 
-    void SDLRenderer::setTextureAnchor(SDLRenderer::TextureAnchor textureAnchor) {
-        impl->textureAnchor = textureAnchor;
+    void SDLRenderer::setTextureOrigin(const Vec2 &textureOrigin) {
+        impl->textureOrigin = textureOrigin;
     }
 
-    SDLRenderer::TextureAnchor SDLRenderer::getTextureAnchor() {
-        return impl->textureAnchor;
+    Vec2 SDLRenderer::getTextureOrigin() {
+        return impl->textureOrigin;
     }
 
     Vec2 SDLRenderer::getViewportSize() {
