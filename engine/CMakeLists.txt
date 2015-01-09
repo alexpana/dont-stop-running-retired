@@ -57,6 +57,9 @@ set(SDL_HEADERS
     include/sdl/SDLTextureLoader.h
     include/sdl/SDLUtils.h)
 
+set(WIN_SOURCES
+    src/win/Filesystem.cpp)
+
 # =======================================
 # Include Directories
 # =======================================
@@ -78,7 +81,9 @@ add_library(engine STATIC
     ${ROOT_HEADERS}
 
     ${SDL_SOURCES}
-    ${SDL_HEADERS})
+    ${SDL_HEADERS}
+
+    ${WIN_SOURCES})
 
 target_link_libraries(engine
 
