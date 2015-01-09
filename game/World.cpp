@@ -15,17 +15,17 @@ World::World(Engine *engine, TileEnginePtr tileEngine) :
     runner->setPosition({160, 256 - runner->getSize().y});
     engine->registerUpdateable(runner.get());
 
-    background = engine->getTextureFactory()->load("data/bg.png");
-    backgroundFar = engine->getTextureFactory()->load("data/bg_far.png");
-    backgroundMid = engine->getTextureFactory()->load("data/bg_mid.png");
-    backgroundNear = engine->getTextureFactory()->load("data/bg_near.png");
+    background = engine->getTextureLoader()->load("data/bg.png");
+    backgroundFar = engine->getTextureLoader()->load("data/bg_far.png");
+    backgroundMid = engine->getTextureLoader()->load("data/bg_mid.png");
+    backgroundNear = engine->getTextureLoader()->load("data/bg_near.png");
 
     backgroundPainter.addTexture(background.get(), 0);
     backgroundPainter.addTexture(backgroundFar.get(), 0.25);
     backgroundPainter.addTexture(backgroundMid.get(), 0.41);
     backgroundPainter.addTexture(backgroundNear.get(), 0.83);
 
-    sawTexture = engine->getTextureFactory()->load("data/saw.png");
+    sawTexture = engine->getTextureLoader()->load("data/saw.png");
 
     stepSoundSamples.push_back(engine->getSound()->loadSample("data/footstep.wav"));
     stepSoundSamples.push_back(engine->getSound()->loadSample("data/footstep2.wav"));

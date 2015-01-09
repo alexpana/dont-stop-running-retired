@@ -7,6 +7,9 @@
 #include <Engine.h>
 #include <Log.h>
 #include <Renderable.h>
+#include <Sprite.h>
+#include <SpriteSheet.h>
+#include <SpriteSheetLoader.h>
 #include <TileEngine.h>
 
 #include "ConsoleHandler.h"
@@ -33,7 +36,7 @@ int runGame() {
 
     _log.info() << "Running engine from: " << engine->getFilesystem()->getCurrentWorkingDirectory() << endl;
 
-    auto textureFactory = engine->getTextureFactory();
+    auto textureFactory = engine->getTextureLoader();
 
     auto tiles = make_unique<engine::TileMap>();
 
@@ -90,11 +93,11 @@ int runAssetView() {
     params.screenHeight = 400;
     params.windowTitle = "Asset Viewer";
 
-    auto engine = std::unique_ptr<engine::Engine>(new engine::Engine{params});
+    auto engine = std::make_unique<engine::Engine>(params);
 
     engine->start();
 
-    auto texture = engine->getTextureFactory()->load("data/tree_test_0.png");
+    auto texture = engine->getTextureLoader()->load("data/tree_test_0.png");
 
     auto textureRenderer = std::make_unique<AssetRenderer>(engine.get(), std::move(texture));
 
@@ -117,6 +120,28 @@ int runAssetView() {
     return 0;
 }
 
+int runTest() {
+    engine::Engine::Params params;
+    params.screenWidth = 400;
+    params.screenHeight = 400;
+    params.windowTitle = "Asset Viewer";
+
+    auto engine = std::make_unique<engine::Engine>(params);
+
+    engine->start();
+
+    engine::SpriteSheetLoader loader{engine->getTextureLoader()};
+    std::unique_ptr<engine::SpriteSheet> spriteSheet = loader.load("data/spritesheet.json");
+
+    engine::Sprite *wall1 = spriteSheet->getSprite("wall_1");
+    engine::Sprite *wall2 = spriteSheet->getSprite("wall_2");
+
+    engine->stop();
+
+    return 0;
+}
+
 int main(int argc, char **argv) {
-    return runAssetView();
+    return runGame();
+//    return runTest();
 }

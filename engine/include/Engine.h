@@ -63,8 +63,8 @@ namespace engine {
             return renderer.get();
         }
 
-        TextureLoader *getTextureFactory() {
-            return imageFactory.get();
+        TextureLoader *getTextureLoader() {
+            return textureLoader.get();
         }
 
         Random *getRandom() {
@@ -125,7 +125,7 @@ namespace engine {
 
         std::unique_ptr<Filesystem> filesystem;
 
-        std::unique_ptr<TextureLoader> imageFactory;
+        std::unique_ptr<TextureLoader> textureLoader;
 
         std::unique_ptr<InputSystem> input;
 

@@ -9,6 +9,7 @@ set(ROOT_SOURCES
     src/InputSystem.cpp
     src/Physics.cpp
     src/Sound.cpp
+    src/SpriteSheetLoader.cpp
     src/StateInput.cpp
     src/TileMap.cpp
     src/Timer.cpp)
@@ -34,7 +35,8 @@ set(ROOT_HEADERS
     include/Renderer.h
     include/Sound.h
     include/Sprite.h
-    include/Spritesheet.h
+    include/SpriteSheet.h
+    include/SpriteSheetLoader.h
     include/Texture.h
     include/TextureLoader.h
     include/TileEngine.h

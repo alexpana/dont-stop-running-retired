@@ -52,7 +52,7 @@ namespace engine {
 
         renderer = std::make_unique<SDLRenderer>(nativeRenderer);
 
-        imageFactory = std::make_unique<SDLTextureLoader>(renderer.get());
+        textureLoader = std::make_unique<SDLTextureLoader>(renderer.get());
 
         random = std::make_unique<Random>();
 
