@@ -10,3 +10,5 @@ bin/*
 .gitignore~
 ..gitignore.un~
 *~
+bin/*
+build/*
