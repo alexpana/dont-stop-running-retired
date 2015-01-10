@@ -12,7 +12,8 @@ set(ROOT_SOURCES
     src/SpriteSheetLoader.cpp
     src/StateInput.cpp
     src/TileMap.cpp
-    src/Timer.cpp)
+    src/Timer.cpp
+    src/Version.cpp)
 
 set(ROOT_HEADERS
     include/CompileFlags.h
@@ -43,7 +44,8 @@ set(ROOT_HEADERS
     include/TileMap.h
     include/Timer.h
     include/Transform.h
-    include/Vec2.h)
+    include/Vec2.h
+    include/Version.h)
 
 set(SDL_SOURCES
     src/sdl/SDLInputSystem.cpp
