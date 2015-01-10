@@ -8,8 +8,8 @@ using namespace engine;
 static engine::Log _log{"World"};
 
 World::World(Engine *engine, TileEnginePtr tileEngine) :
-        tileEngine(tileEngine),
-        engine(engine) {
+        engine(engine),
+        tileEngine(tileEngine) {
 
     runner = std::make_unique<Runner>(this);
     runner->setPosition({160, 256 - runner->getSize().y});

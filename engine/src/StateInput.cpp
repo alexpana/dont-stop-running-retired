@@ -70,25 +70,30 @@ namespace engine {
     bool StateInput::Implementation::keyPressed(const KeyEvent &event) {
         recentlyPressedKeys.insert(event.key);
         pressedKeys.insert(event.key);
+        return true;
     }
 
     bool StateInput::Implementation::keyReleased(const KeyEvent &event) {
         recentlyReleasedKeys.insert(event.key);
         pressedKeys.erase(event.key);
+        return true;
     }
 
     bool StateInput::Implementation::mouseMoved(const MouseMoveEvent &event) {
         mousePosition = event.mousePosition;
+        return true;
     }
 
     bool StateInput::Implementation::mouseButtonPressed(const MouseButtonEvent &event) {
         pressedMouseButtons |= mouseButtonToInt(event.mouseButton);
         recentlyPressedMouseButtons |= mouseButtonToInt(event.mouseButton);
+        return true;
     }
 
     bool StateInput::Implementation::mouseButtonReleased(const MouseButtonEvent &event) {
         pressedMouseButtons &= ~(mouseButtonToInt(event.mouseButton));
         recentlyReleasedMouseButtons |= mouseButtonToInt(event.mouseButton);
+        return true;
     }
 
     void StateInput::Implementation::updateStarted() {

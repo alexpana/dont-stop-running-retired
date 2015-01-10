@@ -11,10 +11,10 @@ class World;
 class Runner : public engine::Entity {
 public:
     explicit Runner(World *world) :
-            size(20, 40),
+            velocity{410, 0},
             isJumping(false),
             world(world),
-            velocity{410, 0} {
+            size(20, 40) {
     }
 
     void update(double delta) override;

@@ -28,6 +28,7 @@ namespace engine {
         if (findIt != json.MemberEnd()) {
             return findIt->value.GetString();
         }
+        return "";
     }
 
 
@@ -119,7 +120,7 @@ namespace engine {
 
         spriteSheet->setTexture(std::move(spriteSheetTexture));
 
-        auto findSpritesIt = json.FindMember("sprites");
+        auto findSpritesIt = json.FindMember(SPRITES_KEY);
 
         if (findSpritesIt != json.MemberEnd()) {
             auto sprites = std::move(findSpritesIt->value);

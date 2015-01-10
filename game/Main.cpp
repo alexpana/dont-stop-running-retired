@@ -2,6 +2,7 @@
 #define SDL_MAIN_HANDLED
 #endif
 
+#include <assert.h>
 #include <iostream>
 
 #include <Engine.h>
@@ -11,6 +12,7 @@
 #include <SpriteSheet.h>
 #include <SpriteSheetLoader.h>
 #include <TileEngine.h>
+#include <Version.h>
 
 #include "ConsoleHandler.h"
 #include "World.h"
@@ -83,8 +85,8 @@ public:
     }
 
 private:
-    std::unique_ptr<engine::Texture> texture;
     engine::Engine *engine;
+    std::unique_ptr<engine::Texture> texture;
 };
 
 int runAssetView() {
@@ -134,7 +136,10 @@ int runTest() {
     std::unique_ptr<engine::SpriteSheet> spriteSheet = loader.load("data/spritesheet.json");
 
     engine::Sprite *wall1 = spriteSheet->getSprite("wall_1");
+    assert(wall1 != nullptr);
+
     engine::Sprite *wall2 = spriteSheet->getSprite("wall_2");
+    assert(wall2 != nullptr);
 
     engine->stop();
 
@@ -142,6 +147,9 @@ int runTest() {
 }
 
 int main(int argc, char **argv) {
+    engine::Version version;
+    engine::getVersion(&version);
+    _log.info() << "Running engine version " << version << std::endl;
     return runGame();
 //    return runTest();
 }
