@@ -2,7 +2,6 @@
 #define SDL_MAIN_HANDLED
 #endif
 
-#include <assert.h>
 #include <iostream>
 
 #include <Engine.h>
@@ -122,34 +121,9 @@ int runAssetView() {
     return 0;
 }
 
-int runTest() {
-    engine::Engine::Params params;
-    params.screenWidth = 400;
-    params.screenHeight = 400;
-    params.windowTitle = "Asset Viewer";
-
-    auto engine = std::make_unique<engine::Engine>(params);
-
-    engine->start();
-
-    engine::SpriteSheetLoader loader{engine->getTextureLoader()};
-    std::unique_ptr<engine::SpriteSheet> spriteSheet = loader.load("data/spritesheet.json");
-
-    engine::Sprite *wall1 = spriteSheet->getSprite("wall_1");
-    assert(wall1 != nullptr);
-
-    engine::Sprite *wall2 = spriteSheet->getSprite("wall_2");
-    assert(wall2 != nullptr);
-
-    engine->stop();
-
-    return 0;
-}
-
 int main(int argc, char **argv) {
     engine::Version version;
     engine::getVersion(&version);
     _log.info() << "Running engine version " << version << std::endl;
     return runGame();
-//    return runTest();
 }
