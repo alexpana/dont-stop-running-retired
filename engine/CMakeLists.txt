@@ -13,7 +13,7 @@ set(ROOT_SOURCES
     src/SpriteSheetLoader.cpp
     src/StateInput.cpp
     src/TileMap.cpp
-    src/Timer.cpp
+    src/win/Timer.cpp
     src/Version.cpp)
 
 set(ROOT_HEADERS
