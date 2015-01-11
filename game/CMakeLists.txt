@@ -22,7 +22,7 @@ set(GAME_HEADERS
 # Source groups
 # =======================================
 
-source_group(Engine FILES ${GAME_SOURCES} ${GAME_HEADERS})
+source_group(Game FILES ${GAME_SOURCES} ${GAME_HEADERS})
 
 # =======================================
 # Executable
@@ -63,4 +63,4 @@ target_link_libraries(game
 # =======================================
 # Dependencies libraries
 # =======================================
-add_dependencies(engine engine)
+add_dependencies(game engine)
