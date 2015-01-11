@@ -514,6 +514,7 @@ private:
                         RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
                     else
                         return;
+                    break;
                 default:  RAPIDJSON_PARSE_ERROR(kParseErrorObjectMissCommaOrCurlyBracket, is.Tell());
             }
         }
@@ -551,6 +552,7 @@ private:
                         RAPIDJSON_PARSE_ERROR(kParseErrorTermination, is.Tell());
                     else
                         return;
+                    break;
                 default:  RAPIDJSON_PARSE_ERROR(kParseErrorArrayMissCommaOrSquareBracket, is.Tell());
             }
         }

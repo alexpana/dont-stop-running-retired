@@ -113,7 +113,6 @@ namespace engine {
 
         void stopSDLTTF();
 
-        SDL_Window *mainWindow;
 
         SDL_Surface *frameBuffer;
 

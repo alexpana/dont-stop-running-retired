@@ -13,7 +13,8 @@ static engine::Log _log{"Engine"};
 
 namespace engine {
 
-    Engine::Engine(Params const &params) : initParams(params) {
+    Engine::Engine(Params const &params) :
+            initParams(params) {
     }
 
     Engine::~Engine() {
@@ -156,4 +157,4 @@ namespace engine {
     void Engine::stopSDLTTF() {
         TTF_Quit();
     }
-}
+};

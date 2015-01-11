@@ -13,8 +13,8 @@ static engine::Log _log{"Renderer"};
 namespace engine {
 
     struct SDLRenderer::Implementation {
-        SDL_Renderer *renderer;
-        TTF_Font *font;
+        SDL_Renderer *renderer = nullptr;
+        TTF_Font *font = nullptr;
         Vec2 textureOrigin = Vec2{0, 0};
 
         Implementation(SDL_Renderer *renderer) : renderer(renderer) {
