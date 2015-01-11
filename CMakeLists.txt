@@ -15,6 +15,7 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/lib )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
+# Set custom compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas")
 
 # Add our custom FindSDL2* modules
@@ -31,3 +32,5 @@ find_package(SDL2_MIXER REQUIRED)
 add_subdirectory(engine)
 
 add_subdirectory(game)
+
+add_subdirectory(test)
