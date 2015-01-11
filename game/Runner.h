@@ -97,7 +97,5 @@ private:
 
     engine::Vec2 position;
 
-    engine::CollisionShape collisionShape;
-
     engine::Vec2 size;
 };
