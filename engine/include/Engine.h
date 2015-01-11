@@ -113,8 +113,11 @@ namespace engine {
 
         void stopSDLTTF();
 
+        const Params initParams;
 
-        SDL_Surface *frameBuffer;
+        SDL_Window *mainWindow = nullptr;
+
+        SDL_Surface *frameBuffer = nullptr;
 
         std::unique_ptr<Random> random;
 
@@ -141,7 +144,5 @@ namespace engine {
         Timer frameTimer;
 
         Timer gameTimer;
-
-        const Params initParams;
     };
 }
