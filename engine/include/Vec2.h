@@ -1,8 +1,9 @@
 #pragma once
 
 #include <cmath>
-
 #include <ostream>
+
+#include "MathUtils.h"
 
 namespace engine {
     class Vec2 {
@@ -36,6 +37,10 @@ namespace engine {
         double cross(const Vec2 &rhs) const;
 
         Vec2 normalized() const;
+
+        static Vec2 angleDirection(Angle angle) {
+            return Vec2{std::cos(angle.getRadians()), std::sin(angle.getRadians())};
+        }
     };
 
     inline std::ostream &operator<<(std::ostream &lhs, const Vec2 &rhs) {
