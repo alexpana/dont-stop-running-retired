@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 namespace engine {
     struct Constants {
         static constexpr double PI = 3.14159265359;
@@ -43,4 +45,16 @@ namespace engine {
         */
         Radians value;
     };
+
+    bool operator!=(const Degrees& lhs, const Degrees& rhs);
+
+    bool operator!=(const Radians& lhs, const Radians& rhs);
+
+    bool operator!=(const Angle& lhs, const Angle& rhs);
+
+    bool operator==(const Degrees& lhs, const Degrees& rhs);
+
+    bool operator==(const Radians& lhs, const Radians& rhs);
+
+    bool operator==(const Angle& lhs, const Angle& rhs);
 }

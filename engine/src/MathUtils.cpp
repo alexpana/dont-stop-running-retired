@@ -32,10 +32,34 @@ namespace engine {
     Degrees::Degrees(double value) : value(value) {
     }
 
-    Degrees::Degrees(Radians radians) : value(value * 57.2957795131) {
+    Degrees::Degrees(Radians radians) : value(radians.value * 57.2957795131) {
     }
 
     Degrees::operator double() const {
         return value;
+    }
+
+    bool operator!=(const Degrees& lhs, const Degrees& rhs) {
+        return std::fabs(lhs.value - rhs.value) >= 0.00001;
+    }
+
+    bool operator!=(const Radians& lhs, const Radians& rhs) {
+        return std::fabs(lhs.value - rhs.value) >= 0.00001;
+    }
+
+    bool operator!=(const Angle& lhs, const Angle& rhs) {
+        return std::fabs(lhs.value - rhs.value) >= 0.00001;
+    }
+
+    bool operator==(const Degrees& lhs, const Degrees& rhs) {
+        return std::fabs(lhs.value - rhs.value) < 0.00001;
+    }
+
+    bool operator==(const Radians& lhs, const Radians& rhs) {
+        return std::fabs(lhs.value - rhs.value) < 0.00001;
+    }
+
+    bool operator==(const Angle& lhs, const Angle& rhs) {
+        return std::fabs(lhs.value - rhs.value) < 0.00001;
     }
 }
