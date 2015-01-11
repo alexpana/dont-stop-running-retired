@@ -22,7 +22,7 @@ namespace engine {
         }
 
         std::ostream &info() {
-            return prepareOutputStream("INFO");
+            return prepareOutputStream("INFO ");
         }
 
         std::ostream &error() {
@@ -30,7 +30,7 @@ namespace engine {
         }
 
         std::ostream &warning() {
-            return prepareOutputStream("WARNING");
+            return prepareOutputStream("WARN ");
         }
 
     private:
