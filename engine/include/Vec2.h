@@ -87,6 +87,10 @@ namespace engine {
         return fabs(lhs.x - rhs.x) < 0.00001 && fabs(lhs.y - rhs.y) < 0.00001;
     }
 
+    inline bool operator!=(const Vec2 &lhs, const Vec2 &rhs) {
+        return !(lhs == rhs);
+    }
+
     inline double Vec2::cross(const Vec2 &rhs) const {
         return x * rhs.y - y * rhs.x;
     }
