@@ -7,6 +7,7 @@ include_directories(include/)
 set(ROOT_SOURCES
     src/Engine.cpp
     src/InputSystem.cpp
+    src/MathUtils.cpp
     src/Physics.cpp
     src/Sound.cpp
     src/SpriteSheetLoader.cpp
@@ -29,6 +30,7 @@ set(ROOT_HEADERS
     include/Updateable.h
     include/Renderable.h
     include/Log.h
+    include/MathUtils.h
     include/Memory.h
     include/Physics.h
     include/Random.h
