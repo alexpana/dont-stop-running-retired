@@ -8,6 +8,7 @@ set(TEST_HEADERS
 set(TEST_SOURCES
     test.cpp
     TestBones.h
+    TestIdentities.h
     TestMath.h
     TestSpriteSheetLoader.h)
 

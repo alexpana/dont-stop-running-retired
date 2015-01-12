@@ -7,6 +7,7 @@ include_directories(include/)
 set(ROOT_SOURCES
     src/Bone2D.cpp
     src/Engine.cpp
+    src/Identity.cpp
     src/InputSystem.cpp
     src/MathUtils.cpp
     src/Physics.cpp

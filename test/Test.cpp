@@ -9,6 +9,7 @@
 #include "TestBones.h"
 #include "TestMath.h"
 #include "TestSpriteSheetLoader.h"
+#include "TestIdentities.h"
 
 int main() {
     test::TestRunner runner{};
@@ -16,6 +17,7 @@ int main() {
     runner.registerTestClass(std::make_unique<TestBones>(), "TestBones");
     runner.registerTestClass(std::make_unique<TestMath>(), "TestMath");
     runner.registerTestClass(std::make_unique<TestSpriteSheetLoader>(), "TestSpriteSheetLoader");
+    runner.registerTestClass(std::make_unique<TestIdentities>(), "TestIdentities");
 
     runner.run();
 
