@@ -3,8 +3,10 @@
 #include <functional>
 #include <stdint.h>
 #include <utility>
+#include "Random.h"
 
 namespace engine {
+
     // 128-bit value UUID
     struct Identity {
         union {
@@ -14,35 +16,23 @@ namespace engine {
             };
         };
 
+        Identity(const Identity &other) : low(other.low), high(other.high) {
+        }
+
         Identity(uint64_t high, uint64_t low) : low(low), high(high) {
         };
 
-        std::string toString() {
-            static std::string digits = "0123456789abcdef";
-            std::string result(36, '-');
+        std::string str() const;
 
-            int strIndex = 0;
+        static Identity generateRandom();
 
-            for (int i = 15; i >= 0; --i) {
-                result[strIndex++] = digits[(high >> (i * 4)) & 0xf];
-                if (strIndex == 8) strIndex += 1;
-                if (strIndex == 13) strIndex += 1;
-            }
-
-            strIndex += 1;
-
-            for (int i = 15; i >= 0; --i) {
-                result[strIndex++] = digits[(low >> (i * 4)) & 0xf];
-                if (strIndex == 23) strIndex += 1;
-            }
-
-            return result;
-        }
     };
 
     bool operator==(const Identity &lhs, const Identity &rhs);
+
     bool operator<(const Identity &lhs, const Identity &rhs);
 
+    // included to provide templates for the other operators
     using namespace std::rel_ops;
 }
 
