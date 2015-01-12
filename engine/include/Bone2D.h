@@ -2,13 +2,21 @@
 
 #include "MathUtils.h"
 #include "Vec2.h"
+#include "Identity.h"
+#include "BoneArmature2D.h"
 
 namespace engine {
+    class BoneArmature2D;
+
     class Bone2D {
     public:
-        Bone2D(const Bone2D *parent, double length = 0.0, Radians rotation = 0.0);
+        Bone2D(BoneArmature2D* armature, const Identity id, double length = 0.0, Radians rotation = 0.0);
 
-        const Bone2D *getParent() const;
+        Bone2D *getParent();
+
+        Bone2D *getRootParent();
+
+        BoneArmature2D *getArmature() const;
 
         double getLength() const;
 
@@ -20,11 +28,27 @@ namespace engine {
 
         Vec2 getPosition() const;
 
+        Identity getIdentity() const;
+
+        Bone2D *createChild(const Identity id, double length = 0.0, Radians rotation = 0.0);
+
+        std::vector<Bone2D*>::iterator childrenBegin();
+
+        std::vector<Bone2D*>::iterator childrenEnd();
+
     private:
-        const Bone2D *parent;
+        Bone2D(Bone2D *parent, const Identity id, double length = 0.0, Radians rotation = 0.0);
 
-        double length;
+        BoneArmature2D *armature;
 
-        Radians rotation;
+        Identity identity;
+
+        Bone2D *parent = nullptr;
+
+        double length = 0;
+
+        Radians rotation = 0;
+
+        std::vector<Bone2D *> children;
     };
 }

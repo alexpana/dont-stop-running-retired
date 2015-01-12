@@ -6,6 +6,7 @@ include_directories(include/)
 
 set(ROOT_SOURCES
     src/Bone2D.cpp
+    src/BoneArmature2D.cpp
     src/Engine.cpp
     src/Identity.cpp
     src/InputSystem.cpp
@@ -20,6 +21,7 @@ set(ROOT_SOURCES
 
 set(ROOT_HEADERS
     include/Bone2D.h
+    include/BoneArmature2D.h
     include/CompileFlags.h
     include/Console.h
     include/Constants.h
