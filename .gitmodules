@@ -1,0 +1,6 @@
+[submodule "extern/bx"]
+	path = extern/bx
+	url = https://github.com/bkaradzic/bx
+[submodule "extern/bgfx"]
+	path = extern/bgfx
+	url = https://github.com/bkaradzic/bgfx

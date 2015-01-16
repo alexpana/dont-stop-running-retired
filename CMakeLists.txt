@@ -8,12 +8,15 @@ set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )
 
 # Second, for multi-config builds (e.g. msvc)
-foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/bin )
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/lib )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/lib )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+
+# Verbose compiler
+#set(CMAKE_VERBOSE_MAKEFILE off)
 
 # Set custom compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas")
@@ -23,16 +26,18 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${DontStopRunning_SOURCE_DIR}/cmake"
 
 find_package(SDL2 REQUIRED)
 
-find_package(SDL2_IMAGE REQUIRED)
+find_package(SDL2_image REQUIRED)
 
-find_package(SDL2_TTF REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
-find_package(SDL2_MIXER REQUIRED)
+find_package(SDL2_mixer REQUIRED)
 
-add_subdirectory(engine)
+#add_subdirectory(engine)
 
-add_subdirectory(game)
+#add_subdirectory(game)
 
-add_subdirectory(test)
+#add_subdirectory(test)
 
-add_subdirectory(asset-viewer)
+#add_subdirectory(asset-viewer)
+
+add_subdirectory(sandbox)
