@@ -4,8 +4,12 @@ find_package(BGFX REQUIRED)
 # Configure BX and BGFX
 add_definitions(-DBX_CONFIG_CRT_FILE_READER_WRITER)
 
+set(SANDBOX_HEADERS
+    bgfx_utils.h)
+
 set(SANDBOX_SOURCES
-    main.cpp)
+    main.cpp
+    bgfx_utils.cpp)
 
 add_executable(sandbox
     ${SANDBOX_SOURCES})

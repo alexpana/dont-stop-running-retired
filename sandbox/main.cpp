@@ -1,49 +1,63 @@
 #include <SDL2/SDL.h>
 #include <bx/bx.h>
+#include <bx/fpumath.h>
 #include <bx/timer.h>
 #include <bx/readerwriter.h>
 #include <bgfx.h>
 #include <bgfxplatform.h>
 #include <iostream>
 
+#include "bgfx_utils.h"
+
 using namespace std;
 
-static bx::FileReaderI *sFileReader = nullptr;
+struct PosTexVertex {
+    float x, y, z;
+    float u, v;
 
-static const bgfx::Memory *loadMem(bx::FileReaderI *_reader, const char *_filePath) {
-    std::cout << "loadMem(" << _filePath << ")" << std::endl;
-    if (0 == bx::open(_reader, _filePath)) {
-        uint32_t size = (uint32_t) bx::getSize(_reader);
-        const bgfx::Memory *mem = bgfx::alloc(size + 1);
-        bx::read(_reader, mem->data, size);
-        bx::close(_reader);
-        mem->data[mem->size - 1] = '\0';
-        std::cout << "Mem[" << &mem->data << "].size = " << mem->size << std::endl;
-        return mem;
-    } else {
-        std::cout << "Could not load " << _filePath << std::endl;
+    static bgfx::VertexDecl getDecl() {
+        if (!declarationInit) {
+            declarationInit = true;
+            declaration.begin()
+                    .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+                    .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+                    .end();
+        }
+        return declaration;
     }
 
-    return nullptr;
-}
+private:
+    static bgfx::VertexDecl declaration;
+    static bool declarationInit;
+};
 
-bgfx::TextureHandle loadTexture(const char *_name,
-        uint32_t _flags = BGFX_TEXTURE_NONE,
-        uint8_t _skip = 0,
-        bgfx::TextureInfo *_info = nullptr) {
+bgfx::VertexDecl PosTexVertex::declaration;
+bool PosTexVertex::declarationInit = false;
 
-    const bgfx::Memory *mem = loadMem(sFileReader, _name);
+//static PosTexVertex sQuadVertices[4] = {
+//        {-1.0f,  1.0f, 0.0f, 0.0f, 1.0f},
+//        {-1.0f, -1.0f, 0.0f, 0.0f, 0.0f},
+//        { 1.0f, -1.0f, 0.0f, 1.0f, 0.0f},
+//        { 1.0f,  1.0f, 0.0f, 1.0f, 1.0f}
+//};
 
-    return bgfx::createTexture(mem, _flags, _skip, _info);
-}
+static PosTexVertex sQuadVertices[4] = {
+        {10.0f,  10.0f, 0.0f, 0.0f, 1.0f},
+        {10.0f,  100.0f, 0.0f, 0.0f, 0.0f},
+        {110.0f, 100.0f, 0.0f, 1.0f, 0.0f},
+        {110.0f, 10.0f, 0.0f, 1.0f, 1.0f}
+};
+
+static const uint16_t sQuadIndices[6] = {
+        0, 1, 2,
+        0, 2, 3
+};
 
 int main() {
     uint64_t timerFrequency = bx::getHPFrequency();
     cout << "HP timer frequency: " << timerFrequency << endl;
     uint16_t width = 800;
     uint16_t height = 600;
-
-    sFileReader = new bx::CrtFileReader;
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *wnd = SDL_CreateWindow(
@@ -66,10 +80,30 @@ int main() {
             1.0f,
             0);
 
+    bgfx_utils::init();
+
     // load texture
-//    bgfx::TextureInfo textureInfo;
-//    auto textureHandle = loadTexture("data/fieldstone-rgba.tga", BGFX_TEXTURE_NONE, 0, &textureInfo);
-//    cout << "Texture size: " << textureInfo.width << "x" << textureInfo.height << " storage: " << textureInfo.storageSize << endl;
+    bgfx::TextureInfo textureInfo;
+    auto textureHandle = bgfx_utils::loadTexture("data/bg_64_64.dds", BGFX_TEXTURE_NONE, 0, &textureInfo);
+    cout << "Texture size: " << textureInfo.width << "x" << textureInfo.height << " storage: " << textureInfo.storageSize << endl;
+
+    bgfx::VertexBufferHandle quadVB = bgfx::createVertexBuffer(bgfx::makeRef(sQuadVertices, sizeof(sQuadVertices)), PosTexVertex::getDecl());
+
+    bgfx::IndexBufferHandle quadIB = bgfx::createIndexBuffer(bgfx::makeRef(sQuadIndices, sizeof(sQuadIndices)));
+
+
+    float view[16];
+    bx::mtxIdentity(view);
+
+    float proj[16];
+    bx::mtxOrtho(proj, 0, width, height, 0, 1, 100);
+
+    bgfx::setViewTransform(0, view, proj);
+
+    // Set view 0 default viewport.
+    bgfx::setViewRect(0, 0, 0, width, height);
+
+    bgfx::ProgramHandle program = bgfx_utils::loadProgram("default");
 
     SDL_Event event;
     bool running = true;
@@ -79,7 +113,15 @@ int main() {
                 running = false;
             }
 
-            bgfx::setViewRect(0, 0, 0, width, height);
+            bgfx::submit(0);
+
+            bgfx::setProgram(program);
+
+            bgfx::setVertexBuffer(quadVB);
+
+            bgfx::setIndexBuffer(quadIB);
+
+//            bgfx::setImage(0, textureHandle);
 
             bgfx::submit(0);
 
@@ -90,7 +132,7 @@ int main() {
         }
     }
 
-    delete sFileReader;
+    bgfx::destroyProgram(program);
 
     return 0;
 }
