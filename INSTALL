@@ -1,10 +1,14 @@
+# bring in SDL2
+sudo apt-get install libgl1-mesa-dev libsdl2-dev
+
+# bring in bgfx
 git submodule init
 git submodule update
 
-sudo apt-get install libgl1-mesa-dev
-
+# build bgfx
 cd extern/bgfx
 make
+make linux-debug64
 
-# SDL2
-sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+# install nvidia tools
+sudo apt-get install libnvtt-bin
