@@ -4,3 +4,6 @@
 [submodule "extern/bgfx"]
 	path = extern/bgfx
 	url = https://github.com/bkaradzic/bgfx
+[submodule "extern/assets"]
+	path = extern/assets
+	url = git@github.com:alexpana/dont-stop-running-assets.git
