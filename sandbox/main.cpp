@@ -7,61 +7,19 @@
 #include <bgfxplatform.h>
 #include <iostream>
 
-#include "bgfx_utils.h"
+#include "utils.h"
+
+#include "particles.h"
 
 using namespace std;
 
-struct PosTexVertex {
-    float x, y, z;
-    float u, v;
-
-    static bgfx::VertexDecl getDecl() {
-        if (!declarationInit) {
-            declarationInit = true;
-            declaration.begin()
-                    .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-                    .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-                    .end();
-        }
-        return declaration;
-    }
-
-private:
-    static bgfx::VertexDecl declaration;
-    static bool declarationInit;
-};
-
-bgfx::VertexDecl PosTexVertex::declaration;
-bool PosTexVertex::declarationInit = false;
-
-//static PosTexVertex sQuadVertices[4] = {
-//        {-1.0f,  1.0f, 0.0f, 0.0f, 1.0f},
-//        {-1.0f, -1.0f, 0.0f, 0.0f, 0.0f},
-//        { 1.0f, -1.0f, 0.0f, 1.0f, 0.0f},
-//        { 1.0f,  1.0f, 0.0f, 1.0f, 1.0f}
-//};
-
-static PosTexVertex sQuadVertices[4] = {
-        {10.0f,  10.0f, 0.0f, 0.0f, 1.0f},
-        {10.0f,  100.0f, 0.0f, 0.0f, 0.0f},
-        {110.0f, 100.0f, 0.0f, 1.0f, 0.0f},
-        {110.0f, 10.0f, 0.0f, 1.0f, 1.0f}
-};
-
-static const uint16_t sQuadIndices[6] = {
-        0, 1, 2,
-        0, 2, 3
-};
-
 int main() {
-    uint64_t timerFrequency = bx::getHPFrequency();
-    cout << "HP timer frequency: " << timerFrequency << endl;
     uint16_t width = 800;
     uint16_t height = 600;
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *wnd = SDL_CreateWindow(
-            "BGFX sandbox",
+            "Particle Editor",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             width, height,
@@ -73,29 +31,48 @@ int main() {
 
     bgfx::setDebug(BGFX_DEBUG_TEXT);
 
-    // Set view 0 clear state.
-    bgfx::setViewClear(0,
-            BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH,
-            0x313233ff,
-            1.0f,
-            0);
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x313233ff, 1.0f, 0);
 
-    bgfx_utils::init();
+    utils::init();
 
-    // load texture
-    bgfx::TextureInfo textureInfo;
-    auto textureHandle = bgfx_utils::loadTexture("data/bg_64_64.dds", BGFX_TEXTURE_NONE, 0, &textureInfo);
-    cout << "Texture size: " << textureInfo.width << "x" << textureInfo.height << " storage: " << textureInfo.storageSize << endl;
+    dsr::ParticleGenerator generator;
+    generator.generatorSpawnFrequency = 32;
 
-    bgfx::VertexBufferHandle quadVB = bgfx::createVertexBuffer(bgfx::makeRef(sQuadVertices, sizeof(sQuadVertices)), PosTexVertex::getDecl());
+    generator.generatorPosition[0] = 300;
+    generator.generatorPosition[1] = 300;
+    generator.generatorPosition[2] = 0;
 
-    bgfx::IndexBufferHandle quadIB = bgfx::createIndexBuffer(bgfx::makeRef(sQuadIndices, sizeof(sQuadIndices)));
+    generator.generatorSpawnRadius = 2.0;
 
+    generator.generatorSpawnArc = .4;
 
-    float view[16];
+    generator.generatorSpawnDirection[0] = 1.0f;
+    generator.generatorSpawnDirection[1] = 0.0f;
+
+    generator.params.lifetime = {utils::TimeUnit::fromSeconds(3), utils::TimeUnit::fromSeconds(5)};
+
+    generator.params.startScale = {1, 2};
+    generator.params.endScale = {6, 10};
+
+    generator.params.startSpeed = {2, 4};
+    generator.params.endSpeed = {0.1, 0.6};
+
+    generator.params.startRotation = {0, 0};
+    generator.params.endRotation = {0, 0};
+
+    generator.params.startAlpha = {1, 1};
+    generator.params.endAlpha = {0, 0};
+
+    generator.params.startColor = {0x324050ff, 0x324050ff};
+    generator.params.endColor = {0x600090ff, 0x604090ff};
+
+    dsr::ParticleSystem particleSystem;
+    particleSystem.addGenerator(&generator);
+
+    F32 view[16];
     bx::mtxIdentity(view);
 
-    float proj[16];
+    F32 proj[16];
     bx::mtxOrtho(proj, 0, width, height, 0, 1, 100);
 
     bgfx::setViewTransform(0, view, proj);
@@ -103,36 +80,90 @@ int main() {
     // Set view 0 default viewport.
     bgfx::setViewRect(0, 0, 0, width, height);
 
-    bgfx::ProgramHandle program = bgfx_utils::loadProgram("default");
+    F32 mouse[3] = {0, 0, 0};
+    F32 emitterSpeed = 2.0;
+
+    int viewType = 0;
 
     SDL_Event event;
     bool running = true;
     while (running) {
+
+        // input
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             }
 
-            bgfx::submit(0);
+            if (event.type == SDL_MOUSEMOTION) {
+                mouse[0] = event.motion.x;
+                mouse[1] = event.motion.y;
+            }
 
-            bgfx::setProgram(program);
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE) {
+                if (emitterSpeed == 2) {
+                    emitterSpeed = 0;
+                } else {
+                    emitterSpeed = 2;
+                }
+            }
 
-            bgfx::setVertexBuffer(quadVB);
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_1) {
+                viewType = 1;
+            }
 
-            bgfx::setIndexBuffer(quadIB);
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_2) {
+                viewType = 2;
+            }
 
-//            bgfx::setImage(0, textureHandle);
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_3) {
+                viewType = 3;
+            }
 
-            bgfx::submit(0);
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_0) {
+                viewType = 0;
+            }
 
-            bgfx::dbgTextClear();
-            bgfx::dbgTextPrintf(1, 2, 0x0B, "FPS: unknown");
-
-            bgfx::frame();
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q) {
+                generator.generatorSpawnArc -= 0.3;
+            }
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_w) {
+                generator.generatorSpawnArc += 0.3;
+            }
         }
+
+        F32 direction[3];
+        bx::vec3Sub(direction, mouse, generator.generatorPosition);
+        bx::vec3Norm(direction, direction);
+        bx::vec3Mul(direction, direction, emitterSpeed);
+
+        if (viewType == 1) {
+            bx::vec3Move(generator.generatorSpawnDirection, direction);
+        }
+
+        if (viewType == 2) {
+            bx::vec3Add(generator.generatorPosition, generator.generatorPosition, direction);
+        }
+
+        if (viewType == 3) {
+            bx2::vec3Rot2(generator.generatorSpawnDirection, generator.generatorSpawnDirection, 0.2);
+        }
+
+        // update
+        particleSystem.update(utils::TimeUnit::fromMilliseconds(33.3));
+
+        bgfx::submit(0);
+
+        // render
+        particleSystem.render();
+
+        bgfx::submit(0);
+
+        bgfx::dbgTextClear();
+        bgfx::dbgTextPrintf(1, 2, 0x0B, "FPS: unknown");
+
+        bgfx::frame();
     }
 
-    bgfx::destroyProgram(program);
-
     return 0;
-}
+};

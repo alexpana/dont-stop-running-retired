@@ -5,29 +5,27 @@
 
 #include <bx/readerwriter.h>
 #include <bx/fpumath.h>
+#include <bx/timer.h>
+#include <bits/unique_ptr.h>
 
-#include "bgfx_utils.h"
-
-#include <memory>
+#include "utils.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-namespace bgfx_utils {
+namespace utils {
 
-	using bx::swap;
+	using bx::FileReaderI;
 
-//	static std::unique_ptr<bx::FileReaderI> sFileReaderHandle;
-	static bx::FileReaderI *sFileReader;
+	static std::unique_ptr<FileReaderI> sFileReaderHandle;
 
 	void init() {
-//		sFileReaderHandle = std::unique_ptr<bx::FileReaderI>(new bx::CrtFileReader);
-		sFileReader = new bx::CrtFileReader;
+		sFileReaderHandle = std::unique_ptr<FileReaderI>(new bx::CrtFileReader);
 	}
 
 	static const bgfx::Memory *loadMem(bx::FileReaderI *_reader, const char *_filePath) {
 		if (0 == bx::open(_reader, _filePath)) {
-			uint32_t size = (uint32_t) bx::getSize(_reader);
+			U32 size = (U32) bx::getSize(_reader);
 			const bgfx::Memory *mem = bgfx::alloc(size + 1);
 			bx::read(_reader, mem->data, size);
 			bx::close(_reader);
@@ -38,9 +36,9 @@ namespace bgfx_utils {
 		return nullptr;
 	}
 
-	bgfx::TextureHandle loadTexture(const char *_name, uint32_t _flags, uint8_t _skip, bgfx::TextureInfo *_info) {
+	bgfx::TextureHandle loadTexture(const char *_name, U32 _flags, U8 _skip, bgfx::TextureInfo *_info) {
 
-		const bgfx::Memory *mem = loadMem(sFileReader, _name);
+		const bgfx::Memory *mem = loadMem(sFileReaderHandle.get(), _name);
 
 		return bgfx::createTexture(mem, _flags, _skip, _info);
 	}
@@ -52,7 +50,7 @@ namespace bgfx_utils {
 		strcat(filePath, name);
 		strcat(filePath, suffix);
 
-		return bgfx::createShader(loadMem(sFileReader, filePath));
+		return bgfx::createShader(loadMem(sFileReaderHandle.get(), filePath));
 	}
 
 	bgfx::ProgramHandle loadProgram(const char *shaderName) {
@@ -62,30 +60,30 @@ namespace bgfx_utils {
 		return bgfx::createProgram(vsh, fsh, true);
 	}
 
-	void calcTangents(void *_vertices, uint16_t _numVertices, bgfx::VertexDecl _decl, const uint16_t *_indices, uint32_t _numIndices) {
+	void calcTangents(void *_vertices, U16 _numVertices, bgfx::VertexDecl _decl, const U16 *_indices, U32 _numIndices) {
 		struct PosTexcoord {
-			float m_x;
-			float m_y;
-			float m_z;
-			float m_pad0;
-			float m_u;
-			float m_v;
-			float m_pad1;
-			float m_pad2;
+			F32 m_x;
+			F32 m_y;
+			F32 m_z;
+			F32 m_pad0;
+			F32 m_u;
+			F32 m_v;
+			F32 m_pad1;
+			F32 m_pad2;
 		};
 
-		float *tangents = new float[6 * _numVertices];
-		memset(tangents, 0, 6 * _numVertices * sizeof(float));
+		F32 *tangents = new F32[6 * _numVertices];
+		memset(tangents, 0, 6 * _numVertices * sizeof(F32));
 
 		PosTexcoord v0;
 		PosTexcoord v1;
 		PosTexcoord v2;
 
-		for (uint32_t ii = 0, num = _numIndices / 3; ii < num; ++ii) {
+		for (U32 ii = 0, num = _numIndices / 3; ii < num; ++ii) {
 			const uint16_t *indices = &_indices[ii * 3];
-			uint32_t i0 = indices[0];
-			uint32_t i1 = indices[1];
-			uint32_t i2 = indices[2];
+			U32 i0 = indices[0];
+			U32 i1 = indices[1];
+			U32 i2 = indices[2];
 
 			bgfx::vertexUnpack(&v0.m_x, bgfx::Attrib::Position, _decl, _vertices, i0);
 			bgfx::vertexUnpack(&v0.m_u, bgfx::Attrib::TexCoord0, _decl, _vertices, i0);
@@ -96,32 +94,32 @@ namespace bgfx_utils {
 			bgfx::vertexUnpack(&v2.m_x, bgfx::Attrib::Position, _decl, _vertices, i2);
 			bgfx::vertexUnpack(&v2.m_u, bgfx::Attrib::TexCoord0, _decl, _vertices, i2);
 
-			const float bax = v1.m_x - v0.m_x;
-			const float bay = v1.m_y - v0.m_y;
-			const float baz = v1.m_z - v0.m_z;
-			const float bau = v1.m_u - v0.m_u;
-			const float bav = v1.m_v - v0.m_v;
+			const F32 bax = v1.m_x - v0.m_x;
+			const F32 bay = v1.m_y - v0.m_y;
+			const F32 baz = v1.m_z - v0.m_z;
+			const F32 bau = v1.m_u - v0.m_u;
+			const F32 bav = v1.m_v - v0.m_v;
 
-			const float cax = v2.m_x - v0.m_x;
-			const float cay = v2.m_y - v0.m_y;
-			const float caz = v2.m_z - v0.m_z;
-			const float cau = v2.m_u - v0.m_u;
-			const float cav = v2.m_v - v0.m_v;
+			const F32 cax = v2.m_x - v0.m_x;
+			const F32 cay = v2.m_y - v0.m_y;
+			const F32 caz = v2.m_z - v0.m_z;
+			const F32 cau = v2.m_u - v0.m_u;
+			const F32 cav = v2.m_v - v0.m_v;
 
-			const float det = (bau * cav - bav * cau);
-			const float invDet = 1.0f / det;
+			const F32 det = (bau * cav - bav * cau);
+			const F32 invDet = 1.0f / det;
 
-			const float tx = (bax * cav - cax * bav) * invDet;
-			const float ty = (bay * cav - cay * bav) * invDet;
-			const float tz = (baz * cav - caz * bav) * invDet;
+			const F32 tx = (bax * cav - cax * bav) * invDet;
+			const F32 ty = (bay * cav - cay * bav) * invDet;
+			const F32 tz = (baz * cav - caz * bav) * invDet;
 
-			const float bx = (cax * bau - bax * cau) * invDet;
-			const float by = (cay * bau - bay * cau) * invDet;
-			const float bz = (caz * bau - baz * cau) * invDet;
+			const F32 bx = (cax * bau - bax * cau) * invDet;
+			const F32 by = (cay * bau - bay * cau) * invDet;
+			const F32 bz = (caz * bau - baz * cau) * invDet;
 
-			for (uint32_t jj = 0; jj < 3; ++jj) {
-				float *tanu = &tangents[indices[jj] * 6];
-				float *tanv = &tanu[3];
+			for (U32 jj = 0; jj < 3; ++jj) {
+				F32 *tanu = &tangents[indices[jj] * 6];
+				F32 *tanv = &tanu[3];
 				tanu[0] += tx;
 				tanu[1] += ty;
 				tanu[2] += tz;
@@ -132,23 +130,23 @@ namespace bgfx_utils {
 			}
 		}
 
-		for (uint32_t ii = 0; ii < _numVertices; ++ii) {
-			const float *tanu = &tangents[ii * 6];
-			const float *tanv = &tangents[ii * 6 + 3];
+		for (U32 ii = 0; ii < _numVertices; ++ii) {
+			const F32 *tanu = &tangents[ii * 6];
+			const F32 *tanv = &tangents[ii * 6 + 3];
 
-			float normal[4];
+			F32 normal[4];
 			bgfx::vertexUnpack(normal, bgfx::Attrib::Normal, _decl, _vertices, ii);
-			float ndt = bx::vec3Dot(normal, tanu);
+			F32 ndt = bx::vec3Dot(normal, tanu);
 
-			float nxt[3];
+			F32 nxt[3];
 			bx::vec3Cross(nxt, normal, tanu);
 
-			float tmp[3];
+			F32 tmp[3];
 			tmp[0] = tanu[0] - normal[0] * ndt;
 			tmp[1] = tanu[1] - normal[1] * ndt;
 			tmp[2] = tanu[2] - normal[2] * ndt;
 
-			float tangent[4];
+			F32 tangent[4];
 			bx::vec3Norm(tangent, tmp);
 
 			tangent[3] = bx::vec3Dot(nxt, tanv) < 0.0f ? -1.0f : 1.0f;
