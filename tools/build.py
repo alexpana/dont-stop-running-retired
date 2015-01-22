@@ -21,7 +21,7 @@ def usage():
 	print "usage: build"
 
 def requires_update(destination, source):
-	return os.path.exists(destination) and os.path.getctime(destination) < os.path.getmtime(source)
+	return not os.path.exists(destination) or os.path.getctime(destination) < os.path.getmtime(source)
 
 def build_textures():
 	CONVERT_CMD = "nvcompress -bc2 %s %s"
@@ -96,7 +96,7 @@ def build_shaders():
 
 		print "** Building vertex shader"
 
-		if not requires_update(vertex_out, vertex_in):
+		if not (requires_update(vertex_out, vertex_in) or requires_update(vertex_out, varying_in)):
 			print "Destination is up to date, skipping"
 		else:
 			subprocess.call(BUILD_CMD % 
@@ -106,7 +106,7 @@ def build_shaders():
 
 		print "** Building fragment shader"
 
-		if not requires_update(fragment_out, fragment_in):
+		if not (requires_update(fragment_out, fragment_in) or requires_update(fragment_out, varying_in)):
 			print "Destination is up to date, skipping"
 		else:
 			subprocess.call(BUILD_CMD % 
