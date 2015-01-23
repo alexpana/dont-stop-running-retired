@@ -2,7 +2,7 @@ find_package(SDL2 REQUIRED)
 
 find_package(BGFX REQUIRED)
 
-find_package(Nanovg REQUIRED)
+# find_package(Nanovg REQUIRED)
 
 # Configure BX and BGFX
 add_definitions(-DBX_CONFIG_CRT_FILE_READER_WRITER)
@@ -25,13 +25,13 @@ add_executable(sandbox
     ${SANDBOX_HEADERS})
 
 include_directories(
-    ${NANOVG_INCLUDE_DIR}
+#    ${NANOVG_INCLUDE_DIR}
     ${BGFX_INCLUDE_DIR}
     ${BX_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR})
 
 target_link_libraries(sandbox
-    ${NANOVG_LIBRARY}
+#    ${NANOVG_LIBRARY}
     ${BGFX_LIBRARY_DEBUG}
     ${SDL2_LIBRARY}
     pthread
