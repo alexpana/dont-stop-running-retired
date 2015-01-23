@@ -12,3 +12,6 @@ make linux-debug64
 
 # install nvidia tools
 sudo apt-get install libnvtt-bin -y
+
+# build the assets
+tools/build.py
