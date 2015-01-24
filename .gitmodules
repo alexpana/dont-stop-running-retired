@@ -7,3 +7,6 @@
 [submodule "extern/assets"]
 	path = extern/assets
 	url = git@github.com:alexpana/dont-stop-running-assets.git
+[submodule "extern/rapidjson"]
+	path = extern/rapidjson
+	url = https://github.com/miloyip/rapidjson.git
