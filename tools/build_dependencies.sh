@@ -5,6 +5,9 @@ echo "------------------------------------------"
 echo "Installing tools and dendencies"
 echo "------------------------------------------"
 echo
+sudo apt-get update
+sudo apt-cache search libsdl
+sudo apt-cache search premake
 sudo apt-get install python libgl1-mesa-dev libsdl2-dev premake4 libnvtt-bin -y
 
 echo
