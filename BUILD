@@ -10,6 +10,18 @@ cd extern/bgfx
 make
 make linux-debug64
 
+# install the premake build tool
+sudo apt-get install premake4 -y
+
+# build and prepare nanovg
+cd extern/nanovg
+premake4 gmake
+cd build
+make nanovg
+cd ..
+mkdir -p include/nanovg
+mv src/*.h include/nanovg
+
 # install nvidia tools
 sudo apt-get install libnvtt-bin -y
 

@@ -1,0 +1,8 @@
+FIND_PATH(NANOVG_INCLUDE_DIR nanovg/nanovg.h HINTS ../extern/nanovg/include/)
+
+FIND_LIBRARY(NANOVG_LIBRARY_DEBUG nanovg HINTS ../extern/nanovg/build/)
+
+INCLUDE(FindPackageHandleStandardArgs)
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Nanovg REQUIRED_VARS NANOVG_LIBRARY_DEBUG NANOVG_INCLUDE_DIR)
+
