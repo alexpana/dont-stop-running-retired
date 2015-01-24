@@ -1,0 +1,1 @@
+install: ./tools/build_dependencies.sh
