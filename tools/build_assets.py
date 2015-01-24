@@ -1,11 +1,12 @@
 #!/usr/bin/python
 import os
 import subprocess
+import shutil
 
 ROOT = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
 ASSETS_DIR = os.path.normpath(os.path.join(ROOT, "extern", "assets"))
 BUILD_DIR = os.path.normpath(os.path.join(ROOT, "bin", "data"))
-SHADER_COMPILER = os.path.normpath(os.path.join(ROOT, "extern", "bgfx", ".build", "linux64_gcc", "bin", "shadercRelease"))
+SHADER_COMPILER = os.path.normpath(os.path.join(ROOT, "extern", "bgfx", ".build", "linux64_gcc", "bin", "shadercDebug"))
 
 class color:
     HEADER = '\033[95m'
@@ -19,6 +20,24 @@ class color:
 
 def usage():
 	print "usage: build"
+
+def initialize():
+	print "============================="
+	print "Initializing"
+	print "============================="
+	print
+
+	# Ensure all the necessary folders exist
+	required_assets_dirs = ["shaders", "textures", "scripts"]
+
+	for dir_name in required_assets_dirs:
+		dir_path = os.path.join(BUILD_DIR, dir_name)
+
+		if not os.path.exists(dir_path):
+			print "Building directory " + color.OKGREEN + dir_path + color.ENDC
+			os.mkdir(dir_path)
+
+	print
 
 def requires_update(destination, source):
 	return not os.path.exists(destination) or os.path.getctime(destination) < os.path.getmtime(source)
@@ -114,6 +133,25 @@ def build_shaders():
 				shell = True)
 		print		
 
+def build_scripts():
+	print "============================="
+	print "Building scripts"
+	print "============================="
+	print
+
+	SRC_DIR = os.path.join(ASSETS_DIR, "scripts")
+	DST_DIR = os.path.join(BUILD_DIR, "scripts")
+
+	for file in os.listdir(SRC_DIR):
+		print "Copying " + file
+		shutil.copy2(os.path.join(SRC_DIR, file), os.path.join(DST_DIR, file))
+
 if __name__ == "__main__":
+	initialize()
+
 	build_textures()
-	build_shaders();
+	build_shaders()
+	build_scripts()
+
+	print
+	print "Done. Have fun developing the game!"
