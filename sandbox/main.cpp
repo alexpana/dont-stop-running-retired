@@ -8,7 +8,6 @@
 #include <iostream>
 
 #include "utils.h"
-
 #include "particles.h"
 
 using namespace std;
@@ -44,7 +43,7 @@ int main() {
 
     generator.generatorSpawnRadius = 2.0;
 
-    generator.generatorSpawnArc = .4;
+    generator.generatorSpawnArc = 3.14;
 
     generator.generatorSpawnDirection[0] = 1.0f;
     generator.generatorSpawnDirection[1] = 0.0f;
@@ -58,7 +57,7 @@ int main() {
     generator.params.endSpeed = {0.1, 0.6};
 
     generator.params.startRotation = {0, 0};
-    generator.params.endRotation = {0, 0};
+    generator.params.endRotation = {4, 6};
 
     generator.params.startAlpha = {1, 1};
     generator.params.endAlpha = {0, 0};

@@ -51,11 +51,11 @@ namespace dsr {
     void ParticleGenerator::spawnParticle() {
         lastSpawnTime = utils::TimeUnit::counter();
 
-        if (particleSystem == nullptr) {
+        if (parentSystem == nullptr) {
             return;
         }
 
-        Particle *p = particleSystem->allocateParticle();
+        Particle *p = parentSystem->allocateParticle();
 
         if (p == nullptr) {
             return;
@@ -90,6 +90,10 @@ namespace dsr {
         p->scale.start = params.startScale.distribute(bx::frnd(&sRNG));
         p->scale.end = params.endScale.distribute(bx::frnd(&sRNG));
 
+        // generate rotation
+        p->rotation.start = params.startRotation.distribute(bx::frnd(&sRNG));
+        p->rotation.end = params.endRotation.distribute(bx::frnd(&sRNG));
+
         // generate alpha
         p->alpha.start = params.startAlpha.distribute(bx::frnd(&sRNG));
         p->alpha.end = params.endAlpha.distribute(bx::frnd(&sRNG));
@@ -115,7 +119,7 @@ namespace dsr {
     }
 
     void ParticleSystem::addGenerator(ParticleGenerator *generator) {
-        generator->particleSystem = this;
+        generator->setParentSystem(this);
         generators.push_back(generator);
     }
 
@@ -135,29 +139,31 @@ namespace dsr {
         }
 
         // update the instance data buffer
-        U8 stride = 4 * (4 + 4 + 4);
+        U8 stride = sizeof(F32) * 12;
         instanceDataBuffer = bgfx::allocInstanceDataBuffer(dsr::kParticleLimit, stride);
         U8 *data = instanceDataBuffer->data;
         for (U32 i = 0; i < dsr::kParticleLimit; ++i) {
             F32 *fdata = (F32 *) data;
 
+            // i_data0
             // position
             fdata[0] = sParticlePool[i].position[0];
             fdata[1] = sParticlePool[i].position[1];
             fdata[2] = sParticlePool[i].position[2];
-            fdata[3] = 0.0;
+            fdata[3] = 0.0;     // unused
 
+            // i_data1
             // color
             fdata[4] = utils::redChannel(sParticlePool[i].color.current) / 255.0f;
             fdata[5] = utils::greenChannel(sParticlePool[i].color.current) / 255.0f;
             fdata[6] = utils::blueChannel(sParticlePool[i].color.current) / 255.0f;
             fdata[7] = sParticlePool[i].alpha.current;
 
-            // scale
-            fdata[8] = sParticlePool[i].scale.current;
-            fdata[9] = 0.0;
-            fdata[10] = 0.0;
-            fdata[11] = 0.0;
+            // i_data2
+            fdata[8] = sParticlePool[i].scale.current; // scale
+            fdata[9] = sParticlePool[i].rotation.current; // rotation
+            fdata[10] = 0.0; // unused
+            fdata[11] = 0.0; // unused
 
             data += stride;
         }

@@ -98,14 +98,20 @@ namespace dsr {
 
         void update(I64 dt);
 
-        void spawnParticle();
-
-        ParticleSystem *particleSystem = nullptr;
-
         ParticleGenerator();
 
+        ParticleGenerator(ParticleGenerator&& other) = default;
+
+        void setParentSystem(ParticleSystem *particleSystem) {
+            parentSystem = particleSystem;
+        }
+
     private:
+        void spawnParticle();
+
         I64 lastSpawnTime;
+
+        ParticleSystem *parentSystem = nullptr;
     };
 
     class ParticleSystem {
