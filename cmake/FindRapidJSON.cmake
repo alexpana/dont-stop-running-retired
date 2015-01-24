@@ -1,0 +1,5 @@
+FIND_PATH(RAPIDJSON_INCLUDE_DIR rapidjson/rapidjson.h HINTS ../extern/rapidjson/include)
+
+INCLUDE(FindPackageHandleStandardArgs)
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(RapidJSON REQUIRED_VARS RAPIDJSON_INCLUDE_DIR)

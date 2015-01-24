@@ -2,6 +2,8 @@ find_package(SDL2 REQUIRED)
 
 find_package(BGFX REQUIRED)
 
+find_package(RapidJSON REQUIRED)
+
 # find_package(Nanovg REQUIRED)
 
 # Configure BX and BGFX
@@ -26,6 +28,7 @@ add_executable(sandbox
 
 include_directories(
 #    ${NANOVG_INCLUDE_DIR}
+    ${RAPIDJSON_INCLUDE_DIR}
     ${BGFX_INCLUDE_DIR}
     ${BX_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR})
