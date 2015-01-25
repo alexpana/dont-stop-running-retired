@@ -13,21 +13,27 @@ add_definitions(-DBX_CONFIG_CRT_FILE_READER_WRITER)
 
 set(SANDBOX_HEADERS
     engine/asset_loader.h
+    engine/assets.h
     engine/game_object.h
     engine/json_reader.h
     engine/math.h
     engine/log.h
     engine/particles.h
     engine/random.h
+    engine/renderer.h
     engine/settings.h
+    engine/shader.h
     engine/sprite.h
+    engine/texture.h
     engine/types.h
     engine/bgfx_utils.h)
 
 set(SANDBOX_SOURCES
     engine/asset_loader.cpp
+    engine/assets.cpp
     engine/bgfx_utils.cpp
     engine/particles.cpp
+    engine/renderer.cpp
     main.cpp)
 
 add_executable(sandbox

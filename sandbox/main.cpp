@@ -11,8 +11,12 @@
 #include "engine/bgfx_utils.h"
 #include "engine/particles.h"
 #include "engine/asset_loader.h"
+#include "engine/assets.h"
+#include "engine/renderer.h"
 
 dsr::ParticleGenerator createParticleGenerator();
+
+void loadAssets();
 
 static dsr::Log _log{"main"};
 
@@ -21,23 +25,27 @@ using namespace dsr;
 
 int main() {
 
-    vector<GameObject> objects = loadObjects("data/scripts/objects.json");
-
     uint16_t width = 800;
     uint16_t height = 600;
     std::string windowName = "Don't Stop Running";
 
     dsr::initBgfx(width, height, windowName);
+    loadAssets();
 
-    dsr::ParticleGenerator generator = createParticleGenerator();
+    Assets &assets = dsr::Assets::instance();
 
     dsr::ParticleSystem particleSystem;
+
+    dsr::ParticleGenerator generator = createParticleGenerator();
     particleSystem.addGenerator(&generator);
 
     F32 mouse[3] = {0, 0, 0};
     F32 emitterSpeed = 2.0;
 
     int viewType = 0;
+
+    GameObject *grass = assets.findGameObject("grass_tile");
+    GameObject *dirt = assets.findGameObject("dirt_tile");
 
     SDL_Event event;
     bool running = true;
@@ -109,6 +117,11 @@ int main() {
         // render
         particleSystem.render();
 
+        dsr::renderSprite({100, 100}, grass->sprite);
+        dsr::renderSprite({132, 100}, grass->sprite);
+        dsr::renderSprite({100, 132}, dirt->sprite);
+        dsr::renderSprite({132, 132}, dirt->sprite);
+
         bgfx::dbgTextClear();
         bgfx::dbgTextPrintf(1, 2, 0x0B, "FPS: unknown");
 
@@ -116,6 +129,38 @@ int main() {
     }
 
     return 0;
+}
+
+void loadShader(std::string shaderName) {
+    Shader shader;
+    if (dsr::loadShader("data/shaders/" + shaderName, shader)) {
+        dsr::Assets::instance().registerShader(shaderName, shader);
+    }
+}
+
+void loadTexture(std::string textureName) {
+    Texture texture;
+    if (loadTexture("data/textures/" + textureName + ".dds", texture)) {
+        dsr::Assets::instance().registerTexture(textureName, texture);
+    }
+}
+
+void loadAssets() {
+    auto &assets = dsr::Assets::instance();
+
+    // load textures
+    loadTexture("tiles");
+
+    // load objects
+    vector<GameObject> objects = loadObjects("data/scripts/objects.json");
+    for (auto &object : objects) {
+        assets.registerGameObject(object.name, object);
+    }
+
+    // load shaders
+    loadShader("particles");
+    loadShader("default");
+    loadShader("sprite");
 }
 
 dsr::ParticleGenerator createParticleGenerator() {

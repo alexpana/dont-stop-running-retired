@@ -10,12 +10,6 @@
 namespace dsr {
         void initBgfx(uint16_t width, uint16_t height, const std::string &windowName);
 
-        bgfx::ShaderHandle loadShader(const char *name);
-
-        bgfx::ProgramHandle loadProgram(const char *name);
-
-        bgfx::TextureHandle loadTexture(const char *name, U32 flags = BGFX_TEXTURE_NONE, U8 skip = 0, bgfx::TextureInfo *info = nullptr);
-
         void calcTangents(void *vertices, U16 numVertices, bgfx::VertexDecl decl, const U16 *indices, U32 numIndices);
 
         struct TimeUnit {

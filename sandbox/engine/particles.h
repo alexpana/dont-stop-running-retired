@@ -116,9 +116,9 @@ namespace dsr {
 
     class ParticleSystem {
     public:
-        ParticleSystem();
+        ParticleSystem() = default;
 
-        ~ParticleSystem();
+        ~ParticleSystem() = default;
 
         void addGenerator(ParticleGenerator *generator);
 
@@ -132,11 +132,10 @@ namespace dsr {
 
     private:
         std::vector<ParticleGenerator *> generators;
-        bgfx::VertexBufferHandle vertexBufferHandle;
-        bgfx::IndexBufferHandle indexBufferHandle;
         const bgfx::InstanceDataBuffer *instanceDataBuffer;
-        bgfx::ProgramHandle shaderProgram;
 
         static Particle sParticlePool[dsr::kParticleLimit];
+
+        void fillInstanceBuffer();
     };
 }

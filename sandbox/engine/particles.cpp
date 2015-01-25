@@ -4,6 +4,8 @@
 #include <bits/algorithmfwd.h>
 
 #include "random.h"
+#include "asset_loader.h"
+#include "assets.h"
 
 namespace dsr {
     static U32RNG sRNG;
@@ -104,20 +106,6 @@ namespace dsr {
         p->color.interpolation = lerpColor;
     }
 
-    ParticleSystem::ParticleSystem() {
-        static F32 sVertexData[] = {-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0};
-        static U16 sIndexData[] = {0, 1, 2, 0, 2, 3};
-
-        bgfx::VertexDecl vertexDecl;
-        vertexDecl.begin()
-                .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-                .end();
-
-        vertexBufferHandle = bgfx::createVertexBuffer(bgfx::makeRef(sVertexData, sizeof(sVertexData)), vertexDecl);
-        indexBufferHandle = bgfx::createIndexBuffer(bgfx::makeRef(sIndexData, sizeof(sIndexData)));
-        shaderProgram = dsr::loadProgram("particles");
-    }
-
     void ParticleSystem::addGenerator(ParticleGenerator *generator) {
         generator->setParentSystem(this);
         generators.push_back(generator);
@@ -137,12 +125,13 @@ namespace dsr {
         for (U32 i = 0; i < kParticleLimit; ++i) {
             sParticlePool[i].update(dt);
         }
+    }
 
-        // update the instance data buffer
+    void ParticleSystem::fillInstanceBuffer() {
         U8 stride = sizeof(F32) * 12;
-        instanceDataBuffer = bgfx::allocInstanceDataBuffer(dsr::kParticleLimit, stride);
+        instanceDataBuffer = bgfx::allocInstanceDataBuffer(kParticleLimit, stride);
         U8 *data = instanceDataBuffer->data;
-        for (U32 i = 0; i < dsr::kParticleLimit; ++i) {
+        for (U32 i = 0; i < kParticleLimit; ++i) {
             F32 *fdata = (F32 *) data;
 
             // i_data0
@@ -154,9 +143,9 @@ namespace dsr {
 
             // i_data1
             // color
-            fdata[4] = dsr::redChannel(sParticlePool[i].color.current) / 255.0f;
-            fdata[5] = dsr::greenChannel(sParticlePool[i].color.current) / 255.0f;
-            fdata[6] = dsr::blueChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[4] = redChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[5] = greenChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[6] = blueChannel(sParticlePool[i].color.current) / 255.0f;
             fdata[7] = sParticlePool[i].alpha.current;
 
             // i_data2
@@ -170,7 +159,19 @@ namespace dsr {
     }
 
     void ParticleSystem::render() {
-        bgfx::setProgram(shaderProgram);
+        static F32 sVertexData[] = {-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0};
+        static U16 sIndexData[] = {0, 1, 2, 0, 2, 3};
+
+        bgfx::VertexDecl vertexDecl;
+        vertexDecl.begin()
+                .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+                .end();
+
+        auto vertexBufferHandle = bgfx::createVertexBuffer(bgfx::makeRef(sVertexData, sizeof(sVertexData)), vertexDecl);
+        auto indexBufferHandle = bgfx::createIndexBuffer(bgfx::makeRef(sIndexData, sizeof(sIndexData)));
+        fillInstanceBuffer();
+
+        bgfx::setProgram(Assets::instance().findShader("particles")->getHandle());
         bgfx::setVertexBuffer(vertexBufferHandle);
         bgfx::setIndexBuffer(indexBufferHandle);
         bgfx::setInstanceDataBuffer(instanceDataBuffer);
@@ -178,6 +179,9 @@ namespace dsr {
                 BGFX_STATE_ALPHA_WRITE |
                 BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_DST_ALPHA) |
                 BGFX_STATE_BLEND_EQUATION_SEPARATE(BGFX_STATE_BLEND_EQUATION_ADD, BGFX_STATE_BLEND_EQUATION_MAX));
+
+        bgfx::destroyVertexBuffer(vertexBufferHandle);
+        bgfx::destroyIndexBuffer(indexBufferHandle);
 
         bgfx::submit(0);
     }
@@ -210,11 +214,5 @@ namespace dsr {
         r += dsr::lerp<U8>((U8) ((a >> 0) & 0xff), (U8) ((b >> 0) & 0xff), t) << 0;
 
         return r;
-    }
-
-    ParticleSystem::~ParticleSystem() {
-        bgfx::destroyIndexBuffer(indexBufferHandle);
-        bgfx::destroyVertexBuffer(vertexBufferHandle);
-        bgfx::destroyProgram(shaderProgram);
     }
 }

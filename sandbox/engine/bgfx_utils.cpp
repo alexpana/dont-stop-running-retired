@@ -57,30 +57,6 @@ namespace dsr {
 		return nullptr;
 	}
 
-	bgfx::TextureHandle loadTexture(const char *_name, U32 _flags, U8 _skip, bgfx::TextureInfo *_info) {
-
-		const bgfx::Memory *mem = loadMem(sFileReaderHandle.get(), _name);
-
-		return bgfx::createTexture(mem, _flags, _skip, _info);
-	}
-
-	bgfx::ShaderHandle loadShader(const char *name, const char *suffix) {
-		char filePath[256];
-
-		strcpy(filePath, "data/shaders/");
-		strcat(filePath, name);
-		strcat(filePath, suffix);
-
-		return bgfx::createShader(loadMem(sFileReaderHandle.get(), filePath));
-	}
-
-	bgfx::ProgramHandle loadProgram(const char *shaderName) {
-		bgfx::ShaderHandle vsh = loadShader(shaderName, ".vert.bin");
-		bgfx::ShaderHandle fsh = loadShader(shaderName, ".frag.bin");
-
-		return bgfx::createProgram(vsh, fsh, true);
-	}
-
 	void calcTangents(void *_vertices, U16 _numVertices, bgfx::VertexDecl _decl, const U16 *_indices, U32 _numIndices) {
 		struct PosTexcoord {
 			F32 m_x;

@@ -1,13 +1,33 @@
 #include "asset_loader.h"
 
+#include <memory>
+
+#include <bx/bx.h>
+#include <bx/readerwriter.h>
+
 #include "json_reader.h"
 
 using namespace std;
 using namespace rapidjson;
 
-static dsr::Log _log{"asset_loader"};
+static dsr::Log _log{"AssetLoader"};
 
 namespace dsr {
+
+    static std::unique_ptr<bx::FileReaderI> sFileReaderHandle = std::unique_ptr<bx::FileReaderI>(new bx::CrtFileReader);
+
+    static const bgfx::Memory *loadMem(bx::FileReaderI *_reader, const std::string &_filePath) {
+        if (!bx::open(_reader, _filePath.c_str())) {
+            U32 size = (U32) bx::getSize(_reader);
+            const bgfx::Memory *mem = bgfx::alloc(size + 1);
+            bx::read(_reader, mem->data, size);
+            bx::close(_reader);
+            mem->data[mem->size - 1] = '\0';
+            return mem;
+        }
+
+        return nullptr;
+    }
 
     template<typename T>
     bool loadSprite(T &obj, Sprite &sprite) {
@@ -115,5 +135,46 @@ namespace dsr {
 
     void loadParticleSystems(const std::string &jsonFilename) {
         _log.error(__FUNCTION__, " is not implemented");
+    }
+
+    bool loadTexture(const std::string &filename, Texture &texture) {
+        const bgfx::Memory *mem = loadMem(sFileReaderHandle.get(), filename.c_str());
+
+        bgfx::TextureInfo info;
+
+        auto handle = bgfx::createTexture(mem, BGFX_TEXTURE_NONE, 0, &info);
+
+        if (bgfx::isValid(handle)) {
+            texture = std::move(Texture(handle, info));
+            return true;
+        }
+
+        return false;
+    }
+
+    static bgfx::ShaderHandle loadShader(const std::string &filePath) {
+        return bgfx::createShader(loadMem(sFileReaderHandle.get(), filePath));
+    }
+
+    static bgfx::ProgramHandle loadProgram(const std::string &shaderName) {
+        bgfx::ShaderHandle vsh = loadShader(shaderName + ".vert.bin");
+        bgfx::ShaderHandle fsh = loadShader(shaderName + ".frag.bin");
+
+        auto handle = bgfx::createProgram(vsh, fsh, true);
+
+        return handle;
+    }
+
+    bool loadShader(const std::string &filename, Shader &shader) {
+        bgfx::ProgramHandle handle = loadProgram(filename);
+        if (bgfx::isValid(handle)) {
+            _log.info("Successfuly loaded shader ", filename);
+            shader = std::move(Shader(handle));
+            return true;
+        }
+
+        _log.warn("Could not load shader ", filename);
+
+        return false;
     }
 }
