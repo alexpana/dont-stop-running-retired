@@ -49,7 +49,7 @@ namespace dsr {
     }
 
     void ParticleGenerator::spawnParticle() {
-        lastSpawnTime = bgfx::TimeUnit::counter();
+        lastSpawnTime = dsr::TimeUnit::counter();
 
         if (parentSystem == nullptr) {
             return;
@@ -115,7 +115,7 @@ namespace dsr {
 
         vertexBufferHandle = bgfx::createVertexBuffer(bgfx::makeRef(sVertexData, sizeof(sVertexData)), vertexDecl);
         indexBufferHandle = bgfx::createIndexBuffer(bgfx::makeRef(sIndexData, sizeof(sIndexData)));
-        shaderProgram = bgfx::loadProgram("particles");
+        shaderProgram = dsr::loadProgram("particles");
     }
 
     void ParticleSystem::addGenerator(ParticleGenerator *generator) {
@@ -154,9 +154,9 @@ namespace dsr {
 
             // i_data1
             // color
-            fdata[4] = bgfx::redChannel(sParticlePool[i].color.current) / 255.0f;
-            fdata[5] = bgfx::greenChannel(sParticlePool[i].color.current) / 255.0f;
-            fdata[6] = bgfx::blueChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[4] = dsr::redChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[5] = dsr::greenChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[6] = dsr::blueChannel(sParticlePool[i].color.current) / 255.0f;
             fdata[7] = sParticlePool[i].alpha.current;
 
             // i_data2

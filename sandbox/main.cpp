@@ -25,38 +25,14 @@ int main() {
 
     uint16_t width = 800;
     uint16_t height = 600;
+    std::string windowName = "Don't Stop Running";
 
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *wnd = SDL_CreateWindow(
-            "Particle Editor",
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
-            width, height,
-            SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-
-    bgfx::sdlSetWindow(wnd);
-    bgfx::init();
-    bgfx::reset(width, height, BGFX_RESET_VSYNC);
-
-    bgfx::setDebug(BGFX_DEBUG_TEXT);
-
-    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x313233ff, 1.0f, 0);
+    dsr::initBgfx(width, height, windowName);
 
     dsr::ParticleGenerator generator = createParticleGenerator();
 
     dsr::ParticleSystem particleSystem;
     particleSystem.addGenerator(&generator);
-
-    F32 view[16];
-    bx::mtxIdentity(view);
-
-    F32 proj[16];
-    bx::mtxOrtho(proj, 0, width, height, 0, 1, 100);
-
-    bgfx::setViewTransform(0, view, proj);
-
-    // Set view 0 default viewport.
-    bgfx::setViewRect(0, 0, 0, width, height);
 
     F32 mouse[3] = {0, 0, 0};
     F32 emitterSpeed = 2.0;
@@ -128,14 +104,10 @@ int main() {
         }
 
         // update
-        particleSystem.update(bgfx::TimeUnit::fromMilliseconds(33.3));
-
-        bgfx::submit(0);
+        particleSystem.update(dsr::TimeUnit::fromMilliseconds(33.3));
 
         // render
         particleSystem.render();
-
-        bgfx::submit(0);
 
         bgfx::dbgTextClear();
         bgfx::dbgTextPrintf(1, 2, 0x0B, "FPS: unknown");
@@ -161,7 +133,7 @@ dsr::ParticleGenerator createParticleGenerator() {
     generator.generatorSpawnDirection[0] = 1.0f;
     generator.generatorSpawnDirection[1] = 0.0f;
 
-    generator.params.lifetime = {bgfx::TimeUnit::fromSeconds(3), bgfx::TimeUnit::fromSeconds(5)};
+    generator.params.lifetime = {dsr::TimeUnit::fromSeconds(3), dsr::TimeUnit::fromSeconds(5)};
 
     generator.params.startScale = {1, 2};
     generator.params.endScale = {6, 10};

@@ -1,25 +1,50 @@
-/*
- * Copyright 2011-2015 Branimir Karadzic. All rights reserved.
- * License: http://www.opensource.org/licenses/BSD-2-Clause
- */
+#include "bgfx_utils.h"
+#include <memory>
 
+#include <SDL.h>
 #include <bx/readerwriter.h>
 #include <bx/fpumath.h>
-#include <bx/timer.h>
-#include <bits/unique_ptr.h>
-
-#include "bgfx_utils.h"
+#include <bgfxplatform.h>
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-namespace bgfx {
+namespace dsr {
 
 	using bx::FileReaderI;
 
 	static std::unique_ptr<FileReaderI> sFileReaderHandle = std::unique_ptr<FileReaderI>(new bx::CrtFileReader);
 
-	static const bgfx::Memory *loadMem(bx::FileReaderI *_reader, const char *_filePath) {
+    void initBgfx(uint16_t width, uint16_t height, const std::string &windowName) {
+        SDL_Init(SDL_INIT_VIDEO);
+        SDL_Window *wnd = SDL_CreateWindow(
+                windowName.c_str(),
+                SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED,
+                width, height,
+                SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+
+        bgfx::sdlSetWindow(wnd);
+        bgfx::init();
+        bgfx::reset(width, height, BGFX_RESET_VSYNC);
+
+        bgfx::setDebug(BGFX_DEBUG_TEXT);
+
+        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x313233ff, 1.0f, 0);
+
+        F32 view[16];
+        bx::mtxIdentity(view);
+
+        F32 proj[16];
+        bx::mtxOrtho(proj, 0, width, height, 0, 1, 100);
+
+        bgfx::setViewTransform(0, view, proj);
+
+        // Set view 0 default viewport.
+        bgfx::setViewRect(0, 0, 0, width, height);
+    }
+
+    static const bgfx::Memory *loadMem(bx::FileReaderI *_reader, const char *_filePath) {
 		if (0 == bx::open(_reader, _filePath)) {
 			U32 size = (U32) bx::getSize(_reader);
 			const bgfx::Memory *mem = bgfx::alloc(size + 1);
