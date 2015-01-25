@@ -13,6 +13,7 @@ add_definitions(-DBX_CONFIG_CRT_FILE_READER_WRITER)
 
 set(SANDBOX_HEADERS
     bx2_math.h
+    log.h
     particles.h
     random.h
     settings.h
