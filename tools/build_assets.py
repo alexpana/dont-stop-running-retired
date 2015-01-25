@@ -4,6 +4,7 @@ import subprocess
 import shutil
 
 ROOT = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
+BIN_DIR = os.path.normpath(os.path.join(ROOT, "bin"))
 ASSETS_DIR = os.path.normpath(os.path.join(ROOT, "extern", "assets"))
 BUILD_DIR = os.path.normpath(os.path.join(ROOT, "bin", "data"))
 SHADER_COMPILER = os.path.normpath(os.path.join(ROOT, "extern", "bgfx", ".build", "linux64_gcc", "bin", "shadercDebug"))
@@ -27,16 +28,33 @@ def initialize():
 	print "============================="
 	print
 
+	dir_count = 0
+
 	# Ensure all the necessary folders exist
 	required_assets_dirs = ["shaders", "textures", "scripts"]
+
+	if not os.path.exists(BIN_DIR):
+		dir_count += 1
+		print "Creating directory " + color.OKGREEN + BIN_DIR + color.ENDC
+		os.mkdir(BIN_DIR)
+
+	if not os.path.exists(BUILD_DIR):
+		dir_count += 1
+		print "Creating directory " + color.OKGREEN + BUILD_DIR + color.ENDC
+		os.mkdir(BUILD_DIR)
 
 	for dir_name in required_assets_dirs:
 		dir_path = os.path.join(BUILD_DIR, dir_name)
 
 		if not os.path.exists(dir_path):
-			print "Building directory " + color.OKGREEN + dir_path + color.ENDC
+			dir_count += 1
+			print "Creating directory " + color.OKGREEN + dir_path + color.ENDC
 			os.mkdir(dir_path)
 
+	if dir_count == 0:
+		print "All necessary directories were found."
+	else:
+		print dir_count, "directories were created."
 	print
 
 def requires_update(destination, source):
