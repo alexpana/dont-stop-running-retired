@@ -6,6 +6,8 @@ find_package(RapidJSON REQUIRED)
 
 find_package(Nanovg REQUIRED)
 
+find_package(GLM REQUIRED)
+
 # Configure BX and BGFX
 add_definitions(-DBX_CONFIG_CRT_FILE_READER_WRITER)
 
@@ -27,6 +29,7 @@ add_executable(sandbox
     ${SANDBOX_HEADERS})
 
 include_directories(
+    ${GLM_INCLUDE_DIR}
     ${NANOVG_INCLUDE_DIR}
     ${RAPIDJSON_INCLUDE_DIR}
     ${BGFX_INCLUDE_DIR}
