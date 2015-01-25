@@ -7,8 +7,8 @@
 
 #include "settings.h"
 #include "types.h"
-#include "utils.h"
-#include "bx2_math.h"
+#include "bgfx_utils.h"
+#include "math.h"
 
 namespace dsr {
 
@@ -20,7 +20,7 @@ namespace dsr {
         T end;
         T current;
 
-        std::function<T(const T &, const T &, F32)> interpolation = bx2::lerp<T>;
+        std::function<T(const T &, const T &, F32)> interpolation = dsr::lerp<T>;
 
         void update(F32 t) {
             current = interpolation(start, end, t);
@@ -49,7 +49,7 @@ namespace dsr {
         T min;
         T max;
 
-        std::function<T(T, T, F32)> distribution = bx2::lerp<T>;
+        std::function<T(T, T, F32)> distribution = dsr::lerp<T>;
 
         Range() : min(), max() {
         };

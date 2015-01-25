@@ -8,20 +8,16 @@
 #include <bx/timer.h>
 #include <bits/unique_ptr.h>
 
-#include "utils.h"
+#include "bgfx_utils.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-namespace utils {
+namespace bgfx {
 
 	using bx::FileReaderI;
 
-	static std::unique_ptr<FileReaderI> sFileReaderHandle;
-
-	void init() {
-		sFileReaderHandle = std::unique_ptr<FileReaderI>(new bx::CrtFileReader);
-	}
+	static std::unique_ptr<FileReaderI> sFileReaderHandle = std::unique_ptr<FileReaderI>(new bx::CrtFileReader);
 
 	static const bgfx::Memory *loadMem(bx::FileReaderI *_reader, const char *_filePath) {
 		if (0 == bx::open(_reader, _filePath)) {

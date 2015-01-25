@@ -12,23 +12,23 @@ find_package(GLM REQUIRED)
 add_definitions(-DBX_CONFIG_CRT_FILE_READER_WRITER)
 
 set(SANDBOX_HEADERS
-    asset_loader.h
-    game_object.h
-    json_reader.h
-    bx2_math.h
-    log.h
-    particles.h
-    random.h
-    settings.h
-    sprite.h
-    types.h
-    utils.h)
+    engine/asset_loader.h
+    engine/game_object.h
+    engine/json_reader.h
+    engine/math.h
+    engine/log.h
+    engine/particles.h
+    engine/random.h
+    engine/settings.h
+    engine/sprite.h
+    engine/types.h
+    engine/bgfx_utils.h)
 
 set(SANDBOX_SOURCES
-    asset_loader.cpp
-    main.cpp
-    utils.cpp
-    particles.cpp)
+    engine/asset_loader.cpp
+    engine/bgfx_utils.cpp
+    engine/particles.cpp
+    main.cpp)
 
 add_executable(sandbox
     ${SANDBOX_SOURCES}

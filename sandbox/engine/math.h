@@ -3,7 +3,9 @@
 #include <bx/fpumath.h>
 #include <cmath>
 
-namespace bx2 {
+#include "types.h"
+
+namespace dsr {
     using namespace bx;
 
     template<typename T>

@@ -1,3 +1,5 @@
+#include "engine/json_reader.h"
+
 #include <SDL2/SDL.h>
 #include <bx/bx.h>
 #include <bx/fpumath.h>
@@ -5,14 +7,22 @@
 #include <bx/readerwriter.h>
 #include <bgfx.h>
 #include <bgfxplatform.h>
-#include <iostream>
 
-#include "utils.h"
-#include "particles.h"
+#include "engine/bgfx_utils.h"
+#include "engine/particles.h"
+#include "engine/asset_loader.h"
+
+dsr::ParticleGenerator createParticleGenerator();
+
+static dsr::Log _log{"main"};
 
 using namespace std;
+using namespace dsr;
 
 int main() {
+
+    vector<GameObject> objects = loadObjects("data/scripts/objects.json");
+
     uint16_t width = 800;
     uint16_t height = 600;
 
@@ -32,38 +42,7 @@ int main() {
 
     bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x313233ff, 1.0f, 0);
 
-    utils::init();
-
-    dsr::ParticleGenerator generator;
-    generator.generatorSpawnFrequency = 32;
-
-    generator.generatorPosition[0] = 300;
-    generator.generatorPosition[1] = 300;
-    generator.generatorPosition[2] = 0;
-
-    generator.generatorSpawnRadius = 2.0;
-
-    generator.generatorSpawnArc = 3.14;
-
-    generator.generatorSpawnDirection[0] = 1.0f;
-    generator.generatorSpawnDirection[1] = 0.0f;
-
-    generator.params.lifetime = {utils::TimeUnit::fromSeconds(3), utils::TimeUnit::fromSeconds(5)};
-
-    generator.params.startScale = {1, 2};
-    generator.params.endScale = {6, 10};
-
-    generator.params.startSpeed = {2, 4};
-    generator.params.endSpeed = {0.1, 0.6};
-
-    generator.params.startRotation = {0, 0};
-    generator.params.endRotation = {4, 6};
-
-    generator.params.startAlpha = {1, 1};
-    generator.params.endAlpha = {0, 0};
-
-    generator.params.startColor = {0x324050ff, 0x324050ff};
-    generator.params.endColor = {0x600090ff, 0x604090ff};
+    dsr::ParticleGenerator generator = createParticleGenerator();
 
     dsr::ParticleSystem particleSystem;
     particleSystem.addGenerator(&generator);
@@ -145,11 +124,11 @@ int main() {
         }
 
         if (viewType == 3) {
-            bx2::vec3Rot2(generator.generatorSpawnDirection, generator.generatorSpawnDirection, 0.2);
+            dsr::vec3Rot2(generator.generatorSpawnDirection, generator.generatorSpawnDirection, 0.2);
         }
 
         // update
-        particleSystem.update(utils::TimeUnit::fromMilliseconds(33.3));
+        particleSystem.update(bgfx::TimeUnit::fromMilliseconds(33.3));
 
         bgfx::submit(0);
 
@@ -165,4 +144,38 @@ int main() {
     }
 
     return 0;
+}
+
+dsr::ParticleGenerator createParticleGenerator() {
+    dsr::ParticleGenerator generator;
+    generator.generatorSpawnFrequency = 32;
+
+    generator.generatorPosition[0] = 300;
+    generator.generatorPosition[1] = 300;
+    generator.generatorPosition[2] = 0;
+
+    generator.generatorSpawnRadius = 2.0;
+
+    generator.generatorSpawnArc = 3.14;
+
+    generator.generatorSpawnDirection[0] = 1.0f;
+    generator.generatorSpawnDirection[1] = 0.0f;
+
+    generator.params.lifetime = {bgfx::TimeUnit::fromSeconds(3), bgfx::TimeUnit::fromSeconds(5)};
+
+    generator.params.startScale = {1, 2};
+    generator.params.endScale = {6, 10};
+
+    generator.params.startSpeed = {2, 4};
+    generator.params.endSpeed = {0.1, 0.6};
+
+    generator.params.startRotation = {0, 0};
+    generator.params.endRotation = {4, 6};
+
+    generator.params.startAlpha = {1, 1};
+    generator.params.endAlpha = {0, 0};
+
+    generator.params.startColor = {0x324050ff, 0x324050ff};
+    generator.params.endColor = {0x600090ff, 0x604090ff};
+    return generator;
 };

@@ -49,7 +49,7 @@ namespace dsr {
     }
 
     void ParticleGenerator::spawnParticle() {
-        lastSpawnTime = utils::TimeUnit::counter();
+        lastSpawnTime = bgfx::TimeUnit::counter();
 
         if (parentSystem == nullptr) {
             return;
@@ -115,7 +115,7 @@ namespace dsr {
 
         vertexBufferHandle = bgfx::createVertexBuffer(bgfx::makeRef(sVertexData, sizeof(sVertexData)), vertexDecl);
         indexBufferHandle = bgfx::createIndexBuffer(bgfx::makeRef(sIndexData, sizeof(sIndexData)));
-        shaderProgram = utils::loadProgram("particles");
+        shaderProgram = bgfx::loadProgram("particles");
     }
 
     void ParticleSystem::addGenerator(ParticleGenerator *generator) {
@@ -154,9 +154,9 @@ namespace dsr {
 
             // i_data1
             // color
-            fdata[4] = utils::redChannel(sParticlePool[i].color.current) / 255.0f;
-            fdata[5] = utils::greenChannel(sParticlePool[i].color.current) / 255.0f;
-            fdata[6] = utils::blueChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[4] = bgfx::redChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[5] = bgfx::greenChannel(sParticlePool[i].color.current) / 255.0f;
+            fdata[6] = bgfx::blueChannel(sParticlePool[i].color.current) / 255.0f;
             fdata[7] = sParticlePool[i].alpha.current;
 
             // i_data2
@@ -204,10 +204,10 @@ namespace dsr {
 
     U32 lerpColor(U32 a, U32 b, F32 t) {
         U32 r = 0;
-        r += bx2::lerp<U8>((U8) ((a >> 24) & 0xff), (U8) ((b >> 24) & 0xff), t) << 24;
-        r += bx2::lerp<U8>((U8) ((a >> 16) & 0xff), (U8) ((b >> 16) & 0xff), t) << 16;
-        r += bx2::lerp<U8>((U8) ((a >> 8) & 0xff), (U8) ((b >> 8) & 0xff), t) << 8;
-        r += bx2::lerp<U8>((U8) ((a >> 0) & 0xff), (U8) ((b >> 0) & 0xff), t) << 0;
+        r += dsr::lerp<U8>((U8) ((a >> 24) & 0xff), (U8) ((b >> 24) & 0xff), t) << 24;
+        r += dsr::lerp<U8>((U8) ((a >> 16) & 0xff), (U8) ((b >> 16) & 0xff), t) << 16;
+        r += dsr::lerp<U8>((U8) ((a >> 8) & 0xff), (U8) ((b >> 8) & 0xff), t) << 8;
+        r += dsr::lerp<U8>((U8) ((a >> 0) & 0xff), (U8) ((b >> 0) & 0xff), t) << 0;
 
         return r;
     }

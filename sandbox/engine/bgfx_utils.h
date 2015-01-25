@@ -4,9 +4,7 @@
 
 #include "types.h"
 
-namespace utils {
-
-    void init();
+namespace bgfx {
 
     bgfx::ShaderHandle loadShader(const char *name);
 
