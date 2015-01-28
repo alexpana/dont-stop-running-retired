@@ -31,7 +31,7 @@ def initialize():
 	dir_count = 0
 
 	# Ensure all the necessary folders exist
-	required_assets_dirs = ["shaders", "textures", "scripts"]
+	required_assets_dirs = ["shaders", "textures", "scripts", "maps"]
 
 	if not os.path.exists(BIN_DIR):
 		dir_count += 1
@@ -164,12 +164,26 @@ def build_scripts():
 		print "Copying " + file
 		shutil.copy2(os.path.join(SRC_DIR, file), os.path.join(DST_DIR, file))
 
+def build_maps():
+	print "============================="
+	print "Building maps"
+	print "============================="
+	print
+
+	SRC_DIR = os.path.join(ASSETS_DIR, "maps")
+	DST_DIR = os.path.join(BUILD_DIR, "maps")
+
+	for file in os.listdir(SRC_DIR):
+		print "Copying " + file
+		shutil.copy2(os.path.join(SRC_DIR, file), os.path.join(DST_DIR, file))
+
 if __name__ == "__main__":
 	initialize()
 
 	build_textures()
 	build_shaders()
 	build_scripts()
+	build_maps()
 
 	print
 	print "Done. Have fun developing the game!"
