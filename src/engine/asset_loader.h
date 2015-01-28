@@ -5,6 +5,7 @@
 
 #include "game_object.h"
 #include "log.h"
+#include "level_map.h"
 #include "shader.h"
 #include "texture.h"
 
@@ -18,4 +19,8 @@ namespace dsr {
     bool loadTexture(const std::string &filename, Texture &texture);
 
     bool loadShader(const std::string &filename, Shader &shader);
+
+    bool loadMapLevel(const std::string &filename, LevelMap &levelMap);
+
+    void *loadRawFile(const std::string &filename, U32 *size);
 }

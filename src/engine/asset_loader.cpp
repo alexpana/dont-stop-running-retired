@@ -177,4 +177,26 @@ namespace dsr {
 
         return false;
     }
+
+    bool loadMapLevel(const std::string &filename, LevelMap &levelMap) {
+        _log.error(__FUNCTION__, " is not implemented");
+        return false;
+    }
+
+    void *loadRawFile(const std::string &filename, U32 *size) {
+        if (0 == bx::open(sFileReaderHandle.get(), filename.c_str())) {
+            U32 _size = (uint32_t) bx::getSize(sFileReaderHandle.get());
+            void *data = malloc(_size);
+            bx::read(sFileReaderHandle.get(), data, _size);
+            bx::close(sFileReaderHandle.get());
+            if (size != nullptr) {
+                *size = _size;
+            }
+            return data;
+        }
+        if (size != nullptr) {
+            *size = 0;
+        }
+        return nullptr;
+    }
 }

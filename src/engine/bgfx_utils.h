@@ -16,10 +16,10 @@ namespace dsr {
             /**
             * Time unit value, measured in CPU cycles.
             */
-            I64
+            S64
                     value;
 
-            TimeUnit(I64 value) : value(value) {
+            TimeUnit(S64 value) : value(value) {
             }
 
             F32 toSeconds() {
@@ -30,16 +30,16 @@ namespace dsr {
                 return toSeconds() * 1000;
             }
 
-            operator I64() {
+            operator S64() {
                 return value;
             }
 
-            static I64 fromSeconds(F32 seconds) {
-                return static_cast<I64>(seconds * bx::getHPFrequency());
+            static S64 fromSeconds(F32 seconds) {
+                return static_cast<S64>(seconds * bx::getHPFrequency());
             };
 
-            static I64 fromMilliseconds(F32 milliseconds) {
-                return static_cast<I64>((milliseconds / 1000) * bx::getHPFrequency());
+            static S64 fromMilliseconds(F32 milliseconds) {
+                return static_cast<S64>((milliseconds / 1000) * bx::getHPFrequency());
             };
 
             static TimeUnit counter() {
@@ -47,11 +47,11 @@ namespace dsr {
             }
         };
 
-        static I64 msec(F32 milliseconds) {
+        static S64 msec(F32 milliseconds) {
             return TimeUnit::fromMilliseconds(milliseconds);
         }
 
-        static I64 sec(F32 seconds) {
+        static S64 sec(F32 seconds) {
             return TimeUnit::fromSeconds(seconds);
         }
 

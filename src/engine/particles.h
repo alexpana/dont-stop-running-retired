@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <bx/timer.h>
+#include <glm/vec2.hpp>
 
 #include "settings.h"
 #include "types.h"
@@ -28,7 +29,7 @@ namespace dsr {
     };
 
     struct Particle {
-        F32 direction[3];
+        glm::vec2 direction;
 
         ParticleProperty<F32> speed;
         ParticleProperty<F32> rotation;
@@ -36,12 +37,12 @@ namespace dsr {
         ParticleProperty<U32> color;
         ParticleProperty<F32> alpha;
 
-        F32 position[3];
+        glm::vec2 position;
 
-        I64 lifeTime;
-        I64 currentLife;
+        S64 lifeTime;
+        S64 currentLife;
 
-        void update(I64 dt);
+        void update(S64 dt);
     };
 
     template<typename T>
@@ -67,7 +68,7 @@ namespace dsr {
     class ParticleGenerator {
     public:
         struct Params {;
-            Range<I64> lifetime;
+            Range<S64> lifetime;
 
             Range<U32> startColor;
             Range<U32> endColor;
@@ -85,18 +86,18 @@ namespace dsr {
             Range<F32> endAlpha;
         } params;
 
-        F32 generatorPosition[3];
+        glm::vec2 generatorPosition;
 
         F32 generatorSpawnRadius;
 
-        F32 generatorSpawnDirection[3];
+        glm::vec2 generatorSpawnDirection;
 
         F32 generatorSpawnArc;
 
         // Particles per second
         F32 generatorSpawnFrequency;
 
-        void update(I64 dt);
+        void update(S64 dt);
 
         ParticleGenerator();
 
@@ -109,7 +110,7 @@ namespace dsr {
     private:
         void spawnParticle();
 
-        I64 lastSpawnTime;
+        S64 lastSpawnTime;
 
         ParticleSystem *parentSystem = nullptr;
     };
@@ -124,7 +125,7 @@ namespace dsr {
 
         void removeGenerator(ParticleGenerator &generator);
 
-        void update(I64 dt);
+        void update(S64 dt);
 
         void render();
 

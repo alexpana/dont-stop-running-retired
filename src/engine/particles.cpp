@@ -12,7 +12,7 @@ namespace dsr {
 
     Particle ParticleSystem::sParticlePool[dsr::kParticleLimit];
 
-    void Particle::update(I64 dt) {
+    void Particle::update(S64 dt) {
         if (lifeTime <= 0) {
             return;
         }
@@ -26,9 +26,9 @@ namespace dsr {
 
         // update position
         speed.update(t);
-        F32 offset[3];
-        bx::vec3Mul(offset, direction, speed.current);
-        bx::vec3Add(position, position, offset);
+        glm::vec2 offset;
+        offset = direction * speed.current;
+        position += offset;
 
         rotation.update(t);
 
@@ -41,7 +41,7 @@ namespace dsr {
         currentLife += dt;
     }
 
-    void ParticleGenerator::update(I64 /*dt*/) {
+    void ParticleGenerator::update(S64 /*dt*/) {
         // todo: use spawn rate
         spawnParticle();
         spawnParticle();
@@ -70,19 +70,18 @@ namespace dsr {
 
         // todo: use generator spawn area
         // generate position
-        bx::randUnitSphere(p->position, &sRNG);
-        bx::vec3Mul(p->position, p->position, generatorSpawnRadius);
-        bx::vec3Add(p->position, p->position, generatorPosition);
+        p->position = glm::vec2(bx::frnd(&sRNG), bx::frnd(&sRNG));
+        p->position *= generatorSpawnRadius;
+        p->position += generatorPosition;
 
         // generate direction
         F32 angle = generatorSpawnArc * (bx::frnd(&sRNG) - 0.5f);
         F32 s = std::sin(angle);
         F32 c = std::cos(angle);
-        p->direction[0] = generatorSpawnDirection[0] * c - s * generatorSpawnDirection[1];
-        p->direction[1] = generatorSpawnDirection[1] * c + s * generatorSpawnDirection[0];
-        p->direction[2] = 0;
+        p->direction.x = generatorSpawnDirection.x * c - s * generatorSpawnDirection.y;
+        p->direction.y = generatorSpawnDirection.y * c + s * generatorSpawnDirection.x;
 
-        bx::vec3Norm(p->direction, p->direction);
+        p->direction = glm::normalize(p->direction);
 
         // generate speed
         p->speed.start = params.startSpeed.distribute(bx::frnd(&sRNG));
@@ -115,7 +114,7 @@ namespace dsr {
         // todo
     }
 
-    void ParticleSystem::update(I64 dt) {
+    void ParticleSystem::update(S64 dt) {
         // update generators
         for (auto &generator : generators) {
             generator->update(dt);
@@ -136,9 +135,9 @@ namespace dsr {
 
             // i_data0
             // position
-            fdata[0] = sParticlePool[i].position[0];
-            fdata[1] = sParticlePool[i].position[1];
-            fdata[2] = sParticlePool[i].position[2];
+            fdata[0] = sParticlePool[i].position.x;
+            fdata[1] = sParticlePool[i].position.y;
+            fdata[2] = 0.0;
             fdata[3] = 0.0;     // unused
 
             // i_data1
