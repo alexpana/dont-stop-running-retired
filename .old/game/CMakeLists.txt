@@ -39,7 +39,7 @@ add_executable(game
 include_directories(
     ${SDL2_INCLUDE_DIR}
     ${SDL2_IMAGE_INCLUDE_DIR}
-    ../engine/include/)
+    ../engine/include)
 
 # =======================================
 # Link libraries
