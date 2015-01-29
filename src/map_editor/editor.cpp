@@ -7,17 +7,20 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <nanovg.h>
 #include <sstream>
+#include <fstream>
 
+#include "../engine/input/input.h"
+#include "../engine/ui/gui.h"
 #include "../engine/assets.h"
 #include "../engine/asset_loader.h"
 #include "../engine/bgfx_utils.h"
-#include "../engine/input/input.h"
 #include "../engine/particles.h"
 #include "../engine/renderer.h"
-#include "../engine/ui/gui.h"
+#include "../engine/filesystem.h"
 
 #include "context.h"
 #include "editor_ui.h"
+#include "export.h"
 
 static dsr::Log _log{"map_editor"};
 
@@ -97,11 +100,16 @@ namespace dsr {
         return generator;
     }
 
+    void updateTitle();
+
     int runEditor() {
         std::string windowName = "Don't Stop Running";
 
         dsr::initBgfx(WIDTH, HEIGHT, windowName);
         ui::init();
+
+        updateTitle();
+
         int r = nvgCreateFont(nvgCtx(), "droid", "data/fonts/droidsans.ttf");
         nvgFontFaceId(nvgCtx(), r);
 
@@ -120,7 +128,11 @@ namespace dsr {
 
         LevelMap levelMap{};
 
-        levelMap.entities.push_back(LevelMap::Entity{glm::vec2(128, 128), *assets.findGameObject("saw")});
+        levelMap.entities.push_back(LevelMap::Entity{
+                glm::vec2(128, 128),
+                glm::vec2(1.0, 1.0),
+                0.0f,
+                *assets.findGameObject("saw")});
 
         auto spawningEntity = LevelMap::Entity{};
         spawningEntity.position = {0, 0};
@@ -129,10 +141,16 @@ namespace dsr {
 
         sContext.fnSpawnObjectSelected = [&spawningEntity, &assets]() {
             const char *objects[3] = {"grass_tile", "dirt_tile", "saw"};
-
             spawningEntity.gameObject = *assets.findGameObject(objects[sContext.selectedSpawnObject]);
         };
 
+        sContext.fnActionSave = [&levelMap](std::string filename) {
+            if (filename != "") {
+                exportLevelMap(filename, levelMap);
+                sContext.changedSinceLastSave = false;
+                updateTitle();
+            }
+        };
 
         while (!io::frameCloseRequested()) {
             io::update();
@@ -242,13 +260,18 @@ namespace dsr {
                 dsr::renderSprite(it.position, it.gameObject.sprite);
             }
             spawningEntity.position = glm::vec2(
-                    (int) (io::mouseX() / 32.0 + 0.5) * 32,
-                    (int) (io::mouseY() / 32.0 + 0.5) * 32);
+                    (int) (io::mouseX() / 32.0) * 32,
+                    (int) (io::mouseY() / 32.0) * 32);
 
             if (!hoveringMenu) {
                 dsr::renderSprite(spawningEntity.position, spawningEntity.gameObject.sprite, 9);
                 if (io::mouseButtonDown(io::MouseButton::LEFT)) {
+
                     levelMap.entities.push_back(spawningEntity);
+
+                    sContext.changedSinceLastSave = true;
+
+                    updateTitle();
                 }
             }
 
@@ -259,7 +282,12 @@ namespace dsr {
         }
 
         ui::shutdown();
+        destroyBgfx();
 
         return 0;
+    }
+
+    void updateTitle() {
+        setWindowTitle("Map Editor: " + (sContext.saveFilename != "" ? sContext.saveFilename : "<untitled>") + (sContext.changedSinceLastSave ? "*" : ""));
     }
 }

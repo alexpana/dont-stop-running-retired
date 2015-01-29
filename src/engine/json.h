@@ -3,12 +3,13 @@
 #include <cstdio>
 #include <string>
 
-
 #pragma push_macro("Bool")
 #undef Bool
 
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 #pragma pop_macro("Bool")
 

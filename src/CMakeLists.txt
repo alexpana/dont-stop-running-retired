@@ -28,39 +28,40 @@ set(EDITOR_SOURCES
     map_editor/context.h
     map_editor/editor.h
     map_editor/editor.cpp
-    map_editor/editor_ui.h)
+    map_editor/editor_ui.h
+    map_editor/export.h
+    map_editor/export.cpp)
 
-set(SANDBOX_HEADERS
+set(SANDBOX_SOURCES
     engine/input/input.h
+    engine/input/input.cpp
     engine/asset_loader.h
+    engine/asset_loader.cpp
     engine/assets.h
+    engine/assets.cpp
+    engine/bgfx_utils.h
+    engine/bgfx_utils.cpp
+    engine/filesystem.h
+    engine/filesystem.cpp
     engine/game_object.h
-    engine/json_reader.h
+    engine/json.h
     engine/level_map.h
-    engine/math.h
     engine/log.h
+    engine/math.h
     engine/particles.h
+    engine/particles.cpp
     engine/random.h
     engine/renderer.h
+    engine/renderer.cpp
     engine/settings.h
     engine/shader.h
     engine/sprite.h
     engine/texture.h
     engine/types.h
-    engine/bgfx_utils.h)
-
-set(SANDBOX_SOURCES
-    engine/input/input.cpp
-    engine/asset_loader.cpp
-    engine/assets.cpp
-    engine/bgfx_utils.cpp
-    engine/particles.cpp
-    engine/renderer.cpp
     main.cpp)
 
 add_executable(dont_stop_running
     ${SANDBOX_SOURCES}
-    ${SANDBOX_HEADERS}
 
     ${UI_SOURCES}
 

@@ -8,21 +8,6 @@
 
 namespace dsr {
 
-    template<typename T, typename... Args>
-    void fnCall(T fn, Args... args) {
-        if (fn) {
-            fn(std::forward(args...));
-        }
-    }
-
-    template<typename T>
-    void fnCall(T fn) {
-        if (fn) {
-            fn();
-        }
-    }
-
-
     void uiUpdate(EditorContext &ctx) {
 
         imguiBeginFrame((int32_t) io::mouseX(), (int32_t) io::mouseY(), (uint8_t) (mouseButtonDown(io::MouseButton::LEFT) ? IMGUI_MBUT_LEFT : 0), (U32) io::mouseWheelX(), ctx.viewportWidth, ctx.viewportHeight, 0, 0);
@@ -45,18 +30,20 @@ namespace dsr {
         // ==============================================================
         static const char *items[] = {"select", "spawn"};
         if (ImGui::Combo("mode", &ctx.action, items, 2)) {
-            fnCall(ctx.fnActionChanged);
+            if (ctx.fnActionChanged) {
+                ctx.fnActionChanged();
+            }
         }
 
         // ==============================================================
         //  Spawn Object
         // ==============================================================
         static const char *objects[] = {"grass_tile", "dirt_tile", "saw"};
-        static int item = -1;
         if (ImGui::Combo("item", &ctx.selectedSpawnObject, objects, 3)) {
-            fnCall(ctx.fnSpawnObjectSelected);
+            if (ctx.fnSpawnObjectSelected) {
+                ctx.fnSpawnObjectSelected();
+            }
         }
-
 
         ImGui::Checkbox("snap to grid", &ctx.snapToGrid);
         ImGui::Checkbox("show grid", &ctx.gridVisible);
@@ -80,19 +67,38 @@ namespace dsr {
         // ==============================================================
         if (ImGui::CollapsingHeader("Actions")) {
             if (ImGui::Button("Save", ImVec2(55, 20), true)) {
-                fnCall(ctx.fnActionSave);
+                if (ctx.fnActionSave) {
+                    if (ctx.saveFilename == "") {
+                        ctx.saveFilename = saveFileDialog();
+                    }
+
+                    if (ctx.saveFilename != "") {
+                        ctx.fnActionSave(ctx.saveFilename);
+                    }
+                }
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Save As", ImVec2(55, 20), true)) {
-                // doSaveLevel
+                if (ctx.fnActionSave) {
+                    ctx.saveFilename = saveFileDialog();
+
+                    if (ctx.saveFilename != "") {
+                        ctx.fnActionSave(ctx.saveFilename);
+                    }
+                }
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Load", ImVec2(55, 20), true)) {
-                fnCall(ctx.fnActionLoad);
+                if (ctx.fnActionLoad) {
+                    auto filename = ctx.fnActionLoad();
+                    if (filename != "") {
+                        ctx.saveFilename = filename;
+                    }
+                }
             }
         }
 

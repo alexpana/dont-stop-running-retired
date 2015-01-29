@@ -4,7 +4,6 @@
 
 namespace dsr {
     struct EditorContext {
-
         enum Action {
             SELECT,
             SPAWN
@@ -13,15 +12,18 @@ namespace dsr {
         const U16 viewportWidth;
         const U16 viewportHeight;
 
-        LevelMap::Entity *selectedEntity;
-
         bool snapToGrid = true;
         bool gridVisible = true;
         bool cursorLocationVisible = false;
+        S32 action = Action::SELECT;
 
         S32 selectedSpawnObject = -1;
 
-        S32 action = Action::SELECT;
+        LevelMap::Entity *selectedEntity;
+
+        std::string saveFilename = "";
+
+        bool changedSinceLastSave = false;
 
         struct {
             bool editorHeaderVisible = true;
@@ -29,8 +31,8 @@ namespace dsr {
 
         // Functions
         std::function<void()> fnActionChanged = nullptr;
-        std::function<void()> fnActionLoad = nullptr;
-        std::function<void()> fnActionSave = nullptr;
+        std::function<std::string()> fnActionLoad = nullptr;
+        std::function<void(std::string)> fnActionSave = nullptr;
         std::function<void()> fnSpawnObjectSelected = nullptr;
 
         EditorContext(U16 w, U16 h) : viewportWidth(w), viewportHeight(h) {

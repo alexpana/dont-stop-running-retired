@@ -5,7 +5,7 @@
 #include <bx/bx.h>
 #include <bx/readerwriter.h>
 
-#include "json_reader.h"
+#include "json.h"
 
 using namespace std;
 using namespace rapidjson;
