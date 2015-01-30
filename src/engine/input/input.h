@@ -49,6 +49,10 @@ namespace dsr {
 
         bool mouseButtonDown(MouseButton button);
 
+        bool mouseButtonPressed(MouseButton button);
+
+        bool mouseButtonReleased(MouseButton button);
+
         bool frameCloseRequested();
     }
 }

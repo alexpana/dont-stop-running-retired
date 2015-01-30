@@ -297,21 +297,17 @@ namespace dsr {
                     (int) (input::mouseY() / 32.0) * 32);
 
             if (!hoveringMenu) {
+
+                // render currently spawning entity
                 renderEntity(spawningEntity);
 
-//                dsr::renderSprite(spawningEntity.position, spawningEntity.gameObject.sprite, 9);
-                if (input::mouseButtonDown(input::MouseButton::LEFT)) {
-
+                // spawn entity
+                if (input::mouseButtonPressed(input::MouseButton::LEFT)) {
                     levelMap.entities.push_back(spawningEntity);
-
                     sContext.changedSinceLastSave = true;
-
                     updateTitle();
                 }
             }
-
-//            bgfx::dbgTextClear();
-//            bgfx::dbgTextPrintf(1, 2, 0x0B, "FPS: unknown");
 
             bgfx::frame();
         }

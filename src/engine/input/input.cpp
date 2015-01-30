@@ -12,8 +12,14 @@ namespace dsr {
         struct MouseState {
             F32 position[2];
             bool leftDown;
+            bool leftPressed;
+            bool leftReleased;
             bool rightDown;
+            bool rightPressed;
+            bool rightReleased;
             bool middleDown;
+            bool middlePressed;
+            bool middleReleased;
             F32 wheel[2];
         };
 
@@ -53,6 +59,9 @@ namespace dsr {
             SDL_Event event;
 
             sKeyboardState.pressedKey = 0;
+            sMouseState.leftPressed = sMouseState.leftReleased = false;
+            sMouseState.middlePressed = sMouseState.middleReleased = false;
+            sMouseState.rightPressed = sMouseState.rightReleased = false;
 
             // input
             while (SDL_PollEvent(&event)) {
@@ -74,16 +83,19 @@ namespace dsr {
                 if (event.type == SDL_MOUSEBUTTONDOWN) {
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         sMouseState.leftDown = true;
+                        sMouseState.leftPressed = true;
                         mouseButtonCallback(MouseButton::LEFT, InputAction::PRESSED);
                     }
 
                     if (event.button.button == SDL_BUTTON_RIGHT) {
                         sMouseState.rightDown = true;
+                        sMouseState.rightPressed = true;
                         mouseButtonCallback(MouseButton::RIGHT, InputAction::PRESSED);
                     }
 
                     if (event.button.button == SDL_BUTTON_MIDDLE) {
                         sMouseState.middleDown = true;
+                        sMouseState.middlePressed = true;
                         mouseButtonCallback(MouseButton::MIDDLE, InputAction::PRESSED);
                     }
                 }
@@ -91,16 +103,19 @@ namespace dsr {
                 if (event.type == SDL_MOUSEBUTTONUP) {
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         sMouseState.leftDown = false;
+                        sMouseState.leftReleased = true;
                         mouseButtonCallback(MouseButton::LEFT, InputAction::RELEASED);
                     }
 
                     if (event.button.button == SDL_BUTTON_RIGHT) {
                         sMouseState.rightDown = false;
+                        sMouseState.rightReleased = true;
                         mouseButtonCallback(MouseButton::RIGHT, InputAction::RELEASED);
                     }
 
                     if (event.button.button == SDL_BUTTON_MIDDLE) {
                         sMouseState.middleDown = false;
+                        sMouseState.middleReleased = true;
                         mouseButtonCallback(MouseButton::MIDDLE, InputAction::RELEASED);
                     }
                 }
@@ -177,6 +192,28 @@ namespace dsr {
                     return sMouseState.middleDown;
                 case MouseButton::RIGHT:
                     return sMouseState.rightDown;
+            }
+        }
+
+        bool mouseButtonPressed(MouseButton button) {
+            switch (button) {
+                case MouseButton::LEFT:
+                    return sMouseState.leftPressed;
+                case MouseButton::MIDDLE:
+                    return sMouseState.middlePressed;
+                case MouseButton::RIGHT:
+                    return sMouseState.rightPressed;
+            }
+        }
+
+        bool mouseButtonReleased(MouseButton button) {
+            switch (button) {
+                case MouseButton::LEFT:
+                    return sMouseState.leftReleased;
+                case MouseButton::MIDDLE:
+                    return sMouseState.middleReleased;
+                case MouseButton::RIGHT:
+                    return sMouseState.rightReleased;
             }
         }
 
