@@ -10,7 +10,7 @@ namespace dsr {
 
     void uiUpdate(EditorContext &ctx) {
 
-        imguiBeginFrame((int32_t) io::mouseX(), (int32_t) io::mouseY(), (uint8_t) (mouseButtonDown(io::MouseButton::LEFT) ? IMGUI_MBUT_LEFT : 0), (U32) io::wheelX(), ctx.viewportWidth, ctx.viewportHeight, 0, 0);
+        imguiBeginFrame((int32_t) input::mouseX(), (int32_t) input::mouseY(), (uint8_t) (mouseButtonDown(input::MouseButton::LEFT) ? IMGUI_MBUT_LEFT : 0), (U32) input::wheelX(), ctx.viewportWidth, ctx.viewportHeight, 0, 0);
 
 
         ImGui::SetNextWindowPos(ImVec2(ctx.viewportWidth - 200, 0), ImGuiSetCondition_Always);

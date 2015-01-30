@@ -5,7 +5,7 @@
 #include "../types.h"
 
 namespace dsr {
-    namespace io {
+    namespace input {
         typedef U8 Key;
 
         enum class MouseButton : U8 {

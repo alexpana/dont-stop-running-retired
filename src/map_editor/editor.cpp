@@ -197,14 +197,14 @@ namespace dsr {
 
         sContext.selectedEntityIndex = 0;
 
-        while (!io::frameCloseRequested()) {
-            io::update();
+        while (!input::frameCloseRequested()) {
+            input::update();
 
             uiUpdate(sContext);
 
             bool canUseInput = !ImGui::GetIO().WantCaptureKeyboard && !ImGui::GetIO().WantCaptureKeyboard;
 
-            bool hoveringMenu = io::mouseX() >= WIDTH - 200;
+            bool hoveringMenu = input::mouseX() >= WIDTH - 200;
 
             nvgBeginFrame(nvgCtx(), sContext.viewportWidth, sContext.viewportHeight, 1.0f);
 
@@ -234,10 +234,10 @@ namespace dsr {
 
             if (sContext.cursorLocationVisible && !hoveringMenu) {
                 std::stringstream ss;
-                ss << io::mouseX() << " " << io::mouseY();
+                ss << input::mouseX() << " " << input::mouseY();
 
                 float bounds[4];
-                nvgTextBounds(nvgCtx(), io::mouseX() + 15, io::mouseY() + 15, ss.str().c_str(), nullptr, bounds);
+                nvgTextBounds(nvgCtx(), input::mouseX() + 15, input::mouseY() + 15, ss.str().c_str(), nullptr, bounds);
                 bounds[2] += 10.0;
                 bounds[3] += 10.0;
 
@@ -248,26 +248,26 @@ namespace dsr {
                 nvgFill(nvgCtx());
 
                 nvgFillColor(nvgCtx(), {0.8, 0.8, 0.8, 1.0});
-                nvgText(nvgCtx(), io::mouseX() + 20, io::mouseY() + 20, ss.str().c_str(), nullptr);
+                nvgText(nvgCtx(), input::mouseX() + 20, input::mouseY() + 20, ss.str().c_str(), nullptr);
             }
 
             drawSelectionOutline();
             nvgEndFrame(nvgCtx());
 
             if (canUseInput) {
-                if (io::keyPressed(io::fromSdlKey(SDLK_1))) {
+                if (input::keyPressed(input::fromSdlKey(SDLK_1))) {
                     viewType = 1;
                 }
-                if (io::keyPressed(io::fromSdlKey(SDLK_2))) {
+                if (input::keyPressed(input::fromSdlKey(SDLK_2))) {
                     viewType = 2;
                 }
-                if (io::keyPressed(io::fromSdlKey(SDLK_3))) {
+                if (input::keyPressed(input::fromSdlKey(SDLK_3))) {
                     viewType = 3;
                 }
             }
 
             glm::vec2 direction;
-            direction = glm::vec2(io::mouseX(), io::mouseY()) - glm::vec2(generator.generatorPosition[0], generator.generatorPosition[1]);
+            direction = glm::vec2(input::mouseX(), input::mouseY()) - glm::vec2(generator.generatorPosition[0], generator.generatorPosition[1]);
             direction = glm::normalize(direction);
             direction *= emitterSpeed;
 
@@ -293,14 +293,14 @@ namespace dsr {
 
             }
             spawningEntity.position = glm::vec2(
-                    (int) (io::mouseX() / 32.0) * 32,
-                    (int) (io::mouseY() / 32.0) * 32);
+                    (int) (input::mouseX() / 32.0) * 32,
+                    (int) (input::mouseY() / 32.0) * 32);
 
             if (!hoveringMenu) {
                 renderEntity(spawningEntity);
 
 //                dsr::renderSprite(spawningEntity.position, spawningEntity.gameObject.sprite, 9);
-                if (io::mouseButtonDown(io::MouseButton::LEFT)) {
+                if (input::mouseButtonDown(input::MouseButton::LEFT)) {
 
                     levelMap.entities.push_back(spawningEntity);
 

@@ -3,7 +3,7 @@
 #include "input.h"
 
 namespace dsr {
-    namespace io {
+    namespace input {
         static std::function<void(Key, InputAction)> keyCallback = nullptr;
         static std::function<void(Key, InputAction)> charCallback = nullptr;
         static std::function<void(MouseButton, InputAction)> mouseButtonCallback = nullptr;
