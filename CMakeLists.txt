@@ -19,19 +19,11 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 set(CMAKE_VERBOSE_MAKEFILE off)
 
 # Set custom compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-function")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-unknown-pragmas -Wno-unused-function")
 
 # Add our custom FindSDL2* modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${DontStopRunning_SOURCE_DIR}/cmake")
 
 find_package(SDL2 REQUIRED)
 
-#add_subdirectory(engine)
-
-#add_subdirectory(game)
-
-#add_subdirectory(test)
-
-#add_subdirectory(asset-viewer)
-
-add_subdirectory(sandbox)
+add_subdirectory(src)
