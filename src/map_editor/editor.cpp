@@ -145,6 +145,14 @@ namespace dsr {
         entity.gameObject->render();
     }
 
+    glm::vec2 getMouseActionPosition() {
+        if (sContext.snapToGrid) {
+            return glm::vec2((int) (input::mouseX() / 32.0) * 32, (int) (input::mouseY() / 32.0) * 32);
+        } else {
+            return glm::vec2(input::mouseX(), input::mouseY());
+        }
+    }
+
     int runEditor() {
         std::string windowName = "Don't Stop Running";
 
@@ -283,18 +291,13 @@ namespace dsr {
                 generator.generatorSpawnDirection = glm::rotate(generator.generatorSpawnDirection, 0.2f);
             }
 
-            // particle system
-//            particleSystem.update(dsr::TimeUnit::fromMilliseconds(33.3));
-//            particleSystem.render();
-
             // draw map
             for (auto &it : levelMap.entities) {
                 renderEntity(it);
 
             }
-            spawningEntity.position = glm::vec2(
-                    (int) (input::mouseX() / 32.0) * 32,
-                    (int) (input::mouseY() / 32.0) * 32);
+
+            spawningEntity.position = getMouseActionPosition();
 
             if (!hoveringMenu) {
 
