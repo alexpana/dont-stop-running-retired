@@ -13,7 +13,7 @@ namespace dsr {
             glm::vec2 position;
             glm::vec2 scale;
             F32 rotation;
-            GameObject gameObject;
+            GameObject *gameObject;
         };
 
         glm::vec2 playerStartPosition;

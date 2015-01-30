@@ -8,6 +8,7 @@
 
 namespace dsr {
     struct Sprite {
+        std::string name;
         std::string sheetName;
         glm::vec2 offset;
         glm::vec2 size;

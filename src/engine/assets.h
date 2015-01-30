@@ -1,9 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
+#include <ostream>
+#include <iostream>
 
 #include "game_object.h"
+#include "game_objects/static_tile.h"
 #include "shader.h"
 #include "sprite.h"
 #include "texture.h"
@@ -17,15 +21,15 @@ namespace dsr {
     public:
         Assets(const Assets &other) = delete;
 
-        void registerGameObject(const std::string &name, const GameObject &gameObject);
+        void registerGameObject(const std::string &name, std::unique_ptr<StaticTile> &&gameObject);
 
-        void registerSprite(const std::string &name, const Sprite &sprite);
+        void registerSprite(const std::string &name, std::unique_ptr<Sprite> &&sprite);
 
-        void registerTexture(const std::string &name, Texture &texture);
+        void registerTexture(const std::string &name, std::unique_ptr<Texture> &&texture);
 
-        void registerShader(const std::string &name, Shader &shader);
+        void registerShader(const std::string &name, std::unique_ptr<Shader> &&shader);
 
-        GameObject *findGameObject(const std::string &name);
+        StaticTile *findGameObject(const std::string &name);
 
         Sprite *findSprite(const std::string &name);
 
@@ -35,25 +39,18 @@ namespace dsr {
 
         static Assets &instance();
 
+        static void destroyInstance();
+
+        ~Assets();
+
     private:
         Assets();
 
-        static Assets *uniqueInstance;
+        static UPtr<Assets> uniqueInstance;
 
-        template<typename M>
-        typename M::mapped_type *findResource(const std::string &name, M &map) {
-            auto findIt = map.find(name);
-
-            if (findIt != map.end()) {
-                return &findIt->second;
-            }
-
-            return nullptr;
-        }
-
-        std::unordered_map<std::string, GameObject> gameObjectMap;
-        std::unordered_map<std::string, Sprite> spriteMap;
-        std::unordered_map<std::string, Texture> textureMap;
-        std::unordered_map<std::string, Shader> shaderMap;
+        std::unordered_map<std::string, std::unique_ptr<StaticTile>> gameObjectMap;
+        std::unordered_map<std::string, std::unique_ptr<Sprite>> spriteMap;
+        std::unordered_map<std::string, std::unique_ptr<Texture>> textureMap;
+        std::unordered_map<std::string, std::unique_ptr<Shader>> shaderMap;
     };
 }

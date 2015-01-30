@@ -10,7 +10,7 @@ namespace dsr {
 
     void uiUpdate(EditorContext &ctx) {
 
-        imguiBeginFrame((int32_t) io::mouseX(), (int32_t) io::mouseY(), (uint8_t) (mouseButtonDown(io::MouseButton::LEFT) ? IMGUI_MBUT_LEFT : 0), (U32) io::mouseWheelX(), ctx.viewportWidth, ctx.viewportHeight, 0, 0);
+        imguiBeginFrame((int32_t) io::mouseX(), (int32_t) io::mouseY(), (uint8_t) (mouseButtonDown(io::MouseButton::LEFT) ? IMGUI_MBUT_LEFT : 0), (U32) io::wheelX(), ctx.viewportWidth, ctx.viewportHeight, 0, 0);
 
 
         ImGui::SetNextWindowPos(ImVec2(ctx.viewportWidth - 200, 0), ImGuiSetCondition_Always);
@@ -54,9 +54,9 @@ namespace dsr {
         // ==============================================================
         //  Selection
         // ==============================================================
-        if (ctx.selectedEntity != nullptr) {
+        if (ctx.selectedEntity() != nullptr) {
             if (ImGui::CollapsingHeader("Selection")) {
-                ImGui::InputFloat2("Pos", (float *) &ctx.selectedEntity->position, 1);
+                ImGui::InputFloat2("Pos", (float *) &ctx.selectedEntity()->position, 1);
                 ImGui::InputFloat2("Scale", scale, 1);
                 ImGui::InputFloat("Rot", &rotation, 1);
             }

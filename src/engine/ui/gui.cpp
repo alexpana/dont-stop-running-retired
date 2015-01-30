@@ -33,7 +33,7 @@ namespace dsr {
 
         void init() {
             uint32_t size;
-            void *data = loadRawFile("data/fonts/droidsans.ttf", &size);
+            void *data = loader::loadRawFile("data/fonts/droidsans.ttf", &size);
             imguiCreate(data, size);
             free(data);
 

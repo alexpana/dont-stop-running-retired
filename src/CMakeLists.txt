@@ -33,8 +33,15 @@ set(EDITOR_SOURCES
     map_editor/export.cpp)
 
 set(SANDBOX_SOURCES
+    # input
     engine/input/input.h
     engine/input/input.cpp
+
+    # game objects
+    engine/game_objects/static_tile.h
+    engine/game_objects/static_tile.cpp
+    engine/game_objects/particle_system.h
+
     engine/asset_loader.h
     engine/asset_loader.cpp
     engine/assets.h

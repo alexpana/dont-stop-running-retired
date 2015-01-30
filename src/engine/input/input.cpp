@@ -157,11 +157,11 @@ namespace dsr {
             return sMouseState.position[1];
         }
 
-        F32 mouseWheelX() {
+        F32 wheelX() {
             return 0;
         }
 
-        F32 mouseWheelY() {
+        F32 wheelY() {
             return 0;
         }
 

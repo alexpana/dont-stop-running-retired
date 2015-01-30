@@ -8,6 +8,7 @@
 #include <nanovg.h>
 #include <sstream>
 #include <fstream>
+#include <bits/stl_algo.h>
 
 #include "../engine/input/input.h"
 #include "../engine/ui/gui.h"
@@ -38,16 +39,16 @@ static dsr::EditorContext sContext(WIDTH, HEIGHT);
 namespace dsr {
 
     void loadShader(std::string shaderName) {
-        Shader shader;
-        if (dsr::loadShader("data/shaders/" + shaderName, shader)) {
-            dsr::Assets::instance().registerShader(shaderName, shader);
+        auto shaderPtr = loader::loadShader("data/shaders/" + shaderName);
+        if (shaderPtr) {
+            dsr::Assets::instance().registerShader(shaderName, std::move(shaderPtr));
         }
     }
 
     void loadTexture(std::string textureName) {
-        Texture texture;
-        if (loadTexture("data/textures/" + textureName + ".dds", texture)) {
-            dsr::Assets::instance().registerTexture(textureName, texture);
+        auto texturePtr = loader::loadTexture("data/textures/" + textureName + ".dds");
+        if (texturePtr) {
+            dsr::Assets::instance().registerTexture(textureName, std::move(texturePtr));
         }
     }
 
@@ -57,10 +58,16 @@ namespace dsr {
         // load textures
         loadTexture("tiles");
 
+        // load sprites
+        auto sprites = loader::loadSprites("data/scripts/sprites.json");
+        for (auto &sprite : sprites) {
+            assets.registerSprite(sprite->name, std::move(sprite));
+        }
+
         // load objects
-        vector<GameObject> objects = loadObjects("data/scripts/objects.json");
-        for (auto &object : objects) {
-            assets.registerGameObject(object.name, object);
+        auto staticTiles = loader::loadStaticTiles("data/scripts/static_tiles.json");
+        for (auto &staticTile : staticTiles) {
+            assets.registerGameObject(staticTile->getName(), std::move(staticTile));
         }
 
         // load shaders
@@ -100,7 +107,43 @@ namespace dsr {
         return generator;
     }
 
+    void drawSelectionOutline() {
+        auto *entity = sContext.selectedEntity();
+        if (entity) {
+            glm::vec2 position = entity->position;
+            glm::vec2 scale = entity->scale;
+            glm::vec2 size = entity->gameObject->getSize();
+
+            F32 rotation = entity->rotation;
+
+            auto c = nvgCtx();
+
+            nvgRotate(c, rotation);
+            nvgScale(c, scale.x, scale.y);
+            nvgTranslate(c, position.x, position.y);
+            nvgBeginPath(c);
+            nvgMoveTo(c, -size.x / 2, -size.y / 2);
+            nvgLineTo(c, size.x / 2, -size.y / 2);
+            nvgLineTo(c, size.x / 2, size.y / 2);
+            nvgLineTo(c, -size.x / 2, size.y / 2);
+            nvgLineTo(c, -size.x / 2, -size.y / 2);
+            nvgClosePath(c);
+            nvgResetTransform(c);
+
+            nvgStrokeWidth(c, 2);
+            nvgStrokeColor(c, NVGcolor{0, 0, 0, 1.0});
+            nvgStroke(c);
+
+        }
+    }
+
     void updateTitle();
+
+    void renderEntity(const LevelMap::Entity &entity) {
+        glm::mat4 transform = glm::translate(glm::vec3(entity.position, 0));
+        bgfx::setTransform(&transform);
+        entity.gameObject->render();
+    }
 
     int runEditor() {
         std::string windowName = "Don't Stop Running";
@@ -132,16 +175,16 @@ namespace dsr {
                 glm::vec2(128, 128),
                 glm::vec2(1.0, 1.0),
                 0.0f,
-                *assets.findGameObject("saw")});
+                assets.findGameObject("saw")});
 
         auto spawningEntity = LevelMap::Entity{};
         spawningEntity.position = {0, 0};
 
-        spawningEntity.gameObject = *assets.findGameObject("saw");
+        spawningEntity.gameObject = assets.findGameObject("saw");
 
         sContext.fnSpawnObjectSelected = [&spawningEntity, &assets]() {
             const char *objects[3] = {"grass_tile", "dirt_tile", "saw"};
-            spawningEntity.gameObject = *assets.findGameObject(objects[sContext.selectedSpawnObject]);
+            spawningEntity.gameObject = assets.findGameObject(objects[sContext.selectedSpawnObject]);
         };
 
         sContext.fnActionSave = [&levelMap](std::string filename) {
@@ -151,6 +194,8 @@ namespace dsr {
                 updateTitle();
             }
         };
+
+        sContext.selectedEntityIndex = 0;
 
         while (!io::frameCloseRequested()) {
             io::update();
@@ -187,21 +232,6 @@ namespace dsr {
                 nvgStroke(nvgCtx());
             }
 
-            if (sContext.snapToGrid && !hoveringMenu) {
-                int gridX = (int) ((io::mouseX() / 32) + 0.5) * 32;
-                int gridY = (int) ((io::mouseY() / 32) + 0.5) * 32;
-
-                nvgFillColor(nvgCtx(), {0.6, 0.6, 1.0, 1.0});
-
-                nvgBeginPath(nvgCtx());
-
-                nvgCircle(nvgCtx(), gridX, gridY, 3);
-
-                nvgClosePath(nvgCtx());
-
-                nvgFill(nvgCtx());
-            }
-
             if (sContext.cursorLocationVisible && !hoveringMenu) {
                 std::stringstream ss;
                 ss << io::mouseX() << " " << io::mouseY();
@@ -220,6 +250,8 @@ namespace dsr {
                 nvgFillColor(nvgCtx(), {0.8, 0.8, 0.8, 1.0});
                 nvgText(nvgCtx(), io::mouseX() + 20, io::mouseY() + 20, ss.str().c_str(), nullptr);
             }
+
+            drawSelectionOutline();
             nvgEndFrame(nvgCtx());
 
             if (canUseInput) {
@@ -257,14 +289,17 @@ namespace dsr {
 
             // draw map
             for (auto &it : levelMap.entities) {
-                dsr::renderSprite(it.position, it.gameObject.sprite);
+                renderEntity(it);
+
             }
             spawningEntity.position = glm::vec2(
                     (int) (io::mouseX() / 32.0) * 32,
                     (int) (io::mouseY() / 32.0) * 32);
 
             if (!hoveringMenu) {
-                dsr::renderSprite(spawningEntity.position, spawningEntity.gameObject.sprite, 9);
+                renderEntity(spawningEntity);
+
+//                dsr::renderSprite(spawningEntity.position, spawningEntity.gameObject.sprite, 9);
                 if (io::mouseButtonDown(io::MouseButton::LEFT)) {
 
                     levelMap.entities.push_back(spawningEntity);
@@ -280,6 +315,8 @@ namespace dsr {
 
             bgfx::frame();
         }
+
+        Assets::destroyInstance();
 
         ui::shutdown();
         destroyBgfx();

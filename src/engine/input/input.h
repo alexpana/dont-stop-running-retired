@@ -37,9 +37,9 @@ namespace dsr {
 
         F32 mouseY();
 
-        F32 mouseWheelX();
+        F32 wheelX();
 
-        F32 mouseWheelY();
+        F32 wheelY();
 
         bool keyDown(Key key);
 

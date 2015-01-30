@@ -5,40 +5,56 @@
 namespace dsr {
     static dsr::Log _log{"Assets"};
 
-    Assets *Assets::uniqueInstance = nullptr;
+    UPtr<Assets> Assets::uniqueInstance = nullptr;
 
     Assets &Assets::instance() {
         if (uniqueInstance == nullptr) {
-            uniqueInstance = new Assets();
+            uniqueInstance = UPtr<Assets>(new Assets());
         }
 
-        return *uniqueInstance;
+        return *uniqueInstance.get();
     }
 
     Assets::Assets() {
+        _log.info("Creating a new assets instance.");
     }
 
-    void Assets::registerGameObject(const std::string &name, const GameObject &gameObject) {
+    Assets::~Assets() {
+        std::cout << "Destroying assets instance." << std::endl;
+    }
+
+    template<typename M>
+    typename M::mapped_type::element_type *findResource(const std::string &name, M &map) {
+        auto findIt = map.find(name);
+
+        if (findIt != map.end()) {
+            return findIt->second.get();
+        }
+
+        return nullptr;
+    }
+
+    void Assets::registerGameObject(const std::string &name, std::unique_ptr<StaticTile> &&gameObject) {
         _log.info("Registered game object ", name);
-        gameObjectMap[name] = gameObject;
+        gameObjectMap[name] = std::move(gameObject);
     }
 
-    void Assets::registerSprite(const std::string &name, const Sprite &sprite) {
+    void Assets::registerSprite(const std::string &name, std::unique_ptr<Sprite> &&sprite) {
         _log.info("Registered sprite ", name);
-        spriteMap[name] = sprite;
+        spriteMap[name] = std::move(sprite);
     }
 
-    void Assets::registerTexture(const std::string &name, Texture &texture) {
+    void Assets::registerTexture(const std::string &name, std::unique_ptr<Texture> &&texture) {
         _log.info("Registered texture ", name);
         textureMap[name] = std::move(texture);
     }
 
-    void Assets::registerShader(const std::string &name, Shader &shader) {
+    void Assets::registerShader(const std::string &name, std::unique_ptr<Shader> &&shader) {
         _log.info("Registered shader ", name);
         shaderMap[name] = std::move(shader);
     }
 
-    GameObject *Assets::findGameObject(const std::string &name) {
+    StaticTile *Assets::findGameObject(const std::string &name) {
         return findResource(name, gameObjectMap);
     }
 
@@ -52,5 +68,11 @@ namespace dsr {
 
     Shader *Assets::findShader(const std::string &name) {
         return findResource(name, shaderMap);
+    }
+
+    void Assets::destroyInstance() {
+        if (uniqueInstance) {
+            uniqueInstance.reset(nullptr);
+        }
     }
 }

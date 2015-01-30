@@ -1,5 +1,6 @@
 #include <glm/detail/type_vec.hpp>
 #include <bgfx.h>
+#include <glm/gtx/transform.hpp>
 
 #include "renderer.h"
 #include "types.h"
@@ -54,10 +55,63 @@ namespace dsr {
         bgfx::UniformHandle u_texColor = bgfx::createUniform("u_texColor", bgfx::UniformType::Uniform1iv);
 
         F32 *sVertexData = new F32[16];
-        setVertex(sVertexData, 0, position + vec2{0, 0}, {ox / tw, oy / th}); // uv: 0, 0
-        setVertex(sVertexData, 1, position + vec2{0, h}, {(ox + w) / tw, oy / th}); // uv: 0, 1
-        setVertex(sVertexData, 2, position + vec2{w, h}, {(ox + w) / tw, (oy + h) / th}); // uv: 1, 1
-        setVertex(sVertexData, 3, position + vec2{w, 0}, {ox / tw, (oy + h) / th}); // uv: 1, 0
+        setVertex(sVertexData, 0, vec2{0, 0}, {ox / tw, oy / th}); // uv: 0, 0
+        setVertex(sVertexData, 1, vec2{0, h}, {(ox + w) / tw, oy / th}); // uv: 0, 1
+        setVertex(sVertexData, 2, vec2{w, h}, {(ox + w) / tw, (oy + h) / th}); // uv: 1, 1
+        setVertex(sVertexData, 3, vec2{w, 0}, {ox / tw, (oy + h) / th}); // uv: 1, 0
+
+        auto vBuffer = bgfx::createVertexBuffer(bgfx::makeRef(sVertexData, 16 * sizeof(F32)), getVertexDecl());
+        auto iBuffer = bgfx::createIndexBuffer(bgfx::makeRef(sIndexData, sizeof(sIndexData)));
+
+        glm::mat4 transform = glm::translate(glm::vec3(position, 0));
+
+        bgfx::setTransform(&transform);
+
+        bgfx::setVertexBuffer(vBuffer);
+        bgfx::setIndexBuffer(iBuffer);
+        bgfx::setProgram(Assets::instance().findShader("sprite")->getHandle());
+        bgfx::setTexture(0, u_texColor, texture->getHandle());
+        bgfx::setState(0
+                | BGFX_STATE_RGB_WRITE
+                | BGFX_STATE_ALPHA_WRITE
+                | BGFX_STATE_DEPTH_WRITE
+                | BGFX_STATE_DEPTH_TEST_ALWAYS
+                | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
+                | BGFX_STATE_BLEND_EQUATION_ADD
+        );
+
+        bgfx::submit(0, depth);
+
+        bgfx::destroyVertexBuffer(vBuffer);
+        bgfx::destroyIndexBuffer(iBuffer);
+        bgfx::destroyUniform(u_texColor);
+    }
+
+    void renderSprite(const Sprite &sprite, U32 const depth) {
+        using glm::vec2;
+
+        auto texture = Assets::instance().findTexture(sprite.sheetName);
+
+        if (texture == nullptr) {
+            return;
+        }
+
+        float w = sprite.size.x;
+        float h = sprite.size.y;
+
+        float ox = sprite.offset.x;
+        float oy = sprite.offset.y;
+
+        int tw = texture->getInfo().width;
+        int th = texture->getInfo().height;
+
+        bgfx::UniformHandle u_texColor = bgfx::createUniform("u_texColor", bgfx::UniformType::Uniform1iv);
+
+        F32 *sVertexData = new F32[16];
+        setVertex(sVertexData, 0, vec2{0, 0}, {ox / tw, oy / th}); // uv: 0, 0
+        setVertex(sVertexData, 1, vec2{0, h}, {(ox + w) / tw, oy / th}); // uv: 0, 1
+        setVertex(sVertexData, 2, vec2{w, h}, {(ox + w) / tw, (oy + h) / th}); // uv: 1, 1
+        setVertex(sVertexData, 3, vec2{w, 0}, {ox / tw, (oy + h) / th}); // uv: 1, 0
 
         auto vBuffer = bgfx::createVertexBuffer(bgfx::makeRef(sVertexData, 16 * sizeof(F32)), getVertexDecl());
         auto iBuffer = bgfx::createIndexBuffer(bgfx::makeRef(sIndexData, sizeof(sIndexData)));
@@ -79,6 +133,6 @@ namespace dsr {
 
         bgfx::destroyVertexBuffer(vBuffer);
         bgfx::destroyIndexBuffer(iBuffer);
-//        bgfx::destroyUniform(u_texColor);
+        bgfx::destroyUniform(u_texColor);
     }
 }

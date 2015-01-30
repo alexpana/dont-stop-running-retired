@@ -5,6 +5,8 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+#include "../engine/game_objects/static_tile.h"
+
 using namespace std;
 using namespace rapidjson;
 
@@ -50,16 +52,16 @@ namespace dsr {
     }
 
     template<typename T>
-    static void append(Writer<T> &w, GameObject &gameObject) {
+    static void append(Writer<T> &w, StaticTile &gameObject) {
         w.StartObject();
-        appendMember(w, "name", gameObject.name);
+        appendMember(w, "name", gameObject.getName());
         w.EndObject();
     }
 
     template<typename T>
     static void append(Writer<T> &w, LevelMap::Entity &entity) {
         w.StartObject();
-        appendMember(w, "type", entity.gameObject.name);
+        appendMember(w, "type", entity.gameObject->getName());
         appendMember(w, "position", entity.position);
         appendMember(w, "scale", entity.scale);
         appendMember(w, "rotation", entity.rotation);

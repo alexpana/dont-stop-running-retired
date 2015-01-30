@@ -19,7 +19,9 @@ namespace dsr {
 
         S32 selectedSpawnObject = -1;
 
-        LevelMap::Entity *selectedEntity;
+        LevelMap *levelMap;
+
+        int selectedEntityIndex;
 
         std::string saveFilename = "";
 
@@ -37,5 +39,13 @@ namespace dsr {
 
         EditorContext(U16 w, U16 h) : viewportWidth(w), viewportHeight(h) {
         };
+
+        LevelMap::Entity *selectedEntity() {
+            if (selectedEntityIndex > 0) {
+                return &levelMap->entities[selectedEntityIndex];
+            } else {
+                return nullptr;
+            }
+        }
     };
 }

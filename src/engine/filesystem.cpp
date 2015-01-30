@@ -29,6 +29,7 @@ namespace dsr {
         if (filename.length() > 1) {
             return filename.substr(0, filename.length() - 1);
         }
+        return "";
     }
 
     std::string openFileDialog() {
