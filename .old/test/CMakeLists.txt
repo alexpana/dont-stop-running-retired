@@ -28,7 +28,7 @@ include_directories(${SDL2_INCLUDE_DIR})
 
 include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 
-include_directories(../engine/include/)
+include_directories(../engine/include)
 
 # =======================================
 # Link libraries
