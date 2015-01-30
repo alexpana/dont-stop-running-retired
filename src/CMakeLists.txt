@@ -24,13 +24,17 @@ set(UI_SOURCES
     engine/ui/gui.h
     engine/ui/gui.cpp)
 
-set(EDITOR_SOURCES
+set(MAP_EDITOR_SOURCES
     map_editor/context.h
-    map_editor/editor.h
-    map_editor/editor.cpp
+    map_editor/map_editor.h
+    map_editor/map_editor.cpp
     map_editor/editor_ui.h
     map_editor/export.h
     map_editor/export.cpp)
+
+set(PARTICLE_EDITOR_SOURCES
+    particle_editor/particle_editor.h
+    particle_editor/particle_editor.cpp)
 
 set(SANDBOX_SOURCES
     # input
@@ -72,7 +76,9 @@ add_executable(dont_stop_running
 
     ${UI_SOURCES}
 
-    ${EDITOR_SOURCES})
+    ${MAP_EDITOR_SOURCES}
+
+    ${PARTICLE_EDITOR_SOURCES})
 
 include_directories(
     engine/ui/imgui

@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "map_editor.h"
 
 #include <SDL2/SDL.h>
 #include <bx/bx.h>
@@ -153,7 +153,7 @@ namespace dsr {
         }
     }
 
-    int runEditor() {
+    int runMapEditor() {
         std::string windowName = "Don't Stop Running";
 
         dsr::initBgfx(WIDTH, HEIGHT, windowName);
@@ -300,15 +300,18 @@ namespace dsr {
             spawningEntity.position = getMouseActionPosition();
 
             if (!hoveringMenu) {
+                if (sContext.action == EditorContext::Action::SPAWN) {
+                    // render currently spawning entity
+                    renderEntity(spawningEntity);
 
-                // render currently spawning entity
-                renderEntity(spawningEntity);
-
-                // spawn entity
-                if (input::mouseButtonPressed(input::MouseButton::LEFT)) {
-                    levelMap.entities.push_back(spawningEntity);
-                    sContext.changedSinceLastSave = true;
-                    updateTitle();
+                    // spawn entity
+                    if (input::mouseButtonPressed(input::MouseButton::LEFT)) {
+                        levelMap.entities.push_back(spawningEntity);
+                        sContext.changedSinceLastSave = true;
+                        updateTitle();
+                    }
+                } else {
+                    // TODO: handle selection
                 }
             }
 

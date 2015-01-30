@@ -928,7 +928,7 @@ struct Imgui
 		const float barHeight = (float)height / (float)sh;
 		const bool hasScrollBar = (barHeight < 1.0f);
 
-		// Handle mouse scrolling.
+		// Handle mousePosition scrolling.
 		if (area.m_inside && !area.m_didScroll && !anyActive() )
 		{
 			if (m_scroll)

@@ -1,5 +1,5 @@
 #pragma once
 
 namespace dsr {
-    int runEditor();
+    int runMapEditor();
 }
