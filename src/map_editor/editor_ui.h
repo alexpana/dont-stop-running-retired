@@ -12,17 +12,13 @@ namespace dsr {
 
         imguiBeginFrame((int32_t) input::mouseX(), (int32_t) input::mouseY(), (uint8_t) (mouseButtonDown(input::MouseButton::LEFT) ? IMGUI_MBUT_LEFT : 0), (U32) input::wheelX(), ctx.viewportWidth, ctx.viewportHeight, 0, 0);
 
-
-        ImGui::SetNextWindowPos(ImVec2(ctx.viewportWidth - 200, 0), ImGuiSetCondition_Always);
-
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(5.0f, 1.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(1.0f, 1.0f));
-
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 1));
 
+        ImGui::SetNextWindowPos(ImVec2(ctx.viewportWidth - 200, 0), ImGuiSetCondition_Always);
         ImGui::Begin("Editor", &ctx.ui.editorHeaderVisible, ImVec2(200, ctx.viewportHeight), 0.3, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
         // ==============================================================
@@ -100,6 +96,28 @@ namespace dsr {
                     }
                 }
             }
+        }
+
+        glm::vec2 statusBarPosition = glm::vec2(0, ctx.viewportHeight - 30);
+        glm::vec2 statusBarSize = glm::vec2(ctx.viewportWidth - 200, 30);
+
+
+        std::stringstream ss;
+        ss << "mouse: " << input::mouseX() << ", " << input::mouseY();
+
+        nvgFillColor(nvgCtx(), {0, 0, 0, 0.3});
+        nvgBeginPath(nvgCtx());
+        nvgRect(nvgCtx(), statusBarPosition.x, statusBarPosition.y, statusBarSize.x, statusBarSize.y);
+        nvgClosePath(nvgCtx());
+        nvgFill(nvgCtx());
+
+        nvgFillColor(nvgCtx(), {0.8, 0.8, 0.8, 1.0});
+        nvgText(nvgCtx(), statusBarPosition.x + 10, statusBarPosition.y + 20, ss.str().c_str(), nullptr);
+
+        if (ctx.levelMap) {
+            ss.str("");
+            ss << "objects: " << ctx.levelMap->entities.size();
+            nvgText(nvgCtx(), statusBarPosition.x + 150, statusBarPosition.y + 20, ss.str().c_str(), nullptr);
         }
 
         ImGui::End();

@@ -205,6 +205,9 @@ namespace dsr {
 
         sContext.selectedEntityIndex = 0;
 
+        sContext.levelMap = &levelMap;
+        sContext.selectedEntityIndex = -1;
+
         while (!input::frameCloseRequested()) {
             input::update();
 
