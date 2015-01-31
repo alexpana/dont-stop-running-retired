@@ -24,8 +24,8 @@ namespace dsr {
         // ==============================================================
         //  Action type
         // ==============================================================
-        static const char *items[] = {"select", "spawn"};
-        if (ImGui::Combo("mode", &ctx.action, items, 2)) {
+        static const char *items[] = {"select", "spawn", "draw shape"};
+        if (ImGui::Combo("mode", &ctx.action, items, 3)) {
             if (ctx.fnActionChanged) {
                 ctx.fnActionChanged();
             }

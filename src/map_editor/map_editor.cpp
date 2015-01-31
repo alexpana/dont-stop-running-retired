@@ -35,8 +35,17 @@ dsr::ParticleGenerator createParticleGenerator();
 void loadAssets();
 
 static dsr::EditorContext sContext(WIDTH, HEIGHT);
+static dsr::LevelMap sLevelMap;
 
 namespace dsr {
+    enum class SnapBehavior {
+        CLOSEST,
+        HOVERING_CELL
+    };
+
+    void drawGrid();
+
+    void drawTooltip(const std::string &tooltip);
 
     void loadShader(std::string shaderName) {
         auto shaderPtr = loader::loadShader("data/shaders/" + shaderName);
@@ -142,21 +151,104 @@ namespace dsr {
     void renderEntity(const LevelMap::Entity &entity) {
         glm::mat4 transform = glm::translate(glm::vec3(entity.position, 0));
         bgfx::setTransform(&transform);
-        entity.gameObject->render();
+        if (entity.gameObject) {
+            entity.gameObject->render();
+        }
     }
 
-    glm::vec2 getMouseActionPosition() {
+    glm::vec2 getMouseActionPosition(SnapBehavior snapBehavior = SnapBehavior::HOVERING_CELL) {
         if (sContext.snapToGrid) {
-            return glm::vec2((int) (input::mouseX() / 32.0) * 32, (int) (input::mouseY() / 32.0) * 32);
+            switch (snapBehavior) {
+                case SnapBehavior::HOVERING_CELL:
+                    return glm::vec2((int) (input::mouseX() / 32.0) * 32, (int) (input::mouseY() / 32.0) * 32);
+                case SnapBehavior::CLOSEST:
+                    return glm::vec2((int) (input::mouseX() / 32.0 + 0.5) * 32, (int) (input::mouseY() / 32.0 + 0.5) * 32);
+            }
         } else {
             return glm::vec2(input::mouseX(), input::mouseY());
         }
     }
 
-    int runMapEditor() {
-        std::string windowName = "Don't Stop Running";
+    void updateSpawnAction() {
+        sContext.currentlySpawningEntity.position = getMouseActionPosition();
 
-        dsr::initBgfx(WIDTH, HEIGHT, windowName);
+        renderEntity(sContext.currentlySpawningEntity);
+
+        if (input::keyDown(input::fromSdlKey(SDLK_LSHIFT))) {
+            stringstream ss;
+            ss << sContext.currentlySpawningEntity.position.x << ", " << sContext.currentlySpawningEntity.position.y;
+            drawTooltip(ss.str());
+        }
+
+        // spawn entity
+        if (input::mouseButtonPressed(input::MouseButton::LEFT)) {
+            if (sContext.currentlySpawningEntity.gameObject) {
+                sContext.levelMap->entities.push_back(sContext.currentlySpawningEntity);
+                sContext.changedSinceLastSave = true;
+                updateTitle();
+            }
+        }
+    }
+
+    void updateDrawShapeAction() {
+        auto actionPosition = getMouseActionPosition(SnapBehavior::CLOSEST);
+        auto c = nvgCtx();
+
+        if (sContext.drawShape.isDrawing) {
+            S32 x = (S32) std::min(actionPosition.x, sContext.drawShape.startPosition.x);
+            S32 y = (S32) std::min(actionPosition.y, sContext.drawShape.startPosition.y);
+            S32 w = abs(actionPosition.x - sContext.drawShape.startPosition.x);
+            S32 h = abs(actionPosition.y - sContext.drawShape.startPosition.y);
+
+            nvgBeginPath(c);
+            nvgRect(c, x, y, w, h);
+            nvgClosePath(c);
+
+            nvgFillColor(c, {0.3, 0.4, 0.6, 0.4});
+            nvgFill(c);
+
+            nvgTranslate(c, 0.5, 0.5);
+            nvgBeginPath(c);
+            nvgRect(c, x, y, w, h);
+            nvgClosePath(c);
+
+            nvgStrokeColor(c, {0, 0, 0, 1.0});
+            nvgStrokeWidth(c, 1.0);
+            nvgStroke(c);
+
+            stringstream ss;
+            ss << w << ", " << h;
+            drawTooltip(ss.str());
+
+
+            if (input::mouseButtonReleased(input::MouseButton::LEFT)) {
+                sContext.drawShape.isDrawing = false;
+
+                // TODO: insert shape into level map
+            }
+
+        } else {
+            nvgBeginPath(c);
+            nvgCircle(c, actionPosition.x, actionPosition.y, 3.0);
+            nvgClosePath(c);
+
+            nvgFillColor(c, {0.3, 0.4, 0.6, 0.9});
+            nvgFill(c);
+
+
+            if (input::mouseButtonPressed(input::MouseButton::LEFT)) {
+                sContext.drawShape.isDrawing = true;
+                sContext.drawShape.startPosition = actionPosition;
+            }
+        }
+    }
+
+    void updateSelectAction() {
+
+    }
+
+    int runMapEditor() {
+        dsr::initBgfx(WIDTH, HEIGHT, "Map Editor");
         ui::init();
 
         updateTitle();
@@ -173,31 +265,20 @@ namespace dsr {
         dsr::ParticleGenerator generator = createParticleGenerator();
         particleSystem.addGenerator(&generator);
 
-        F32 emitterSpeed = 2.0;
-
-        int viewType = 0;
-
-        LevelMap levelMap{};
-
-        levelMap.entities.push_back(LevelMap::Entity{
+        sLevelMap.entities.push_back(LevelMap::Entity{
                 glm::vec2(128, 128),
                 glm::vec2(1.0, 1.0),
                 0.0f,
                 assets.findGameObject("saw")});
 
-        auto spawningEntity = LevelMap::Entity{};
-        spawningEntity.position = {0, 0};
-
-        spawningEntity.gameObject = assets.findGameObject("saw");
-
-        sContext.fnSpawnObjectSelected = [&spawningEntity, &assets]() {
+        sContext.fnSpawnObjectSelected = [&assets]() {
             const char *objects[3] = {"grass_tile", "dirt_tile", "saw"};
-            spawningEntity.gameObject = assets.findGameObject(objects[sContext.selectedSpawnObject]);
+            sContext.currentlySpawningEntity.gameObject = assets.findGameObject(objects[sContext.selectedSpawnObject]);
         };
 
-        sContext.fnActionSave = [&levelMap](std::string filename) {
+        sContext.fnActionSave = [](std::string filename) {
             if (filename != "") {
-                exportLevelMap(filename, levelMap);
+                exportLevelMap(filename, sLevelMap);
                 sContext.changedSinceLastSave = false;
                 updateTitle();
             }
@@ -205,131 +286,95 @@ namespace dsr {
 
         sContext.selectedEntityIndex = 0;
 
-        sContext.levelMap = &levelMap;
+        sContext.levelMap = &sLevelMap;
         sContext.selectedEntityIndex = -1;
 
         while (!input::frameCloseRequested()) {
+            nvgBeginFrame(nvgCtx(), sContext.viewportWidth, sContext.viewportHeight, 1.0f);
             input::update();
 
             uiUpdate(sContext);
 
-            bool canUseInput = !ImGui::GetIO().WantCaptureKeyboard && !ImGui::GetIO().WantCaptureKeyboard;
-
-            bool hoveringMenu = input::mouseX() >= WIDTH - 200;
-
-            nvgBeginFrame(nvgCtx(), sContext.viewportWidth, sContext.viewportHeight, 1.0f);
-
-            if (sContext.gridVisible) {
-                nvgStrokeWidth(nvgCtx(), 0.5f);
-
-                nvgStrokeColor(nvgCtx(), {0.7, 0.7, 0.7, 1.0});
-
-                nvgBeginPath(nvgCtx());
-
-                for (int i = 0; i < sContext.viewportWidth / 32 + 1; ++i) {
-                    nvgMoveTo(nvgCtx(), (float) ((i * 32) + 0.5), 0);
-
-                    nvgLineTo(nvgCtx(), (float) ((i * 32) + 0.5), sContext.viewportHeight);
-                }
-
-                for (int i = 0; i < sContext.viewportHeight / 32 + 1; ++i) {
-                    nvgMoveTo(nvgCtx(), 0, (float) ((i * 32) + 0.5));
-
-                    nvgLineTo(nvgCtx(), sContext.viewportWidth, (float) ((i * 32) + 0.5));
-                }
-
-                nvgClosePath(nvgCtx());
-
-                nvgStroke(nvgCtx());
-            }
-
-            if (sContext.cursorLocationVisible && !hoveringMenu) {
-                std::stringstream ss;
-                ss << input::mouseX() << " " << input::mouseY();
-
-                float bounds[4];
-                nvgTextBounds(nvgCtx(), input::mouseX() + 15, input::mouseY() + 15, ss.str().c_str(), nullptr, bounds);
-                bounds[2] += 10.0;
-                bounds[3] += 10.0;
-
-                nvgFillColor(nvgCtx(), {0, 0, 0, 0.4});
-                nvgBeginPath(nvgCtx());
-                nvgRoundedRect(nvgCtx(), bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1], 2.0f);
-                nvgClosePath(nvgCtx());
-                nvgFill(nvgCtx());
-
-                nvgFillColor(nvgCtx(), {0.8, 0.8, 0.8, 1.0});
-                nvgText(nvgCtx(), input::mouseX() + 20, input::mouseY() + 20, ss.str().c_str(), nullptr);
-            }
-
+            drawGrid();
             drawSelectionOutline();
-            nvgEndFrame(nvgCtx());
-
-            if (canUseInput) {
-                if (input::keyPressed(input::fromSdlKey(SDLK_1))) {
-                    viewType = 1;
-                }
-                if (input::keyPressed(input::fromSdlKey(SDLK_2))) {
-                    viewType = 2;
-                }
-                if (input::keyPressed(input::fromSdlKey(SDLK_3))) {
-                    viewType = 3;
-                }
-            }
-
-            glm::vec2 direction;
-            direction = glm::vec2(input::mouseX(), input::mouseY()) - glm::vec2(generator.generatorPosition[0], generator.generatorPosition[1]);
-            direction = glm::normalize(direction);
-            direction *= emitterSpeed;
-
-            if (viewType == 1) {
-                generator.generatorPosition = direction;
-            }
-
-            if (viewType == 2) {
-                generator.generatorPosition += direction;
-            }
-
-            if (viewType == 3) {
-                generator.generatorSpawnDirection = glm::rotate(generator.generatorSpawnDirection, 0.2f);
-            }
 
             // draw map
-            for (auto &it : levelMap.entities) {
+            for (auto &it : sLevelMap.entities) {
                 renderEntity(it);
-
             }
 
-            spawningEntity.position = getMouseActionPosition();
-
+            bool hoveringMenu = input::mouseX() >= WIDTH - 200;
             if (!hoveringMenu) {
-                if (sContext.action == EditorContext::Action::SPAWN) {
-                    // render currently spawning entity
-                    renderEntity(spawningEntity);
-
-                    // spawn entity
-                    if (input::mouseButtonPressed(input::MouseButton::LEFT)) {
-                        levelMap.entities.push_back(spawningEntity);
-                        sContext.changedSinceLastSave = true;
-                        updateTitle();
-                    }
-                } else {
-                    // TODO: handle selection
+                switch (sContext.action) {
+                    case EditorContext::Action::SPAWN:
+                        updateSpawnAction();
+                        break;
+                    case EditorContext::Action::DRAW_SHAPE:
+                        updateDrawShapeAction();
+                        break;
+                    case EditorContext::Action::SELECT:
+                        updateSelectAction();
+                        break;
+                    default:
+                        break;
                 }
             }
 
+            nvgEndFrame(nvgCtx());
             bgfx::frame();
         }
 
         Assets::destroyInstance();
-
         ui::shutdown();
         destroyBgfx();
 
         return 0;
     }
 
+    void drawGrid() {
+        if (sContext.gridVisible) {
+            nvgStrokeWidth(nvgCtx(), 0.5f);
+
+            nvgStrokeColor(nvgCtx(), {0.7, 0.7, 0.7, 1.0});
+
+            nvgBeginPath(nvgCtx());
+
+            for (int i = 0; i < sContext.viewportWidth / 32 + 1; ++i) {
+                nvgMoveTo(nvgCtx(), (float) ((i * 32) + 0.5), 0);
+
+                nvgLineTo(nvgCtx(), (float) ((i * 32) + 0.5), sContext.viewportHeight);
+            }
+
+            for (int i = 0; i < sContext.viewportHeight / 32 + 1; ++i) {
+                nvgMoveTo(nvgCtx(), 0, (float) ((i * 32) + 0.5));
+
+                nvgLineTo(nvgCtx(), sContext.viewportWidth, (float) ((i * 32) + 0.5));
+            }
+
+            nvgClosePath(nvgCtx());
+
+            nvgStroke(nvgCtx());
+        }
+    }
+
+    void drawTooltip(const std::string &tooltip) {
+        nvgResetTransform(nvgCtx());
+        float bounds[4];
+        nvgTextBounds(nvgCtx(), input::mouseX() + 15, input::mouseY() + 15, tooltip.c_str(), nullptr, bounds);
+        bounds[2] += 10.0;
+        bounds[3] += 10.0;
+
+        nvgFillColor(nvgCtx(), {0, 0, 0, 0.4});
+        nvgBeginPath(nvgCtx());
+        nvgRoundedRect(nvgCtx(), bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1], 2.0f);
+        nvgClosePath(nvgCtx());
+        nvgFill(nvgCtx());
+
+        nvgFillColor(nvgCtx(), {0.8, 0.8, 0.8, 1.0});
+        nvgText(nvgCtx(), input::mouseX() + 20, input::mouseY() + 20, tooltip.c_str(), nullptr);
+    }
+
     void updateTitle() {
-        setWindowTitle("Map Editor: " + (sContext.saveFilename != "" ? sContext.saveFilename : "<untitled>") + (sContext.changedSinceLastSave ? "*" : ""));
+        setWindowTitle("Map Editor: " + (sContext.saveFilename != "" ? sContext.saveFilename : "(untitled)") + (sContext.changedSinceLastSave ? "*" : ""));
     }
 }

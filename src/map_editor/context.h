@@ -6,7 +6,8 @@ namespace dsr {
     struct EditorContext {
         enum Action {
             SELECT,
-            SPAWN
+            SPAWN,
+            DRAW_SHAPE
         };
 
         const U16 viewportWidth;
@@ -19,17 +20,26 @@ namespace dsr {
 
         S32 selectedSpawnObject = -1;
 
+        // Level related stuff
         LevelMap *levelMap;
+        S32 selectedEntityIndex;
 
-        int selectedEntityIndex;
 
-        std::string saveFilename = "";
+        // Drawing shape
+        struct {
+            bool isDrawing = false;
+            glm::vec2 startPosition;
+        } drawShape;
 
-        bool changedSinceLastSave = false;
+        // Spawning entity
+        LevelMap::Entity currentlySpawningEntity;
 
         struct {
             bool editorHeaderVisible = true;
         } ui;
+
+        std::string saveFilename = "";
+        bool changedSinceLastSave = false;
 
         // Functions
         std::function<void()> fnActionChanged = nullptr;

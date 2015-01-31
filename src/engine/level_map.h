@@ -20,7 +20,10 @@ namespace dsr {
 
         std::vector<Entity> entities;
 
+        LevelMap() = default;
+
         LevelMap(LevelMap &&other) = default;
-        LevelMap& operator=(LevelMap &&other) = default;
+
+        LevelMap &operator=(LevelMap &&other) = default;
     };
 }
