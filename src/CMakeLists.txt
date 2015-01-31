@@ -45,6 +45,7 @@ set(SANDBOX_SOURCES
     engine/game_objects/static_tile.h
     engine/game_objects/static_tile.cpp
     engine/game_objects/particle_system.h
+    engine/game_objects/shape.h
 
     engine/asset_loader.h
     engine/asset_loader.cpp

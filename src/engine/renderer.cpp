@@ -107,6 +107,7 @@ namespace dsr {
 
         bgfx::UniformHandle u_texColor = bgfx::createUniform("u_texColor", bgfx::UniformType::Uniform1iv);
 
+        // TODO: fix memory leak!!
         F32 *sVertexData = new F32[16];
         setVertex(sVertexData, 0, vec2{0, 0}, {ox / tw, oy / th}); // uv: 0, 0
         setVertex(sVertexData, 1, vec2{0, h}, {(ox + w) / tw, oy / th}); // uv: 0, 1
@@ -134,5 +135,9 @@ namespace dsr {
         bgfx::destroyVertexBuffer(vBuffer);
         bgfx::destroyIndexBuffer(iBuffer);
         bgfx::destroyUniform(u_texColor);
+    }
+
+    void renderRect(const glm::vec2 &size, const U32 color, const U32 depth) {
+
     }
 }

@@ -29,11 +29,9 @@ namespace dsr {
             return size;
         }
 
-        virtual void render() {
-        }
+        virtual void render() = 0;
 
-        virtual void update(F32 ms) {
-        }
+        virtual void update(F32 ms) = 0;
 
         virtual ~GameObject() = default;
 
